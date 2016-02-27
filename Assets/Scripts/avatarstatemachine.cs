@@ -141,7 +141,7 @@ public class avatarstatemachine : MonoBehaviour
             transform.localPosition = _avatarpos;
 
         }
-        else //avatar is on place
+        //else //avatar is on place
         if (finalpath[avatarwhereinpath + 1] != Vector2.zero)
         {
             avatarmoving = true;
