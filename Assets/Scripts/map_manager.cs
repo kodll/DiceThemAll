@@ -7,6 +7,8 @@ public class map_manager : MonoBehaviour
     [HideInInspector] public int mapsize = 50;
     [HideInInspector] public minimap minimaplocal;
     public GameObject myavatar;
+    public GameObject maptapvalid;
+    public GameObject mapcontainer;
 
     [HideInInspector] public float mappiecesize = 100;
     [HideInInspector] public float mapoffset = 25;
@@ -77,6 +79,19 @@ public class map_manager : MonoBehaviour
 
     void MapClicked(int clickeditemX, int clickeditemY)
     {
+        GameObject tap;
+        Vector3 pos;
+
+
         myavatar.GetComponent<avatarstatemachine>().FindPath(clickeditemX, clickeditemY);
+        tap = Instantiate(maptapvalid, Vector3.zero, Quaternion.identity) as GameObject;
+        tap.transform.SetParent(mapcontainer.transform);
+        tap.transform.localScale = Vector3.one;
+        tap.transform.localRotation = Quaternion.identity;
+        pos = Vector3.zero;
+        pos.x = (clickeditemX - mapoffset) * mappiecesize;
+        pos.y = (clickeditemY - mapoffset) * mappiecesize;
+        //pos.z = floorZ;
+        tap.transform.localPosition = pos;
     }
 }
