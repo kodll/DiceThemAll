@@ -20,9 +20,12 @@ public class avatarstatemachine : MonoBehaviour
     public const int maxsizepath = 200;
 
     static float avatarspeed = 150;
+    static float avatarrotationspeed = 7;
 
     [HideInInspector] public Vector2 avataractualposition;
 
+    static Vector3 avatar_old_worldposition;
+    static Vector3 avatar_actual_worldposition;
     static Vector2[] finalpath;
     static int avatarwhereinpath = 0;
     static bool avatarmoving;
@@ -39,6 +42,52 @@ public class avatarstatemachine : MonoBehaviour
     void Update()
     {
     }
+
+    public void RotateAvatarByPath()
+    {
+        Vector3 delta;
+        float oldangle;
+        float finalangle = 0;
+
+        delta = avatar_actual_worldposition - avatar_old_worldposition;
+        delta = delta.normalized;
+
+        //Debug.Log("Delta: " + delta);       
+
+        oldangle = transform.localRotation.eulerAngles.z;
+
+        if (delta.x == 0 && delta.y == 1) finalangle = 90;
+        else if (delta.x == 0 && delta.y == -1) finalangle = 270;
+        else if (delta.x == -1 && delta.y == 0) finalangle = 180;
+        else if (delta.x == 1 && delta.y == 0) finalangle = 0;
+        else finalangle = oldangle;
+
+        if (Mathf.Round(oldangle) != Mathf.Round(finalangle))
+        {
+            if (Mathf.Abs(finalangle - oldangle) <= 180)
+            {
+                finalangle = (finalangle - oldangle) * Time.deltaTime * avatarrotationspeed;
+            }
+            else
+            {
+                if ((finalangle - oldangle) > 0)
+                {
+                    //Debug.Log("PLUS 180");
+                    finalangle = -(finalangle + 360 - oldangle) * Time.deltaTime * avatarrotationspeed;
+                    
+                }
+                else
+                {
+                    finalangle = (finalangle + 360 - oldangle) * Time.deltaTime * avatarrotationspeed;
+                    //Debug.Log("MINUS 180");
+                }
+
+            }
+        }
+        else finalangle = 0;
+        this.transform.Rotate(0, 0, finalangle);
+    }
+        
 
     public void PathFindingInit()
     {
@@ -91,6 +140,8 @@ public class avatarstatemachine : MonoBehaviour
         pos.z = map_manager_local.floorZ;
 
         transform.localPosition = pos;
+        avatar_old_worldposition = pos;
+        avatar_actual_worldposition = pos;
 
         for (i = 0; i < maxsizepath; i++)
         {
@@ -118,7 +169,8 @@ public class avatarstatemachine : MonoBehaviour
 
         if (avatarmoving) //avatar is moving
         {
-            _avatarpos = transform.localPosition;
+            avatar_old_worldposition = avatar_actual_worldposition;
+            _avatarpos = avatar_old_worldposition;
 
             _wheretogo.x = (finalpath[avatarwhereinpath + 1].x - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
             _wheretogo.y = (finalpath[avatarwhereinpath + 1].y - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
@@ -133,11 +185,12 @@ public class avatarstatemachine : MonoBehaviour
                 avatarmoving = false;
                 avatarwhereinpath = avatarwhereinpath + 1;
                 avataractualposition = finalpath[avatarwhereinpath];
-
+                avatar_old_worldposition = avatar_actual_worldposition;
 
             }
 
             _avatarpos = _avatarpos + _norm;
+            avatar_actual_worldposition = _avatarpos;
             transform.localPosition = _avatarpos;
 
         }
@@ -148,7 +201,8 @@ public class avatarstatemachine : MonoBehaviour
             avataractualposition = finalpath[avatarwhereinpath];
 
             //Debug.Log("avatar position on path [" + avatarwhereinpath + "]: " + finalpath[avatarwhereinpath] + " ARRAY:" + finalpath[0] + ", " + finalpath[1] + ", " + finalpath[2] + ", " + finalpath[3] + ", " + finalpath[4]);
-        }         
+        }
+        RotateAvatarByPath();
     }
 
     public void FindPath(int whereX, int whereY)
@@ -237,7 +291,7 @@ public class avatarstatemachine : MonoBehaviour
 
             if (paths[shortest].singlepath[1] != oldpath[avatarwhereinpath+1]) // TESTING!!! BUG!!! BAD ARRAY INDEX
             {
-                Debug.Log("DIFFERENT DIRECTION PATH");
+                //Debug.Log("DIFFERENT DIRECTION PATH");
                 avatarwhereinpath = 0;
 
                 for (i = 0; i < maxsizepath; i++) finalpath[i] = paths[shortest].singlepath[i];
@@ -253,7 +307,7 @@ public class avatarstatemachine : MonoBehaviour
             }
             else
             {
-                Debug.Log("SAME DIRECTION PATH");
+                //Debug.Log("SAME DIRECTION PATH");
                 avatarwhereinpath = 0;
                 for (i = 0; i < maxsizepath; i++) finalpath[i] = paths[shortest].singlepath[i];
             }
