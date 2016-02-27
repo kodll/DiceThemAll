@@ -147,7 +147,7 @@ public class avatarstatemachine : MonoBehaviour
             avatarmoving = true;
             avataractualposition = finalpath[avatarwhereinpath];
 
-            Debug.Log("avatar position on path [" + avatarwhereinpath + "]: " + finalpath[avatarwhereinpath] + " ARRAY:" + finalpath[0] + ", " + finalpath[1] + ", " + finalpath[2] + ", " + finalpath[3] + ", " + finalpath[4]);
+            //Debug.Log("avatar position on path [" + avatarwhereinpath + "]: " + finalpath[avatarwhereinpath] + " ARRAY:" + finalpath[0] + ", " + finalpath[1] + ", " + finalpath[2] + ", " + finalpath[3] + ", " + finalpath[4]);
         }         
     }
 
@@ -158,10 +158,12 @@ public class avatarstatemachine : MonoBehaviour
         int shortest = 0;
 
         oldpath = new Vector2[maxsizepath];
-        oldpath = finalpath;
+        
+        
 
         for (i = 0; i < maxsizepath; i++)
         {
+            oldpath[i] = finalpath[i];
             successfulpaths[i] = -1;
             paths[i].valid = 0;
             paths[i].indexinsidepath = 0;
@@ -221,7 +223,7 @@ public class avatarstatemachine : MonoBehaviour
 
         if (successfulpaths[0] != -1)
         {
-            Debug.Log("Path Length:" + paths[shortest].indexinsidepath);
+            //Debug.Log("Path Length:" + paths[shortest].indexinsidepath);
             //Debug.Log("START[" + avatarwhereinpath + "]:" + avataractualposition);
             //Debug.Log("OLD PATH NOW [" + avatarwhereinpath + "]: " + finalpath[avatarwhereinpath]);
             //Debug.Log("OLD PATH NEXT [" + (avatarwhereinpath + 1) + "]: " + finalpath[avatarwhereinpath + 1]);
@@ -230,31 +232,30 @@ public class avatarstatemachine : MonoBehaviour
 
             //for (i = 0; i < 3; i++) Debug.Log("MOVING TO PATH ID: " + shortest + " [" + i + "]: " + paths[shortest].singlepath[i]);
 
-            Debug.Log("after pathfinding array [" + avatarwhereinpath + "]: " + oldpath[avatarwhereinpath] + " ARRAY:" + oldpath[0] + ", " + oldpath[1] + ", " + oldpath[2] + ", " + oldpath[3] + ", " + oldpath[4]);
+            //Debug.Log("OLD PATH [" + avatarwhereinpath + "]: " + oldpath[avatarwhereinpath] + " ARRAY:" + oldpath[0] + ", " + oldpath[1] + ", " + oldpath[2] + ", " + oldpath[3] + ", " + oldpath[4]);
+            //Debug.Log("NEW PATH ARRAY:" + paths[shortest].singlepath[0] + ", " + paths[shortest].singlepath[1] + ", " + paths[shortest].singlepath[2] + ", " + paths[shortest].singlepath[3] + ", " + paths[shortest].singlepath[4]);
 
-
-            if (paths[shortest].singlepath[1] != finalpath[avatarwhereinpath]) // TESTING!!! BUG!!! BAD ARRAY INDEX
+            if (paths[shortest].singlepath[1] != oldpath[avatarwhereinpath+1]) // TESTING!!! BUG!!! BAD ARRAY INDEX
             {
                 Debug.Log("DIFFERENT DIRECTION PATH");
                 avatarwhereinpath = 0;
-                finalpath = paths[shortest].singlepath;
-                
-                
 
-                /*finalpath[0] = avataractualposition;
-                for (i = 0; i < paths[shortest].indexinsidepath; i++)
+                for (i = 0; i < maxsizepath; i++) finalpath[i] = paths[shortest].singlepath[i];
+
+                finalpath[0] = avataractualposition;
+                for (i = 0; i <= paths[shortest].indexinsidepath; i++)
                 {
                     finalpath[i + 1] = paths[shortest].singlepath[i];
                     
                     //Debug.Log("CLEANING THE PATH ID: " + shortest + " [" + i + "]: " + paths[shortest].singlepath[i]);
 
-                }*/
+                }
             }
             else
             {
                 Debug.Log("SAME DIRECTION PATH");
                 avatarwhereinpath = 0;
-                finalpath = paths[shortest].singlepath;
+                for (i = 0; i < maxsizepath; i++) finalpath[i] = paths[shortest].singlepath[i];
             }
 
         }
