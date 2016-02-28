@@ -125,7 +125,7 @@ public class map_manager : MonoBehaviour
         pos.y = (clickeditemY - mapoffset) * mappiecesize;
         //pos.z = floorZ;
         tap.transform.localPosition = pos;
-        avatarstatictime = 1.5f;
+        avatarstatictime = 0.35f;
         camerafadeouttime = 0.01f;
         cameraspeed = cameraspeedlow; 
     }

@@ -189,8 +189,8 @@ public class avatarstatemachine : MonoBehaviour
 
                 if (finalpath[avatarwhereinpath + 1] == Vector2.zero)
                 {
-                    map_manager_local.avatarstatictime = 0.40f;
-                    map_manager_local.camerafadeouttime = 0.5f;
+                    map_manager_local.avatarstatictime = 0.1f;
+                    map_manager_local.camerafadeouttime = 0.1f;
                     map_manager_local.cameraspeed = map_manager_local.cameraspeedhi;
                 }
 
