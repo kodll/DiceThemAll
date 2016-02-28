@@ -25,12 +25,11 @@ public class avatarstatemachine : MonoBehaviour
     [HideInInspector] public Vector2 avataractualposition;
 
     static Vector3 avatar_old_worldposition;
-    static Vector3 avatar_actual_worldposition;
+    [HideInInspector] public Vector3 avatar_actual_worldposition;
     static Vector2[] finalpath;
     static int avatarwhereinpath = 0;
-    static bool avatarmoving;
+    [HideInInspector] public bool avatarmoving;
 
-    [HideInInspector]
     static map_manager map_manager_local;
 
     // Use this for initialization
@@ -156,6 +155,7 @@ public class avatarstatemachine : MonoBehaviour
 
         avatarwhereinpath = 0;
         avatarmoving = false;
+        map_manager_local.avatarstatictime = 0;
 
         Debug.Log("avatar on place - Erased path: " + x + "," + y);
     }
@@ -187,6 +187,13 @@ public class avatarstatemachine : MonoBehaviour
                 avataractualposition = finalpath[avatarwhereinpath];
                 avatar_old_worldposition = avatar_actual_worldposition;
 
+                if (finalpath[avatarwhereinpath + 1] == Vector2.zero)
+                {
+                    map_manager_local.avatarstatictime = 0.40f;
+                    map_manager_local.camerafadeouttime = 0.5f;
+                    map_manager_local.cameraspeed = map_manager_local.cameraspeedhi;
+                }
+
             }
 
             _avatarpos = _avatarpos + _norm;
@@ -194,7 +201,7 @@ public class avatarstatemachine : MonoBehaviour
             transform.localPosition = _avatarpos;
 
         }
-        //else //avatar is on place
+        
         if (finalpath[avatarwhereinpath + 1] != Vector2.zero)
         {
             avatarmoving = true;
@@ -202,6 +209,9 @@ public class avatarstatemachine : MonoBehaviour
 
             //Debug.Log("avatar position on path [" + avatarwhereinpath + "]: " + finalpath[avatarwhereinpath] + " ARRAY:" + finalpath[0] + ", " + finalpath[1] + ", " + finalpath[2] + ", " + finalpath[3] + ", " + finalpath[4]);
         }
+        
+            
+       
         RotateAvatarByPath();
     }
 

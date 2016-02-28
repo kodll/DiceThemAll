@@ -12,13 +12,23 @@ public class map_manager : MonoBehaviour
 
     [HideInInspector] public float mappiecesize = 100;
     [HideInInspector] public float mapoffset = 25;
+    [HideInInspector] public Vector3 mapvectoroffset;
+    [HideInInspector] public float floorZ = -19;
 
-    public float floorZ = -19;
+    [HideInInspector] public float cameraspeedlow = 1.5f;
+    [HideInInspector] public float cameraspeedhi = 5.0f;
+    [HideInInspector] public float cameraspeed = 1.5f;
+    [HideInInspector] public float camerafadeouttime = 1.0f;
+    [HideInInspector] public float avatarstatictime;
 
     // Use this for initialization
     void Start ()
     {
         int i,j;
+
+        mapvectoroffset = Vector3.zero;
+        mapvectoroffset.x = mapoffset * mappiecesize;
+        mapvectoroffset.y = mapoffset * mappiecesize;
 
         mapfield = new GameObject[mapsize, mapsize];
 
@@ -59,8 +69,11 @@ public class map_manager : MonoBehaviour
 
         myavatar.GetComponent<avatarstatemachine>().SetCharacter(25, 26);
 
+        avatarstatictime = 0.4f;
+        camerafadeouttime = 0.3f;
+        cameraspeed = cameraspeedhi;
 
-        
+
 
 
 
@@ -70,7 +83,26 @@ public class map_manager : MonoBehaviour
 	void Update ()
     {
         myavatar.GetComponent<avatarstatemachine>().Actualize(Time.deltaTime);
+        ScrollMap();
+
 	}
+
+    void ScrollMap()
+    {
+        Vector3 actual;
+        Vector3 newpos;
+
+        if (avatarstatictime > 0) avatarstatictime = avatarstatictime - Time.deltaTime * camerafadeouttime;
+        
+
+        if (avatarstatictime > 0)
+        {
+            actual = -mapcontainer.transform.localPosition;
+            newpos = actual - myavatar.transform.localPosition;
+
+            mapcontainer.transform.localPosition = -actual + newpos * Time.deltaTime * cameraspeed * avatarstatictime;
+        }
+    }
 
     void AddListener(UnityEngine.UI.Button b, int clickeditemX, int clickeditemY)
     {
@@ -93,5 +125,8 @@ public class map_manager : MonoBehaviour
         pos.y = (clickeditemY - mapoffset) * mappiecesize;
         //pos.z = floorZ;
         tap.transform.localPosition = pos;
+        avatarstatictime = 1.5f;
+        camerafadeouttime = 0.01f;
+        cameraspeed = cameraspeedlow; 
     }
 }

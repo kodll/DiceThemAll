@@ -41,9 +41,6 @@ public class minimap : MonoBehaviour {
 
                     pos.x = i * minimapdata[i, j].GetComponent<RectTransform>().sizeDelta.x;
                     pos.y = j * minimapdata[i, j].GetComponent<RectTransform>().sizeDelta.y;
-
-                    //minimapdata[i, j].transform.position = pos;
-                    //minimapdata[i, j].transform.parent = transform;
                     minimapdata[i, j].transform.SetParent(transform);
                     minimapdata[i, j].transform.localScale = Vector3.one;
                     minimapdata[i, j].transform.localRotation = Quaternion.identity;
