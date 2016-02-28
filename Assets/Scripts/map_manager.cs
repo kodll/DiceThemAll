@@ -99,7 +99,7 @@ public class map_manager : MonoBehaviour
         scrollmultiplier = scrollmultiplier + Time.deltaTime * 3;
         if (scrollmultiplier > 1) scrollmultiplier = 1;
 
-        Debug.Log("Scroll multi: " + scrollmultiplier);
+        //Debug.Log("Scroll multi: " + scrollmultiplier);
 
         if (avatarstatictime > 0) avatarstatictime = avatarstatictime - Time.deltaTime * camerafadeouttime;
 
