@@ -112,7 +112,7 @@ public class map_manager : MonoBehaviour
             //Debug.Log("Scroll delta: " + (delta.magnitude / Time.deltaTime));
             //Debug.Log("Time delta: " + Time.deltaTime);
 
-            if (delta.magnitude / Time.deltaTime > 500)
+            if (delta.magnitude / Time.deltaTime > 800)
             {
                 scrollmultiplier = -4.0f;
             }
