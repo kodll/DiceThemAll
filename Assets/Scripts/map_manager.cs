@@ -20,6 +20,8 @@ public class map_manager : MonoBehaviour
     [HideInInspector] public float cameraspeed = 1.5f;
     [HideInInspector] public float camerafadeouttime = 1.0f;
     [HideInInspector] public float avatarstatictime;
+    [HideInInspector] public float scrollmultiplier;
+    [HideInInspector] public Vector3 scrollpreviousframe;
 
     // Use this for initialization
     void Start ()
@@ -72,8 +74,8 @@ public class map_manager : MonoBehaviour
         avatarstatictime = 0.4f;
         camerafadeouttime = 0.3f;
         cameraspeed = cameraspeedhi;
-
-
+        scrollmultiplier = 1;
+        scrollpreviousframe = Vector3.zero;
 
 
 
@@ -91,16 +93,46 @@ public class map_manager : MonoBehaviour
     {
         Vector3 actual;
         Vector3 newpos;
+        Vector3 delta;
+        float cuttedscrollmultiplier;
+
+        scrollmultiplier = scrollmultiplier + Time.deltaTime * 3;
+        if (scrollmultiplier > 1) scrollmultiplier = 1;
+
+        Debug.Log("Scroll multi: " + scrollmultiplier);
 
         if (avatarstatictime > 0) avatarstatictime = avatarstatictime - Time.deltaTime * camerafadeouttime;
-        
 
         if (avatarstatictime > 0)
         {
             actual = -mapcontainer.transform.localPosition;
-            newpos = actual - myavatar.transform.localPosition;
+            delta = actual - scrollpreviousframe;
 
-            mapcontainer.transform.localPosition = -actual + newpos * Time.deltaTime * cameraspeed * avatarstatictime;
+            
+            //Debug.Log("Scroll delta: " + (delta.magnitude / Time.deltaTime));
+            //Debug.Log("Time delta: " + Time.deltaTime);
+
+            if (delta.magnitude / Time.deltaTime > 500)
+            {
+                scrollmultiplier = -4.0f;
+            }
+            if (scrollmultiplier > 1) scrollmultiplier = 1;
+
+            cuttedscrollmultiplier = scrollmultiplier;
+            if (cuttedscrollmultiplier < 0) cuttedscrollmultiplier = 0;
+
+            
+
+
+
+            newpos = actual - myavatar.transform.localPosition;
+            newpos = -actual + newpos * Time.deltaTime * cameraspeed * avatarstatictime * cuttedscrollmultiplier;
+            newpos.z = 0;
+            
+            
+
+            mapcontainer.transform.localPosition = newpos;
+            scrollpreviousframe = -newpos;
         }
     }
 
@@ -125,8 +157,9 @@ public class map_manager : MonoBehaviour
         pos.y = (clickeditemY - mapoffset) * mappiecesize;
         //pos.z = floorZ;
         tap.transform.localPosition = pos;
-        avatarstatictime = 0.35f;
-        camerafadeouttime = 0.01f;
-        cameraspeed = cameraspeedlow; 
+        avatarstatictime = 0.9f;
+        camerafadeouttime = 0.05f;
+        cameraspeed = cameraspeedlow;
+        scrollmultiplier = 1;
     }
 }
