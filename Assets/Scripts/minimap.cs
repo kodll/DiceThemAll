@@ -3,7 +3,7 @@ using System.Collections;
 
 public class minimap : MonoBehaviour {
 
-    [HideInInspector] public GameObject mappiece;
+    public GameObject mappiece;
     GameObject[,] minimapdata;
     [HideInInspector] public map_manager map_manager_local;
 

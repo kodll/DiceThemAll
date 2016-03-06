@@ -8,7 +8,10 @@ public class map_manager : MonoBehaviour
     [HideInInspector] public minimap minimaplocal;
     public GameObject myavatar;
     public GameObject maptapvalid;
-    public GameObject mapcontainer;
+    public GameObject mapmover;
+    public GameObject mapcamera;
+    public GameObject mycamera;
+
 
     [HideInInspector] public float mappiecesize = 100;
     [HideInInspector] public float mapoffset = 25;
@@ -23,10 +26,23 @@ public class map_manager : MonoBehaviour
     [HideInInspector] public float scrollmultiplier;
     [HideInInspector] public Vector3 scrollpreviousframe;
 
+    bool tap;
+    float taplength;
+    Ray ray;
+    Vector3 oldmousepos;
+    Vector3 newmousepos;
+    Vector3 lastdelta;
+    float lastdeltatime;
+    public GameObject mouse3d;
+    GameObject mymouse3d;
+    Plane floorcollision;
+    Camera mapcameracomponent;
+
     // Use this for initialization
     void Start ()
     {
         int i,j;
+        Vector3 colpos;
 
         mapvectoroffset = Vector3.zero;
         mapvectoroffset.x = mapoffset * mappiecesize;
@@ -77,6 +93,16 @@ public class map_manager : MonoBehaviour
         scrollmultiplier = 1;
         scrollpreviousframe = Vector3.zero;
 
+        //mymouse3d = Instantiate(mouse3d, Vector3.zero, Quaternion.identity) as GameObject;
+        
+        tap = false;
+        colpos = Vector3.zero;
+        colpos.y = -floorZ;
+        floorcollision = new Plane(Vector3.up, colpos);
+        mapcameracomponent = mycamera.GetComponent<Camera>();
+        //Cursor.visible = false;
+        oldmousepos = Vector3.zero;
+        newmousepos = Vector3.zero;
 
 
     }
@@ -84,10 +110,42 @@ public class map_manager : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
     {
-        myavatar.GetComponent<avatarstatemachine>().Actualize(Time.deltaTime);
-        ScrollMap();
+        Vector3 m3d;
+        Vector2 mpos;
+        float rayDistance;
 
-	}
+        
+
+        myavatar.GetComponent<avatarstatemachine>().Actualize(Time.deltaTime);
+        
+
+      
+        mpos = Input.mousePosition;
+        ray = mapcameracomponent.ScreenPointToRay(new Vector3(mpos.x, mpos.y, 0));
+
+        
+        if (floorcollision.Raycast(ray, out rayDistance))
+        {
+            m3d = ray.GetPoint(rayDistance);
+            //mymouse3d.transform.position = m3d;
+            newmousepos = m3d;
+        }
+        if (Input.GetMouseButtonDown(0))
+        {
+            tap = true;
+            oldmousepos = newmousepos;
+            lastdeltatime = 0;
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            tap = false;
+            taplength=0;
+            Debug.Log("released button ");
+            lastdeltatime = 1;
+        }
+
+        ScrollMap();
+    }
 
     void ScrollMap()
     {
@@ -101,18 +159,35 @@ public class map_manager : MonoBehaviour
 
         //Debug.Log("Scroll multi: " + scrollmultiplier);
 
+        if (tap)
+        {
+            lastdelta = newmousepos - oldmousepos;
+            mapmover.transform.position = mapmover.transform.position + lastdelta;
+            mapcamera.transform.position = -mapmover.transform.position;
+            taplength = taplength + Time.deltaTime;
+            //Debug.Log("Scroll delta: " + lastdelta);
+            
+
+        }
+        else if (lastdeltatime > 0)
+        {
+            mapmover.transform.position = mapmover.transform.position + lastdelta * lastdeltatime * 0.3f;
+            mapcamera.transform.position = -mapmover.transform.position;
+            lastdeltatime = lastdeltatime * 0.95f;
+        }
+
         if (avatarstatictime > 0) avatarstatictime = avatarstatictime - Time.deltaTime * camerafadeouttime;
 
         if (avatarstatictime > 0)
         {
-            actual = -mapcontainer.transform.localPosition;
+            actual = -mapmover.transform.localPosition;
             delta = actual - scrollpreviousframe;
 
             
             //Debug.Log("Scroll delta: " + (delta.magnitude / Time.deltaTime));
             //Debug.Log("Time delta: " + Time.deltaTime);
 
-            if (delta.magnitude / Time.deltaTime > 800)
+            if (taplength > 0.2)
             {
                 scrollmultiplier = -4.0f;
             }
@@ -131,9 +206,11 @@ public class map_manager : MonoBehaviour
             
             
 
-            mapcontainer.transform.localPosition = newpos;
+            mapmover.transform.localPosition = newpos;
+            mapcamera.transform.localPosition = -newpos;
             scrollpreviousframe = -newpos;
         }
+  
     }
 
     void AddListener(UnityEngine.UI.Button b, int clickeditemX, int clickeditemY)
@@ -143,23 +220,25 @@ public class map_manager : MonoBehaviour
 
     void MapClicked(int clickeditemX, int clickeditemY)
     {
-        GameObject tap;
+        GameObject tapindicator;
         Vector3 pos;
 
-
-        myavatar.GetComponent<avatarstatemachine>().FindPath(clickeditemX, clickeditemY);
-        tap = Instantiate(maptapvalid, Vector3.zero, Quaternion.identity) as GameObject;
-        tap.transform.SetParent(mapcontainer.transform);
-        tap.transform.localScale = Vector3.one;
-        tap.transform.localRotation = Quaternion.identity;
-        pos = Vector3.zero;
-        pos.x = (clickeditemX - mapoffset) * mappiecesize;
-        pos.y = (clickeditemY - mapoffset) * mappiecesize;
-        //pos.z = floorZ;
-        tap.transform.localPosition = pos;
-        avatarstatictime = 0.9f;
-        camerafadeouttime = 0.05f;
-        cameraspeed = cameraspeedlow;
-        scrollmultiplier = 1;
+        if (taplength < 0.15f)
+        {
+            myavatar.GetComponent<avatarstatemachine>().FindPath(clickeditemX, clickeditemY);
+            tapindicator = Instantiate(maptapvalid, Vector3.zero, Quaternion.identity) as GameObject;
+            tapindicator.transform.SetParent(this.transform);
+            tapindicator.transform.localScale = Vector3.one;
+            tapindicator.transform.localRotation = Quaternion.identity;
+            pos = Vector3.zero;
+            pos.x = (clickeditemX - mapoffset) * mappiecesize;
+            pos.y = (clickeditemY - mapoffset) * mappiecesize;
+            //pos.z = floorZ;
+            tapindicator.transform.localPosition = pos;
+            avatarstatictime = 0.9f;
+            camerafadeouttime = 0.05f;
+            cameraspeed = cameraspeedlow;
+            scrollmultiplier = 1;
+        }
     }
 }
