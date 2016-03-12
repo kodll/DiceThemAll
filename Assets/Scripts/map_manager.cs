@@ -10,7 +10,7 @@ public class map_manager : MonoBehaviour
     public GameObject maptapvalid;
     public GameObject mapmover;
     public GameObject mapcamera;
-    public GameObject mycamera;
+    public GameObject tapcamera;
 
 
     [HideInInspector] public float mappiecesize = 100;
@@ -36,7 +36,7 @@ public class map_manager : MonoBehaviour
     public GameObject mouse3d;
     GameObject mymouse3d;
     Plane floorcollision;
-    Camera mapcameracomponent;
+    Camera tapcameracomponent;
 
     // Use this for initialization
     void Start ()
@@ -94,12 +94,13 @@ public class map_manager : MonoBehaviour
         scrollpreviousframe = Vector3.zero;
 
         //mymouse3d = Instantiate(mouse3d, Vector3.zero, Quaternion.identity) as GameObject;
-        
+        //mymouse3d.transform.SetParent(tapcamera.transform);
+
         tap = false;
         colpos = Vector3.zero;
         colpos.y = -floorZ;
         floorcollision = new Plane(Vector3.up, colpos);
-        mapcameracomponent = mycamera.GetComponent<Camera>();
+        tapcameracomponent = tapcamera.GetComponent<Camera>();
         //Cursor.visible = false;
         oldmousepos = Vector3.zero;
         newmousepos = Vector3.zero;
@@ -114,16 +115,11 @@ public class map_manager : MonoBehaviour
         Vector2 mpos;
         float rayDistance;
 
-        
-
+        oldmousepos = newmousepos;
         myavatar.GetComponent<avatarstatemachine>().Actualize(Time.deltaTime);
-        
-
-      
         mpos = Input.mousePosition;
-        ray = mapcameracomponent.ScreenPointToRay(new Vector3(mpos.x, mpos.y, 0));
+        ray = tapcameracomponent.ScreenPointToRay(new Vector3(mpos.x, mpos.y, 0));
 
-        
         if (floorcollision.Raycast(ray, out rayDistance))
         {
             m3d = ray.GetPoint(rayDistance);
@@ -133,8 +129,8 @@ public class map_manager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             tap = true;
-            oldmousepos = newmousepos;
             lastdeltatime = 0;
+            oldmousepos = newmousepos;
         }
         if (Input.GetMouseButtonUp(0))
         {
@@ -171,9 +167,9 @@ public class map_manager : MonoBehaviour
         }
         else if (lastdeltatime > 0)
         {
-            mapmover.transform.position = mapmover.transform.position + lastdelta * lastdeltatime * 0.3f;
+            mapmover.transform.position = mapmover.transform.position + lastdelta * lastdeltatime;
             mapcamera.transform.position = -mapmover.transform.position;
-            lastdeltatime = lastdeltatime * 0.95f;
+            lastdeltatime = lastdeltatime * 0.8f;
         }
 
         if (avatarstatictime > 0) avatarstatictime = avatarstatictime - Time.deltaTime * camerafadeouttime;
@@ -187,7 +183,7 @@ public class map_manager : MonoBehaviour
             //Debug.Log("Scroll delta: " + (delta.magnitude / Time.deltaTime));
             //Debug.Log("Time delta: " + Time.deltaTime);
 
-            if (taplength > 0.2)
+            if (taplength >= 0.15)
             {
                 scrollmultiplier = -4.0f;
             }
@@ -225,6 +221,8 @@ public class map_manager : MonoBehaviour
 
         if (taplength < 0.15f)
         {
+            lastdeltatime = 0;
+            lastdelta = Vector3.zero;
             myavatar.GetComponent<avatarstatemachine>().FindPath(clickeditemX, clickeditemY);
             tapindicator = Instantiate(maptapvalid, Vector3.zero, Quaternion.identity) as GameObject;
             tapindicator.transform.SetParent(this.transform);
