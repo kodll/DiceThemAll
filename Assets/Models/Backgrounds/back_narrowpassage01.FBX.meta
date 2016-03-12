@@ -20,6 +20,7 @@ ModelImporter:
     100024: Plane009
     100026: Plane010
     100028: smallwall1x1A
+    100030: narrowpassage_roadSJ
     400000: //RootNode
     400002: Box002
     400004: Box004
@@ -35,6 +36,7 @@ ModelImporter:
     400024: Plane009
     400026: Plane010
     400028: smallwall1x1A
+    400030: narrowpassage_roadSJ
     2300000: //RootNode
     2300002: Box002
     2300004: Box004
@@ -50,6 +52,7 @@ ModelImporter:
     2300024: Plane009
     2300026: Plane010
     2300028: smallwall1x1A
+    2300030: narrowpassage_roadSJ
     3300000: //RootNode
     3300002: Box002
     3300004: Box004
@@ -65,6 +68,7 @@ ModelImporter:
     3300024: Plane009
     3300026: Plane010
     3300028: smallwall1x1A
+    3300030: narrowpassage_roadSJ
     4300000: narrowpassage_turnSV
     4300002: Box002
     4300004: Box004
@@ -79,6 +83,7 @@ ModelImporter:
     4300022: Plane009
     4300024: Plane010
     4300026: smallwall1x1A
+    4300028: narrowpassage_roadSJ
   materials:
     importMaterials: 1
     materialName: 0
