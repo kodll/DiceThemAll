@@ -238,23 +238,34 @@ public class avatarstatemachine : MonoBehaviour
     {
         int i, j;
         Vector3 pos;
+        bool found;
 
         fogfield = new fogroomstruct[map_manager_local.mapsize, map_manager_local.mapsize];
-        for (i = 0; i < map_manager_local.mapsize; i++)
-            for (j = 0; j < map_manager_local.mapsize; j++)
+        for (i = 1; i < map_manager_local.mapsize-1; i++)
+            for (j = 1; j < map_manager_local.mapsize-1; j++)
             {
-                fogfield[i, j].fog = Instantiate(map_manager_local.fogroomprefab, Vector3.zero, Quaternion.identity) as GameObject;
-                fogfield[i, j].fog.transform.SetParent(map_manager_local.fogcontainer.transform);
-                fogfield[i, j].fog.transform.localRotation = Quaternion.identity;
-                pos = Vector3.zero;
-                pos.x = (i - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
-                pos.y = (j - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
-                fogfield[i, j].fog.transform.localPosition = pos;
-                //fogfield[i, j].subfog = fogfield[i, j].fog.GetComponent<fog_controller>().ObjectSubfog;
+                found = false;
                 if (map_manager_local.mapfield[i, j] != null)
                 {
                     map_manager_local.mapfield[i, j].GetComponent<UnityEngine.UI.Button>().interactable = false;
+                    found = true;
                 }
+                if (map_manager_local.mapfield[i+1, j] != null) found = true;
+                if (map_manager_local.mapfield[i-1, j] != null) found = true;
+                if (map_manager_local.mapfield[i, j+1] != null) found = true;
+                if (map_manager_local.mapfield[i, j-1] != null) found = true;
+
+                if (found)
+                {
+                    fogfield[i, j].fog = Instantiate(map_manager_local.fogroomprefab, Vector3.zero, Quaternion.identity) as GameObject;
+                    fogfield[i, j].fog.transform.SetParent(map_manager_local.fogcontainer.transform);
+                    fogfield[i, j].fog.transform.localRotation = Quaternion.identity;
+                    pos = Vector3.zero;
+                    pos.x = (i - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
+                    pos.y = (j - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
+                    fogfield[i, j].fog.transform.localPosition = pos;
+                }
+                
             }
     }
 
