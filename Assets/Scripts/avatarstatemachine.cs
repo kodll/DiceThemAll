@@ -32,6 +32,14 @@ public class avatarstatemachine : MonoBehaviour
 
     static map_manager map_manager_local;
 
+    public struct fogroomstruct
+    {
+        public GameObject fog;
+        //public GameObject subfog;
+        public float alpha;
+    }
+    public fogroomstruct[,] fogfield;
+
     // Use this for initialization
     void Start()
     {
@@ -129,6 +137,127 @@ public class avatarstatemachine : MonoBehaviour
             }
     }
 
+    void UpdateFogCross(int x, int y, float intime, bool cross)
+    {
+        fogfield[x, y].fog.GetComponent<fog_controller>().SetRoomAlpha(intime/200);
+        map_manager_local.mapfield[x, y].GetComponent<UnityEngine.UI.Button>().interactable = true;
+        if (cross)
+        {
+            fogfield[x + 1, y].fog.GetComponent<fog_controller>().SetRoomAlpha(intime/100);
+            fogfield[x - 1, y].fog.GetComponent<fog_controller>().SetRoomAlpha(intime/100);
+            fogfield[x, y - 1].fog.GetComponent<fog_controller>().SetRoomAlpha(intime/100);
+            fogfield[x, y + 1].fog.GetComponent<fog_controller>().SetRoomAlpha(intime/100);
+
+            if (map_manager_local.mapfield[x+1, y] != null)
+            {
+                map_manager_local.mapfield[x+1, y].GetComponent<UnityEngine.UI.Button>().interactable = true;
+            }
+            if (map_manager_local.mapfield[x-1, y] != null)
+            {
+                map_manager_local.mapfield[x-1, y].GetComponent<UnityEngine.UI.Button>().interactable = true;
+            }
+            if (map_manager_local.mapfield[x, y+1] != null)
+            {
+                map_manager_local.mapfield[x, y+1].GetComponent<UnityEngine.UI.Button>().interactable = true;
+            }
+            if (map_manager_local.mapfield[x, y-1] != null)
+            {
+                map_manager_local.mapfield[x, y-1].GetComponent<UnityEngine.UI.Button>().interactable = true;
+            }
+        }
+    }
+
+    public void UpdateFog()
+    {
+        int x, y;
+        x = (int)avataractualposition.x;
+        y = (int)avataractualposition.y;
+
+        UpdateFogCross(x, y, 0.01f, true);
+
+        if (roomfield[x + 1,y]>0)
+        {
+            UpdateFogCross(x + 1, y, 1, true);
+            if (roomfield[x + 2, y] > 0)
+            {
+                UpdateFogCross(x + 2, y, 2, true);
+                if (roomfield[x + 3, y] > 0)
+                {
+                    UpdateFogCross(x + 3, y, 3, false);
+
+                }
+            }
+
+        }
+        if (roomfield[x - 1, y] > 0)
+        {
+            UpdateFogCross(x - 1, y, 1, true);
+            if (roomfield[x - 2, y] > 0)
+            {
+                UpdateFogCross(x - 2, y, 2, true);
+                if (roomfield[x - 3, y] > 0)
+                {
+                    UpdateFogCross(x - 3, y, 3, false);
+
+                }
+            }
+
+        }
+        if (roomfield[x, y + 1] > 0)
+        {
+            UpdateFogCross(x, y + 1, 1, true);
+            if (roomfield[x, y + 2] > 0)
+            {
+                UpdateFogCross(x, y + 2, 2, true);
+                if (roomfield[x, y + 3] > 0)
+                {
+                    UpdateFogCross(x, y + 3, 3, false);
+
+                }
+            }
+
+        }
+        if (roomfield[x, y - 1] > 0)
+        {
+            UpdateFogCross(x, y - 1, 1, true);
+            if (roomfield[x, y - 2] > 0)
+            {
+                UpdateFogCross(x, y - 2, 2, true);
+                if (roomfield[x, y - 3] > 0)
+                {
+                    UpdateFogCross(x, y - 3, 3, false);
+
+                }
+            }
+
+        }
+
+    }
+
+    public void SetupFog()
+    {
+        int i, j;
+        Vector3 pos;
+
+        fogfield = new fogroomstruct[map_manager_local.mapsize, map_manager_local.mapsize];
+        for (i = 0; i < map_manager_local.mapsize; i++)
+            for (j = 0; j < map_manager_local.mapsize; j++)
+            {
+                fogfield[i, j].fog = Instantiate(map_manager_local.fogroomprefab, Vector3.zero, Quaternion.identity) as GameObject;
+                fogfield[i, j].fog.transform.SetParent(map_manager_local.fogcontainer.transform);
+                fogfield[i, j].fog.transform.localRotation = Quaternion.identity;
+                pos = Vector3.zero;
+                pos.x = (i - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
+                pos.y = (j - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
+                fogfield[i, j].fog.transform.localPosition = pos;
+                //fogfield[i, j].subfog = fogfield[i, j].fog.GetComponent<fog_controller>().ObjectSubfog;
+                if (map_manager_local.mapfield[i, j] != null)
+                {
+                    map_manager_local.mapfield[i, j].GetComponent<UnityEngine.UI.Button>().interactable = false;
+                }
+            }
+    }
+
     public void SetCharacter(float x, float y)
     {
         int i;
@@ -157,6 +286,7 @@ public class avatarstatemachine : MonoBehaviour
         avatarmoving = false;
         map_manager_local.avatarstatictime = 0;
 
+        
         Debug.Log("avatar on place - Erased path: " + x + "," + y);
     }
 
@@ -186,6 +316,8 @@ public class avatarstatemachine : MonoBehaviour
                 avatarwhereinpath = avatarwhereinpath + 1;
                 avataractualposition = finalpath[avatarwhereinpath];
                 avatar_old_worldposition = avatar_actual_worldposition;
+
+                UpdateFog();
 
                 if (finalpath[avatarwhereinpath + 1] == Vector2.zero)
                 {
@@ -343,7 +475,7 @@ public class avatarstatemachine : MonoBehaviour
             paths[pathindex].singlepath[paths[pathindex].indexinsidepath].y = paths[pathindex].actualY;
         }
 
-        while (paths[pathindex].valid == 0 && pathindex < maxsizepath && itterations < 50)
+        while (paths[pathindex].valid == 0 && pathindex < maxsizepath && itterations < 200)
         {
             itterations = itterations + 1;
             ways = 0;

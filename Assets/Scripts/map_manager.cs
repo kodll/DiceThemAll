@@ -38,6 +38,10 @@ public class map_manager : MonoBehaviour
     Plane floorcollision;
     Camera tapcameracomponent;
 
+    public GameObject fogcontainer;
+    public GameObject fogroomprefab;
+    
+
     // Use this for initialization
     void Start ()
     {
@@ -49,31 +53,20 @@ public class map_manager : MonoBehaviour
         mapvectoroffset.y = mapoffset * mappiecesize;
 
         mapfield = new GameObject[mapsize, mapsize];
-
         for (i = 0; i < mapsize; i++)
             for (j = 0; j < mapsize; j++)
             {
                 mapfield[i, j] = null;
             }
 
-
-
         map_piece_def[] myItems = FindObjectsOfType(typeof(map_piece_def)) as map_piece_def[];
-
-        //Debug.Log("Found " + myItems.Length + " map pieces");
-
         foreach (map_piece_def item in myItems)
         {
 
             item.GetFieldCoor(mappiecesize,mapoffset);
-            //Debug.Log("X " + item.gameObject.GetComponent<map_piece_def>().Xcoor + ", Y " + item.gameObject.GetComponent<map_piece_def>().Ycoor);
-
             i = item.gameObject.GetComponent<map_piece_def>().Xcoor;
             j = item.gameObject.GetComponent<map_piece_def>().Ycoor;
             mapfield[i, j] = item.gameObject;
-
-            //Debug.Log("Found: " + mapfield[i,j].name + " X:" + i + " Y:" +j);
-
             UnityEngine.UI.Button button = item.gameObject.GetComponent<UnityEngine.UI.Button>();
             AddListener(button, i, j);
         }
@@ -81,11 +74,13 @@ public class map_manager : MonoBehaviour
         //Debug.Log("Found minimap: " + minimaplocal.name);
         minimaplocal.MapInit();
 
+
         myavatar.GetComponent<avatarstatemachine>().PathFindingInit();
-
         myavatar.GetComponent<avatarstatemachine>().PathFindingSetRooms(mapfield);
-
+        myavatar.GetComponent<avatarstatemachine>().SetupFog();
         myavatar.GetComponent<avatarstatemachine>().SetCharacter(25, 26);
+        myavatar.GetComponent<avatarstatemachine>().UpdateFog();
+
 
         avatarstatictime = 0.4f;
         camerafadeouttime = 0.3f;
@@ -95,18 +90,20 @@ public class map_manager : MonoBehaviour
 
         //mymouse3d = Instantiate(mouse3d, Vector3.zero, Quaternion.identity) as GameObject;
         //mymouse3d.transform.SetParent(tapcamera.transform);
+        //Cursor.visible = false;
 
         tap = false;
         colpos = Vector3.zero;
         colpos.y = -floorZ;
         floorcollision = new Plane(Vector3.up, colpos);
         tapcameracomponent = tapcamera.GetComponent<Camera>();
-        //Cursor.visible = false;
         oldmousepos = Vector3.zero;
         newmousepos = Vector3.zero;
 
+        
 
     }
+    
 	
 	// Update is called once per frame
 	void Update ()
