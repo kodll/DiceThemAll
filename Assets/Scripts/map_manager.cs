@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.EventSystems;
 
 public class map_manager : MonoBehaviour
 {
@@ -10,7 +11,9 @@ public class map_manager : MonoBehaviour
     public GameObject maptapvalid;
     public GameObject mapmover;
     public GameObject mapcamera;
+	public GameObject charactercamera;
     public GameObject tapcamera;
+	public GameObject GUIChestOpenedPopup;
 
 
     [HideInInspector] public float mappiecesize = 100;
@@ -29,8 +32,11 @@ public class map_manager : MonoBehaviour
     bool tap;
     float taplength;
     Ray ray;
+	bool canscrollmanually;
     Vector3 oldmousepos;
-    Vector3 newmousepos;
+	[HideInInspector] public Vector3 newmousepos;
+	[HideInInspector] public Vector3 initialmousepos;
+	[HideInInspector] public float _clickdistance = 10;
     Vector3 lastdelta;
     float lastdeltatime;
     public GameObject mouse3d;
@@ -77,10 +83,10 @@ public class map_manager : MonoBehaviour
 
         myavatar.GetComponent<avatarstatemachine>().PathFindingInit();
         myavatar.GetComponent<avatarstatemachine>().PathFindingSetRooms(mapfield);
-        myavatar.GetComponent<avatarstatemachine>().SetupFog();
-        myavatar.GetComponent<avatarstatemachine>().SetCharacter(25, 26);
-        myavatar.GetComponent<avatarstatemachine>().UpdateFog();
-
+        myavatar.GetComponent<avatarstatemachine>().FogInit();
+        myavatar.GetComponent<avatarstatemachine>().SetCharacter(27, 22);
+        myavatar.GetComponent<avatarstatemachine>().FogUpdate();
+		canscrollmanually = true;
 
         avatarstatictime = 0.4f;
         camerafadeouttime = 0.3f;
@@ -112,32 +118,37 @@ public class map_manager : MonoBehaviour
         Vector2 mpos;
         float rayDistance;
 
-        oldmousepos = newmousepos;
-        myavatar.GetComponent<avatarstatemachine>().Actualize(Time.deltaTime);
-        mpos = Input.mousePosition;
-        ray = tapcameracomponent.ScreenPointToRay(new Vector3(mpos.x, mpos.y, 0));
+		myavatar.GetComponent<avatarstatemachine> ().Actualize (Time.deltaTime);
 
-        if (floorcollision.Raycast(ray, out rayDistance))
-        {
-            m3d = ray.GetPoint(rayDistance);
-            //mymouse3d.transform.position = m3d;
-            newmousepos = m3d;
-        }
-        if (Input.GetMouseButtonDown(0))
-        {
-            tap = true;
-            lastdeltatime = 0;
-            oldmousepos = newmousepos;
-        }
-        if (Input.GetMouseButtonUp(0))
-        {
-            tap = false;
-            taplength=0;
-            Debug.Log("released button ");
-            lastdeltatime = 1;
-        }
+		if (canscrollmanually)
+		{
+			oldmousepos = newmousepos;
 
-        ScrollMap();
+			mpos = Input.mousePosition;
+			ray = tapcameracomponent.ScreenPointToRay (new Vector3 (mpos.x, mpos.y, 0));
+
+			if (floorcollision.Raycast (ray, out rayDistance)) {
+				m3d = ray.GetPoint (rayDistance);
+				//mymouse3d.transform.position = m3d;
+				newmousepos = m3d;
+			}
+			if (Input.GetMouseButtonDown (0)) {
+				tap = true;
+				lastdeltatime = 0;
+				oldmousepos = newmousepos;
+				initialmousepos = newmousepos;
+			}
+			if (Input.GetMouseButtonUp (0)) {
+				tap = false;
+				taplength = 0;
+				//Debug.Log ("released button ");
+				lastdeltatime = 1;
+			}
+
+		
+
+		}
+		ScrollMap ();
     }
 
     void ScrollMap()
@@ -146,6 +157,7 @@ public class map_manager : MonoBehaviour
         Vector3 newpos;
         Vector3 delta;
         float cuttedscrollmultiplier;
+		Vector3 deltamousevector;
 
         scrollmultiplier = scrollmultiplier + Time.deltaTime * 3;
         if (scrollmultiplier > 1) scrollmultiplier = 1;
@@ -180,9 +192,11 @@ public class map_manager : MonoBehaviour
             //Debug.Log("Scroll delta: " + (delta.magnitude / Time.deltaTime));
             //Debug.Log("Time delta: " + Time.deltaTime);
 
-            if (taplength >= 0.15)
+
+			deltamousevector = initialmousepos - newmousepos;
+			if (deltamousevector.magnitude>=_clickdistance && tap)
             {
-                scrollmultiplier = -4.0f;
+                scrollmultiplier = -6.0f;
             }
             if (scrollmultiplier > 1) scrollmultiplier = 1;
 
@@ -194,7 +208,7 @@ public class map_manager : MonoBehaviour
 
 
             newpos = actual - myavatar.transform.localPosition;
-            newpos = -actual + newpos * Time.deltaTime * cameraspeed * avatarstatictime * cuttedscrollmultiplier;
+			newpos = -actual + newpos * Time.deltaTime * cameraspeed * avatarstatictime * cuttedscrollmultiplier;
             newpos.z = 0;
             
             
@@ -209,14 +223,18 @@ public class map_manager : MonoBehaviour
     void AddListener(UnityEngine.UI.Button b, int clickeditemX, int clickeditemY)
     {
         b.onClick.AddListener(() => MapClicked(clickeditemX, clickeditemY));
+
     }
 
     void MapClicked(int clickeditemX, int clickeditemY)
     {
         GameObject tapindicator;
         Vector3 pos;
+		Vector3 deltamousevector;
 
-        if (taplength < 0.15f)
+		//EventSystem.current.SetSelectedGameObject(null);
+		deltamousevector = initialmousepos - newmousepos;
+		if (deltamousevector.magnitude<_clickdistance)
         {
             lastdeltatime = 0;
             lastdelta = Vector3.zero;
@@ -230,10 +248,26 @@ public class map_manager : MonoBehaviour
             pos.y = (clickeditemY - mapoffset) * mappiecesize;
             //pos.z = floorZ;
             tapindicator.transform.localPosition = pos;
-            avatarstatictime = 0.9f;
-            camerafadeouttime = 0.05f;
-            cameraspeed = cameraspeedlow;
-            scrollmultiplier = 1;
+            
+			avatarstatictime = 1.5f;
+			camerafadeouttime = 0.05f;
+			cameraspeed = cameraspeedlow;
+			scrollmultiplier = 1;
         }
     }
+
+	public void TriggerScrolling(bool scrolling)
+	{
+		Debug.Log("Scrolling: " + scrolling);
+		canscrollmanually = scrolling;
+		if (scrolling)
+		{
+			//Time.timeScale = 1.0F;
+		}
+		else
+		{
+			//Time.timeScale = 0.2F;
+			myavatar.GetComponent<avatarstatemachine>().AvatarStop();
+		}
+	}
 }

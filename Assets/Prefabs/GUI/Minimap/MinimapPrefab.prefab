@@ -72,7 +72,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23b40275d69b627469b6a2fb660588b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mappiece: {fileID: 105496, guid: d476048ae044823448cf4c5400ca7097, type: 2}
+  maproom: {fileID: 105496, guid: d476048ae044823448cf4c5400ca7097, type: 2}
+  mappath: {fileID: 105496, guid: 412631ab50250664c97eff9da61cfa6d, type: 2}
   map_manager_local: {fileID: 0}
 --- !u!222 &22208774
 CanvasRenderer:

@@ -21,6 +21,11 @@ ModelImporter:
     100026: Plane010
     100028: smallwall1x1A
     100030: narrowpassage_roadSJ
+    100032: cave_turnNE
+    100034: cave_turnNExx
+    100036: cave_turnNEW
+    100038: narrowpassage_TcrossSZVxxx
+    100040: cave_narrowNS
     400000: //RootNode
     400002: Box002
     400004: Box004
@@ -37,6 +42,11 @@ ModelImporter:
     400026: Plane010
     400028: smallwall1x1A
     400030: narrowpassage_roadSJ
+    400032: cave_turnNE
+    400034: cave_turnNExx
+    400036: cave_turnNEW
+    400038: narrowpassage_TcrossSZVxxx
+    400040: cave_narrowNS
     2300000: //RootNode
     2300002: Box002
     2300004: Box004
@@ -53,6 +63,11 @@ ModelImporter:
     2300026: Plane010
     2300028: smallwall1x1A
     2300030: narrowpassage_roadSJ
+    2300032: cave_turnNE
+    2300034: cave_turnNExx
+    2300036: cave_turnNEW
+    2300038: narrowpassage_TcrossSZVxxx
+    2300040: cave_narrowNS
     3300000: //RootNode
     3300002: Box002
     3300004: Box004
@@ -69,6 +84,11 @@ ModelImporter:
     3300026: Plane010
     3300028: smallwall1x1A
     3300030: narrowpassage_roadSJ
+    3300032: cave_turnNE
+    3300034: cave_turnNExx
+    3300036: cave_turnNEW
+    3300038: narrowpassage_TcrossSZVxxx
+    3300040: cave_narrowNS
     4300000: narrowpassage_turnSV
     4300002: Box002
     4300004: Box004
@@ -84,6 +104,11 @@ ModelImporter:
     4300024: Plane010
     4300026: smallwall1x1A
     4300028: narrowpassage_roadSJ
+    4300030: cave_turnNE
+    4300032: cave_turnNExx
+    4300034: narrowpassage_TcrossSZVxxx
+    4300036: cave_turnNEW
+    4300038: cave_narrowNS
   materials:
     importMaterials: 1
     materialName: 0

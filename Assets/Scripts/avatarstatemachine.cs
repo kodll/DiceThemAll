@@ -17,10 +17,13 @@ public class avatarstatemachine : MonoBehaviour
     static int[] successfulpaths;
     static int lastusedpath;
     static int[,] roomfield;
-    public const int maxsizepath = 200;
+    public const int maxsizepath = 400;
+	public GameObject avatarobject;
+	public GameObject minimapobject;
+	float avatarshift = 10;
 
-    static float avatarspeed = 150;
-    static float avatarrotationspeed = 7;
+    static float avatarspeed = 180;
+    static float avatarrotationspeed = 10;
 
     [HideInInspector] public Vector2 avataractualposition;
 
@@ -36,9 +39,10 @@ public class avatarstatemachine : MonoBehaviour
     {
         public GameObject fog;
         //public GameObject subfog;
-        public float alpha;
+		public int visitedstate;
+		public bool enabledpath;
     }
-    public fogroomstruct[,] fogfield;
+    static fogroomstruct[,] fogfield;
 
     // Use this for initialization
     void Start()
@@ -122,68 +126,122 @@ public class avatarstatemachine : MonoBehaviour
     {
         int i, j;
 
+		for (i = 0; i < map_manager_local.mapsize; i++)
+			for (j = 0; j < map_manager_local.mapsize; j++)
+			{
+				roomfield[i, j] = 0;
+			}
+
         for (i = 0; i < map_manager_local.mapsize; i++)
             for (j = 0; j < map_manager_local.mapsize; j++)
             {
                 if (originalmap[i, j] != null)
                 {
-                    roomfield[i, j] = 1;
+					if (!map_manager_local.mapfield [i, j].GetComponent<map_piece_def> ().isroom)
+					{
+						roomfield [i, j] = 3;
+					}
+					else // ROOM FOUND
+					{
+						//Debug.Log("Found Room_piece: " + originalmap[i,j].name);
+						roomfield [i, j] = 4;
+						roomfield [i-1, j] = 2;
+						roomfield [i+1, j] = 2;
+						roomfield [i, j-1] = 2;
+						roomfield [i-1, j-1] = 1;
+						roomfield [i+1, j-1] = 1;
+						roomfield [i, j+1] = 2;
+						roomfield [i-1, j+1] = 1;
+						roomfield [i+1, j+1] = 1;
+					}
                     //Debug.Log("Found map_piece: " + originalmap[i,j].name);
-                }
-                else
-                {
-                    roomfield[i, j] = 0;
                 }
             }
     }
 
-    void UpdateFogCross(int x, int y, float intime, bool cross)
+	void FogUpdateCross(int x, int y, float intime, bool cross)
     {
         fogfield[x, y].fog.GetComponent<fog_controller>().SetRoomAlpha(intime/200);
-        map_manager_local.mapfield[x, y].GetComponent<UnityEngine.UI.Button>().interactable = true;
-        if (cross)
+
+		if (map_manager_local.mapfield [x, y] != null)
+		{
+			fogfield [x, y].enabledpath = true;
+			if (fogfield [x, y].visitedstate == 0)
+			{
+				fogfield [x, y].visitedstate = 1;
+				minimapobject.GetComponent<minimap>().MapUpdate (x, y, 1);
+			}
+			map_manager_local.mapfield [x, y].GetComponent<UnityEngine.UI.Button> ().interactable = true;
+		}
+        
+		if (cross)
         {
             fogfield[x + 1, y].fog.GetComponent<fog_controller>().SetRoomAlpha(intime/100);
             fogfield[x - 1, y].fog.GetComponent<fog_controller>().SetRoomAlpha(intime/100);
             fogfield[x, y - 1].fog.GetComponent<fog_controller>().SetRoomAlpha(intime/100);
             fogfield[x, y + 1].fog.GetComponent<fog_controller>().SetRoomAlpha(intime/100);
 
+			/*if (fogfield [x+1, y].visitedstate == 0) fogfield [x+1, y].visitedstate = 1;
+
+			if (fogfield [x-1, y].visitedstate == 0) fogfield [x-1, y].visitedstate = 1;
+
+			if (fogfield [x, y+1].visitedstate == 0) fogfield [x, y+1].visitedstate = 1;
+
+			if (fogfield [x, y-1].visitedstate == 0) fogfield [x, y-1].visitedstate = 1;
+*/
+			if (roomfield[x+1,y]>1) fogfield [x+1, y].enabledpath = true;
+			if (roomfield[x-1,y]>1) fogfield [x-1, y].enabledpath = true;
+			if (roomfield[x,y+1]>1) fogfield [x, y+1].enabledpath = true;
+			if (roomfield[x,y-1]>1) fogfield [x, y-1].enabledpath = true;
+
             if (map_manager_local.mapfield[x+1, y] != null)
             {
-                map_manager_local.mapfield[x+1, y].GetComponent<UnityEngine.UI.Button>().interactable = true;
+				if (fogfield [x+1, y].visitedstate == 0) minimapobject.GetComponent<minimap>().MapUpdate (x+1, y, 1);
+				map_manager_local.mapfield[x+1, y].GetComponent<UnityEngine.UI.Button>().interactable = true;
             }
             if (map_manager_local.mapfield[x-1, y] != null)
             {
+				if (fogfield [x-1, y].visitedstate == 0) minimapobject.GetComponent<minimap>().MapUpdate (x-1, y, 1);
                 map_manager_local.mapfield[x-1, y].GetComponent<UnityEngine.UI.Button>().interactable = true;
             }
             if (map_manager_local.mapfield[x, y+1] != null)
             {
+				if (fogfield [x, y+1].visitedstate == 0) minimapobject.GetComponent<minimap>().MapUpdate (x, y+1, 1);
                 map_manager_local.mapfield[x, y+1].GetComponent<UnityEngine.UI.Button>().interactable = true;
             }
             if (map_manager_local.mapfield[x, y-1] != null)
             {
+				if (fogfield [x, y-1].visitedstate == 0) minimapobject.GetComponent<minimap>().MapUpdate (x, y-1, 1);
                 map_manager_local.mapfield[x, y-1].GetComponent<UnityEngine.UI.Button>().interactable = true;
             }
         }
     }
 
-    public void UpdateFog()
+    public void FogUpdate()
     {
         int x, y;
         x = (int)avataractualposition.x;
         y = (int)avataractualposition.y;
 
-        UpdateFogCross(x, y, 0.01f, true);
+		minimapobject.GetComponent<minimap>().MapUpdate (x, y, 2);
+		minimapobject.GetComponent<minimap>().MapUpdate (x, y, 3);
+		fogfield [x, y].visitedstate = 2;
+		fogfield [x, y].enabledpath = true;
 
-        if (roomfield[x + 1,y]>0)
+		FogUpdateCross(x, y, 0.01f, true);
+
+        if (roomfield[x + 1,y] > 0)
         {
-            UpdateFogCross(x + 1, y, 1, true);
+			FogUpdateCross(x + 1, y, 1, true);
+
             if (roomfield[x + 2, y] > 0)
             {
-                UpdateFogCross(x + 2, y, 2, true);
+				FogUpdateCross(x + 2, y, 2, true);
+
                 if (roomfield[x + 3, y] > 0)
                 {
-                    UpdateFogCross(x + 3, y, 3, false);
+					FogUpdateCross(x + 3, y, 3, false);
+
 
                 }
             }
@@ -191,13 +249,16 @@ public class avatarstatemachine : MonoBehaviour
         }
         if (roomfield[x - 1, y] > 0)
         {
-            UpdateFogCross(x - 1, y, 1, true);
+			FogUpdateCross(x - 1, y, 1, true);
+
             if (roomfield[x - 2, y] > 0)
             {
-                UpdateFogCross(x - 2, y, 2, true);
+				FogUpdateCross(x - 2, y, 2, true);
+
                 if (roomfield[x - 3, y] > 0)
                 {
-                    UpdateFogCross(x - 3, y, 3, false);
+					FogUpdateCross(x - 3, y, 3, false);
+
 
                 }
             }
@@ -205,13 +266,16 @@ public class avatarstatemachine : MonoBehaviour
         }
         if (roomfield[x, y + 1] > 0)
         {
-            UpdateFogCross(x, y + 1, 1, true);
+			FogUpdateCross(x, y + 1, 1, true);
+
             if (roomfield[x, y + 2] > 0)
             {
-                UpdateFogCross(x, y + 2, 2, true);
+				FogUpdateCross(x, y + 2, 2, true);
+
                 if (roomfield[x, y + 3] > 0)
                 {
-                    UpdateFogCross(x, y + 3, 3, false);
+					FogUpdateCross(x, y + 3, 3, false);
+
 
                 }
             }
@@ -219,13 +283,16 @@ public class avatarstatemachine : MonoBehaviour
         }
         if (roomfield[x, y - 1] > 0)
         {
-            UpdateFogCross(x, y - 1, 1, true);
+			FogUpdateCross(x, y - 1, 1, true);
+
             if (roomfield[x, y - 2] > 0)
             {
-                UpdateFogCross(x, y - 2, 2, true);
+				FogUpdateCross(x, y - 2, 2, true);
+
                 if (roomfield[x, y - 3] > 0)
                 {
-                    UpdateFogCross(x, y - 3, 3, false);
+					FogUpdateCross(x, y - 3, 3, false);
+
 
                 }
             }
@@ -234,7 +301,7 @@ public class avatarstatemachine : MonoBehaviour
 
     }
 
-    public void SetupFog()
+    public void FogInit()
     {
         int i, j;
         Vector3 pos;
@@ -245,15 +312,15 @@ public class avatarstatemachine : MonoBehaviour
             for (j = 1; j < map_manager_local.mapsize-1; j++)
             {
                 found = false;
-                if (map_manager_local.mapfield[i, j] != null)
+				if (roomfield[i, j] != 0)
                 {
-                    map_manager_local.mapfield[i, j].GetComponent<UnityEngine.UI.Button>().interactable = false;
+					if (roomfield[i,j] > 2) map_manager_local.mapfield[i, j].GetComponent<UnityEngine.UI.Button>().interactable = false;
                     found = true;
                 }
-                if (map_manager_local.mapfield[i+1, j] != null) found = true;
-                if (map_manager_local.mapfield[i-1, j] != null) found = true;
-                if (map_manager_local.mapfield[i, j+1] != null) found = true;
-                if (map_manager_local.mapfield[i, j-1] != null) found = true;
+				if (roomfield[i+1, j] != 0) found = true;
+				if (roomfield[i-1, j] != 0) found = true;
+				if (roomfield[i, j+1] != 0) found = true;
+				if (roomfield[i, j-1] != 0) found = true;
 
                 if (found)
                 {
@@ -264,6 +331,8 @@ public class avatarstatemachine : MonoBehaviour
                     pos.x = (i - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
                     pos.y = (j - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
                     fogfield[i, j].fog.transform.localPosition = pos;
+					fogfield[i, j].visitedstate = 0;
+					fogfield [i, j].enabledpath = false;
                 }
                 
             }
@@ -274,8 +343,8 @@ public class avatarstatemachine : MonoBehaviour
         int i;
         Vector3 pos;
         pos = Vector3.zero;
-        pos.x = (x - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
-        pos.y = (y - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
+		pos.x = (x - map_manager_local.mapoffset) * map_manager_local.mappiecesize + avatarshift;
+		pos.y = (y - map_manager_local.mapoffset) * map_manager_local.mappiecesize - avatarshift;
         pos.z = map_manager_local.floorZ;
 
         transform.localPosition = pos;
@@ -298,8 +367,22 @@ public class avatarstatemachine : MonoBehaviour
         map_manager_local.avatarstatictime = 0;
 
         
-        Debug.Log("avatar on place - Erased path: " + x + "," + y);
+        //Debug.Log("avatar on place - Erased path: " + x + "," + y);
     }
+
+	public void AvatarStop()
+	{
+		int i;
+
+		for (i = 0; i < maxsizepath; i++)
+		{
+			
+			if (i != avatarwhereinpath + 1)
+				finalpath [i] = Vector2.zero;
+		}
+		finalpath [avatarwhereinpath + 2] = finalpath [avatarwhereinpath + 1];
+
+	}
 
     public void Actualize(float timestep)
     {
@@ -313,8 +396,8 @@ public class avatarstatemachine : MonoBehaviour
             avatar_old_worldposition = avatar_actual_worldposition;
             _avatarpos = avatar_old_worldposition;
 
-            _wheretogo.x = (finalpath[avatarwhereinpath + 1].x - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
-            _wheretogo.y = (finalpath[avatarwhereinpath + 1].y - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
+			_wheretogo.x = (finalpath[avatarwhereinpath + 1].x - map_manager_local.mapoffset) * map_manager_local.mappiecesize + avatarshift;
+			_wheretogo.y = (finalpath[avatarwhereinpath + 1].y - map_manager_local.mapoffset) * map_manager_local.mappiecesize - avatarshift;
             _wheretogo.z = map_manager_local.floorZ;
 
             _deltavector = _wheretogo - transform.localPosition;
@@ -328,13 +411,17 @@ public class avatarstatemachine : MonoBehaviour
                 avataractualposition = finalpath[avatarwhereinpath];
                 avatar_old_worldposition = avatar_actual_worldposition;
 
-                UpdateFog();
+                FogUpdate();
 
                 if (finalpath[avatarwhereinpath + 1] == Vector2.zero)
                 {
-                    map_manager_local.avatarstatictime = 0.3f;
+                    map_manager_local.avatarstatictime = 0.4f;
                     map_manager_local.camerafadeouttime = 0.15f;
                     map_manager_local.cameraspeed = map_manager_local.cameraspeedhi;
+
+					avatarobject.GetComponent<Animator> ().SetTrigger ("idle");
+
+					map_manager_local.mapfield [(int) finalpath [avatarwhereinpath].x, (int) finalpath [avatarwhereinpath].y].GetComponent<map_piece_def> ().SetActiveElement(1);
                 }
 
             }
@@ -357,6 +444,17 @@ public class avatarstatemachine : MonoBehaviour
        
         RotateAvatarByPath();
     }
+
+	void DeactivateActiveElements()
+	{
+		int i, j;
+		for (i = 0; i < map_manager_local.mapsize; i++)
+			for (j = 0; j < map_manager_local.mapsize; j++)
+			{
+				if (map_manager_local.mapfield [i, j] != null) map_manager_local.mapfield [i, j].GetComponent<map_piece_def> ().SetActiveElement(0);
+			}
+	}
+		
 
     public void FindPath(int whereX, int whereY)
     {
@@ -465,6 +563,9 @@ public class avatarstatemachine : MonoBehaviour
                 for (i = 0; i < maxsizepath; i++) finalpath[i] = paths[shortest].singlepath[i];
             }
 
+			DeactivateActiveElements ();
+			avatarobject.GetComponent<Animator> ().SetTrigger ("run");
+
         }
 
 
@@ -486,14 +587,14 @@ public class avatarstatemachine : MonoBehaviour
             paths[pathindex].singlepath[paths[pathindex].indexinsidepath].y = paths[pathindex].actualY;
         }
 
-        while (paths[pathindex].valid == 0 && pathindex < maxsizepath && itterations < 200)
+		while (paths[pathindex].valid == 0 && pathindex < maxsizepath && itterations < maxsizepath)
         {
             itterations = itterations + 1;
             ways = 0;
-            if (roomfield[paths[pathindex].actualX + 1, paths[pathindex].actualY] != 0 && !paths[pathindex].roomchecked[paths[pathindex].actualX + 1, paths[pathindex].actualY]) ways = ways + 1;
-            if (roomfield[paths[pathindex].actualX - 1, paths[pathindex].actualY] != 0 && !paths[pathindex].roomchecked[paths[pathindex].actualX - 1, paths[pathindex].actualY]) ways = ways + 1;
-            if (roomfield[paths[pathindex].actualX, paths[pathindex].actualY + 1] != 0 && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY + 1]) ways = ways + 1;
-            if (roomfield[paths[pathindex].actualX, paths[pathindex].actualY - 1] != 0 && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY - 1]) ways = ways + 1;
+			if (fogfield[paths[pathindex].actualX + 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX + 1, paths[pathindex].actualY]) ways = ways + 1;
+			if (fogfield[paths[pathindex].actualX - 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX - 1, paths[pathindex].actualY]) ways = ways + 1;
+			if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY + 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY + 1]) ways = ways + 1;
+			if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY - 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY - 1]) ways = ways + 1;
 
             if (ways > 1) //crossing
             {
@@ -501,26 +602,26 @@ public class avatarstatemachine : MonoBehaviour
                 first = 0;
                 firstdelta = Vector2.zero;
 
-                if (roomfield[paths[pathindex].actualX + 1, paths[pathindex].actualY] != 0 && !paths[pathindex].roomchecked[paths[pathindex].actualX + 1, paths[pathindex].actualY] && paths[pathindex].valid == 0)
+				if (fogfield[paths[pathindex].actualX + 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX + 1, paths[pathindex].actualY] && paths[pathindex].valid == 0)
                 {
                     deltatest = Crossing(pathindex, whereX, whereY, 1, 0, first);
                     firstdelta = deltatest;
                     first = first + 1;
                 }
-                if (roomfield[paths[pathindex].actualX - 1, paths[pathindex].actualY] != 0 && !paths[pathindex].roomchecked[paths[pathindex].actualX - 1, paths[pathindex].actualY] && paths[pathindex].valid == 0)
+				if (fogfield[paths[pathindex].actualX - 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX - 1, paths[pathindex].actualY] && paths[pathindex].valid == 0)
                 {
 
                     deltatest = Crossing(pathindex, whereX, whereY, -1, 0, first);
                     if (deltatest != Vector2.zero) firstdelta = deltatest;
                     first = first + 1;
                 }
-                if (roomfield[paths[pathindex].actualX, paths[pathindex].actualY + 1] != 0 && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY + 1] && paths[pathindex].valid == 0)
+				if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY + 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY + 1] && paths[pathindex].valid == 0)
                 {
                     deltatest = Crossing(pathindex, whereX, whereY, 0, 1, first);
                     if (deltatest != Vector2.zero) firstdelta = deltatest;
                     first = first + 1;
                 }
-                if (roomfield[paths[pathindex].actualX, paths[pathindex].actualY - 1] != 0 && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY - 1] && paths[pathindex].valid == 0)
+				if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY - 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY - 1] && paths[pathindex].valid == 0)
                 {
                     deltatest = Crossing(pathindex, whereX, whereY, 0, -1, first);
                     if (deltatest != Vector2.zero) firstdelta = deltatest;
@@ -541,19 +642,19 @@ public class avatarstatemachine : MonoBehaviour
             {
                 first = 0;
 
-                if (roomfield[paths[pathindex].actualX + 1, paths[pathindex].actualY] != 0 && !paths[pathindex].roomchecked[paths[pathindex].actualX + 1, paths[pathindex].actualY] && paths[pathindex].valid == 0)
+				if (fogfield[paths[pathindex].actualX + 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX + 1, paths[pathindex].actualY] && paths[pathindex].valid == 0)
                 {
                     firstdelta = Crossing(pathindex, whereX, whereY, 1, 0, first);
                 }
-                else if (roomfield[paths[pathindex].actualX - 1, paths[pathindex].actualY] != 0 && !paths[pathindex].roomchecked[paths[pathindex].actualX - 1, paths[pathindex].actualY] && paths[pathindex].valid == 0)
+				else if (fogfield[paths[pathindex].actualX - 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX - 1, paths[pathindex].actualY] && paths[pathindex].valid == 0)
                 {
                     firstdelta = Crossing(pathindex, whereX, whereY, -1, 0, first);
                 }
-                else if (roomfield[paths[pathindex].actualX, paths[pathindex].actualY + 1] != 0 && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY + 1] && paths[pathindex].valid == 0)
+				else if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY + 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY + 1] && paths[pathindex].valid == 0)
                 {
                     firstdelta = Crossing(pathindex, whereX, whereY, 0, 1, first);
                 }
-                else if (roomfield[paths[pathindex].actualX, paths[pathindex].actualY - 1] != 0 && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY - 1] && paths[pathindex].valid == 0)
+				else if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY - 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY - 1] && paths[pathindex].valid == 0)
                 {
                     firstdelta = Crossing(pathindex, whereX, whereY, 0, -1, first);
                 }

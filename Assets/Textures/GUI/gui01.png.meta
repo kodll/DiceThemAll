@@ -1,10 +1,11 @@
 fileFormatVersion: 2
 guid: e0a10290b97a6a244a7ddda25f7bbe95
-timeCreated: 1457821565
+timeCreated: 1458924129
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     21300000: gui_roomfog
+    21300002: gui_roomselected
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -70,6 +71,46 @@ TextureImporter:
         - {x: 32, y: -17}
         - {x: 32, y: 17}
         - {x: 21, y: 32}
+    - name: gui_roomselected
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 960
+        width: 61
+        height: 64
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 26, y: 28, z: 29, w: 28}
+      outline:
+      - - {x: -15.5, y: -4}
+        - {x: -30.5, y: -4}
+        - {x: -30.5, y: -30}
+        - {x: -27.5, y: -31}
+        - {x: -8.5, y: -31}
+        - {x: -4.5, y: -27}
+        - {x: -4.5, y: -15}
+      - - {x: 14.5, y: -4}
+        - {x: 6.5, y: -13}
+        - {x: 5.5, y: -19}
+        - {x: 5.5, y: -29}
+        - {x: 9.5, y: -31}
+        - {x: 28.5, y: -31}
+        - {x: 30.5, y: -29}
+        - {x: 30.5, y: -5}
+        - {x: 28.5, y: -4}
+      - - {x: -30.5, y: 32}
+        - {x: -30.5, y: 6}
+        - {x: -15.5, y: 6}
+        - {x: -4.5, y: 15}
+        - {x: -4.5, y: 30}
+        - {x: -5.5, y: 32}
+      - - {x: 6.5, y: 32}
+        - {x: 5.5, y: 29}
+        - {x: 5.5, y: 16}
+        - {x: 14.5, y: 7}
+        - {x: 17.5, y: 6}
+        - {x: 30.5, y: 6}
+        - {x: 30.5, y: 32}
     outline: []
   spritePackingTag: 
   userData: 
