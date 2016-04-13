@@ -22,7 +22,7 @@ public class avatarstatemachine : MonoBehaviour
 	public GameObject minimapobject;
 	float avatarshift = 10;
 
-    static float avatarspeed = 180;
+    static float avatarspeed = 200;
     static float avatarrotationspeed = 10;
 
     [HideInInspector] public Vector2 avataractualposition;
