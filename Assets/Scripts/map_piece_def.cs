@@ -86,12 +86,10 @@ public class map_piece_def : MonoBehaviour
 			map_manager_local.charactercamera.GetComponent<Animator> ().SetTrigger ("smalldetail_in");
 			//map_manager_local.GUIChestOpenedPopup.SetActive (true);
 			map_manager_local.GUIChestOpenedPopup.GetComponent<Animator> ().SetTrigger ("PanelShow");
-			map_manager_local.GUIChestOpenedPopup.GetComponent<gui_chest_unlocked_popup> ().InitDuplicatedAvatar ();
+			map_manager_local.GUIChestOpenedPopup.GetComponent<gui_chest_unlocked_popup> ().InitChestAppearance ();
 			map_manager_local.GUIChestOpenedPopup.GetComponent<gui_chest_unlocked_popup> ().ActiveElementObject = this.gameObject;
 			DuplicateAvatarOnPlace (AvatarPlaceholderChest);
 			avatarobject_local.avatarobject.GetComponent<Animator> ().SetTrigger ("hide");
-
-
 		}
 	}
 

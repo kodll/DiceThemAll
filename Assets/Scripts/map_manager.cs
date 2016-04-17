@@ -14,6 +14,7 @@ public class map_manager : MonoBehaviour
 	public GameObject charactercamera;
     public GameObject tapcamera;
 	public GameObject GUIChestOpenedPopup;
+	public GameObject GUIDungeonMovement;
 
 
     [HideInInspector] public float mappiecesize = 100;
@@ -47,12 +48,35 @@ public class map_manager : MonoBehaviour
     public GameObject fogcontainer;
     public GameObject fogroomprefab;
     
+	//---GLOBAL DEFINITIONS------------------------------------------------------
+	public GameObject DiceObject;
+	public GameObject PrefabPanelDicesToRollObject;
+
+	[HideInInspector] public Vector3[] DiceNumberRotation;
+
+	//---END OF GLOBAL DEFINITIONS------------------------------------------------------
 
     // Use this for initialization
     void Start ()
     {
         int i,j;
         Vector3 colpos;
+
+		//------------------------DICES ROTATION-------------------------------
+		DiceNumberRotation = new Vector3[6];
+
+		for (i = 0; i < 6; i++)
+		{
+			DiceNumberRotation[i] = Vector3.zero;
+		}
+		DiceNumberRotation [0].x = 180;
+		DiceNumberRotation [1].x = 90;
+		DiceNumberRotation [1].y = 180;
+		DiceNumberRotation [2].y = 90;
+		DiceNumberRotation [2].x = 90;
+		DiceNumberRotation [3].y = 270;
+		DiceNumberRotation [4].x = 90;
+		//----------------------------------------------------------------------
 
         mapvectoroffset = Vector3.zero;
         mapvectoroffset.x = mapoffset * mappiecesize;
@@ -80,14 +104,17 @@ public class map_manager : MonoBehaviour
         //Debug.Log("Found minimap: " + minimaplocal.name);
         minimaplocal.MapInit();
 
-
+		// systems initiation----------------------------------------------------------
         myavatar.GetComponent<avatarstatemachine>().PathFindingInit();
         myavatar.GetComponent<avatarstatemachine>().PathFindingSetRooms(mapfield);
         myavatar.GetComponent<avatarstatemachine>().FogInit();
         myavatar.GetComponent<avatarstatemachine>().SetCharacter(27, 22);
         myavatar.GetComponent<avatarstatemachine>().FogUpdate();
-		canscrollmanually = true;
+		GUIChestOpenedPopup.GetComponent<gui_chest_unlocked_popup>().InitGuiChestSystem ();
+		//--------------------------------------------------------------------------------
 
+
+		canscrollmanually = true;
         avatarstatictime = 0.4f;
         camerafadeouttime = 0.3f;
         cameraspeed = cameraspeedhi;
@@ -155,7 +182,6 @@ public class map_manager : MonoBehaviour
     {
         Vector3 actual;
         Vector3 newpos;
-        Vector3 delta;
         float cuttedscrollmultiplier;
 		Vector3 deltamousevector;
 
@@ -186,9 +212,7 @@ public class map_manager : MonoBehaviour
         if (avatarstatictime > 0)
         {
             actual = -mapmover.transform.localPosition;
-            delta = actual - scrollpreviousframe;
-
-            
+           
             //Debug.Log("Scroll delta: " + (delta.magnitude / Time.deltaTime));
             //Debug.Log("Time delta: " + Time.deltaTime);
 
@@ -260,6 +284,7 @@ public class map_manager : MonoBehaviour
 	{
 		Debug.Log("Scrolling: " + scrolling);
 		canscrollmanually = scrolling;
+		tap = false;
 		if (scrolling)
 		{
 			//Time.timeScale = 1.0F;

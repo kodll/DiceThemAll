@@ -47,11 +47,14 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\avatarstatemachine.cs" />
      <Compile Include="Assets\Scripts\destroy_intime.cs" />
+     <Compile Include="Assets\Scripts\dice_machine.cs" />
      <Compile Include="Assets\Scripts\fog_controller.cs" />
      <Compile Include="Assets\Scripts\gui_chest_unlocked_popup.cs" />
+     <Compile Include="Assets\Scripts\loot_item_def.cs" />
      <Compile Include="Assets\Scripts\map_manager.cs" />
      <Compile Include="Assets\Scripts\map_piece_def.cs" />
      <Compile Include="Assets\Scripts\minimap.cs" />
+     <Compile Include="Assets\Scripts\panel_dicestoroll.cs" />
      <None Include="Assets\Standard Assets\Effects\GlassRefraction\Shaders\GlassStainedBumpDistort.shader" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\_BloomAndFlares\BlendOneOne.shader" />
      <None Include="Assets\Standard Assets\Effects\ImageEffects\Shaders\NoiseEffectShaderRGB.shader" />
