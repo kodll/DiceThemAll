@@ -23,7 +23,7 @@ public class avatarstatemachine : MonoBehaviour
 	float avatarshift = 10;
 
     static float avatarspeed = 200;
-    static float avatarrotationspeed = 10;
+    static float avatarrotationspeed = 9;
 
     [HideInInspector] public Vector2 avataractualposition;
 

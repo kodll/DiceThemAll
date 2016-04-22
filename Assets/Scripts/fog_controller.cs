@@ -22,7 +22,7 @@ public class fog_controller : MonoBehaviour {
             Color newmaincolor, newsubcolor;
             newmaincolor = this.gameObject.GetComponent<SpriteRenderer>().color;
             newsubcolor = ObjectSubfog.gameObject.GetComponent<SpriteRenderer>().color;
-            newmaincolor.a = newmaincolor.a - Time.deltaTime;
+			newmaincolor.a = newmaincolor.a - Time.deltaTime;
             if (newmaincolor.a < 0) newmaincolor.a = 0;
             newsubcolor.a = newmaincolor.a;
 
