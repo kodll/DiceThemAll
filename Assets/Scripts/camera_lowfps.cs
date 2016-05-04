@@ -3,7 +3,8 @@ using System.Collections;
 
 public class camera_lowfps : MonoBehaviour {
 
-	float fpstime = 0;
+
+	[HideInInspector] public float fpstime = 0;
 	Camera mycamera;
 	static avatarstatemachine avatarobject_local;
 	// Use this for initialization
@@ -18,11 +19,10 @@ public class camera_lowfps : MonoBehaviour {
 	void FixedUpdate ()
 	{
 		float counter;
-
-		counter = 0.12f;
+		counter = 0.2f;
 		if (avatarobject_local.avatarmoving)
 		{
-			counter = 0.05f;
+			counter = 0.04f;
 		}
 
 		fpstime = fpstime + Time.deltaTime;

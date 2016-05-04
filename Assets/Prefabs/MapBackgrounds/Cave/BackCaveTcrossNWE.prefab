@@ -77,7 +77,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 111738}
-  m_LocalRotation: {x: -0.70710677, y: -0.7071069, z: -0.00000018098602, w: 0.00000024814358}
+  m_LocalRotation: {x: 0.7071068, y: -0.7071067, z: 0.000000115202326, w: -0.00000011520231}
   m_LocalPosition: {x: 0, y: 0, z: -1.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -131,7 +131,7 @@ MeshRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 1
   m_Materials:
-  - {fileID: 2100000, guid: 0b403acb7868b4b46a87b30a2d81b343, type: 2}
+  - {fileID: 2100000, guid: 36e1397c6d2b05a459b99ffee6740dc7, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 1
@@ -160,7 +160,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 111738}
-  m_Mesh: {fileID: 4300036, guid: 66b3d9bf4d8ef8746964b4c4b8e03f51, type: 3}
+  m_Mesh: {fileID: 4300046, guid: 66b3d9bf4d8ef8746964b4c4b8e03f51, type: 3}
 --- !u!65 &6598610
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -189,6 +189,7 @@ MonoBehaviour:
   isroom: 0
   ActiveElementButton: {fileID: 0}
   ActiveElementObject: {fileID: 0}
+  AvatarPlaceholderChest: {fileID: 0}
 --- !u!114 &11469720
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -302,7 +303,7 @@ RectTransform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 181434}
-  m_LocalRotation: {x: -0.00000013408285, y: 0.00000008940697, z: -1, w: 0.000000029802322}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -314,7 +315,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 300.00012, y: -0.000015258789}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 120, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &22479162
 RectTransform:

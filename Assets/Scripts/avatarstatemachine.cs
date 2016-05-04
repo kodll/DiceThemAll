@@ -20,10 +20,10 @@ public class avatarstatemachine : MonoBehaviour
     public const int maxsizepath = 400;
 	public GameObject avatarobject;
 	public GameObject minimapobject;
-	float avatarshift = 10;
+	float avatarshift = 0;
 
-    static float avatarspeed = 200;
-    static float avatarrotationspeed = 9;
+    static float avatarspeed = 240;
+    static float avatarrotationspeed = 7;
 
     [HideInInspector] public Vector2 avataractualposition;
 
@@ -34,6 +34,7 @@ public class avatarstatemachine : MonoBehaviour
     [HideInInspector] public bool avatarmoving;
 
     static map_manager map_manager_local;
+	static camera_lowfps camera_lowfps_local;
 
     public struct fogroomstruct
     {
@@ -104,6 +105,7 @@ public class avatarstatemachine : MonoBehaviour
     {
         int i, j, k;
         map_manager_local = GameObject.FindObjectOfType(typeof(map_manager)) as map_manager;
+		camera_lowfps_local = GameObject.FindObjectOfType(typeof(camera_lowfps)) as camera_lowfps;
         roomfield = new int[map_manager_local.mapsize, map_manager_local.mapsize];
         finalpath = new Vector2[maxsizepath];
         successfulpaths = new int[maxsizepath];
@@ -364,6 +366,7 @@ public class avatarstatemachine : MonoBehaviour
 
         avatarwhereinpath = 0;
         avatarmoving = false;
+		camera_lowfps_local.fpstime = 100;
         map_manager_local.avatarstatictime = 0;
 
         
@@ -420,6 +423,7 @@ public class avatarstatemachine : MonoBehaviour
                     map_manager_local.cameraspeed = map_manager_local.cameraspeedhi;
 
 					avatarobject.GetComponent<Animator> ().SetTrigger ("idle");
+					camera_lowfps_local.fpstime = 100;
 
 					map_manager_local.mapfield [(int) finalpath [avatarwhereinpath].x, (int) finalpath [avatarwhereinpath].y].GetComponent<map_piece_def> ().SetActiveElement(1);
                 }

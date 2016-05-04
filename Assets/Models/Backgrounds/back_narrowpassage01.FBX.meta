@@ -26,6 +26,33 @@ ModelImporter:
     100036: cave_turnNEW
     100038: narrowpassage_TcrossSZVxxx
     100040: cave_narrowNS
+    100042: cave_narrowWE
+    100044: cave_turnEN
+    100046: cave_bridgeE
+    100048: cave_bridgeN
+    100050: cave_bridgeNS
+    100052: cave_bridgeS
+    100054: cave_bridgeW
+    100056: cave_bridgeWE
+    100058: cave_cross1
+    100060: cave_cross2
+    100062: cave_deadE
+    100064: cave_deadN
+    100066: cave_deadS
+    100068: cave_deadW
+    100070: cave_narrowNS1
+    100072: cave_narrowNS2
+    100074: cave_narrowNS3
+    100076: cave_narrowWE1
+    100078: cave_narrowWE2
+    100080: cave_narrowWE3
+    100082: cave_tturnENS
+    100084: cave_tturnWEN
+    100086: cave_tturnWES
+    100088: cave_tturnWNS
+    100090: cave_turnNW
+    100092: cave_turnSE
+    100094: cave_turnSW
     400000: //RootNode
     400002: Box002
     400004: Box004
@@ -47,6 +74,33 @@ ModelImporter:
     400036: cave_turnNEW
     400038: narrowpassage_TcrossSZVxxx
     400040: cave_narrowNS
+    400042: cave_narrowWE
+    400044: cave_turnEN
+    400046: cave_bridgeE
+    400048: cave_bridgeN
+    400050: cave_bridgeNS
+    400052: cave_bridgeS
+    400054: cave_bridgeW
+    400056: cave_bridgeWE
+    400058: cave_cross1
+    400060: cave_cross2
+    400062: cave_deadE
+    400064: cave_deadN
+    400066: cave_deadS
+    400068: cave_deadW
+    400070: cave_narrowNS1
+    400072: cave_narrowNS2
+    400074: cave_narrowNS3
+    400076: cave_narrowWE1
+    400078: cave_narrowWE2
+    400080: cave_narrowWE3
+    400082: cave_tturnENS
+    400084: cave_tturnWEN
+    400086: cave_tturnWES
+    400088: cave_tturnWNS
+    400090: cave_turnNW
+    400092: cave_turnSE
+    400094: cave_turnSW
     2300000: //RootNode
     2300002: Box002
     2300004: Box004
@@ -68,6 +122,33 @@ ModelImporter:
     2300036: cave_turnNEW
     2300038: narrowpassage_TcrossSZVxxx
     2300040: cave_narrowNS
+    2300042: cave_narrowWE
+    2300044: cave_turnEN
+    2300046: cave_bridgeE
+    2300048: cave_bridgeN
+    2300050: cave_bridgeNS
+    2300052: cave_bridgeS
+    2300054: cave_bridgeW
+    2300056: cave_bridgeWE
+    2300058: cave_cross1
+    2300060: cave_cross2
+    2300062: cave_deadE
+    2300064: cave_deadN
+    2300066: cave_deadS
+    2300068: cave_deadW
+    2300070: cave_narrowNS1
+    2300072: cave_narrowNS2
+    2300074: cave_narrowNS3
+    2300076: cave_narrowWE1
+    2300078: cave_narrowWE2
+    2300080: cave_narrowWE3
+    2300082: cave_tturnENS
+    2300084: cave_tturnWEN
+    2300086: cave_tturnWES
+    2300088: cave_tturnWNS
+    2300090: cave_turnNW
+    2300092: cave_turnSE
+    2300094: cave_turnSW
     3300000: //RootNode
     3300002: Box002
     3300004: Box004
@@ -89,6 +170,33 @@ ModelImporter:
     3300036: cave_turnNEW
     3300038: narrowpassage_TcrossSZVxxx
     3300040: cave_narrowNS
+    3300042: cave_narrowWE
+    3300044: cave_turnEN
+    3300046: cave_bridgeE
+    3300048: cave_bridgeN
+    3300050: cave_bridgeNS
+    3300052: cave_bridgeS
+    3300054: cave_bridgeW
+    3300056: cave_bridgeWE
+    3300058: cave_cross1
+    3300060: cave_cross2
+    3300062: cave_deadE
+    3300064: cave_deadN
+    3300066: cave_deadS
+    3300068: cave_deadW
+    3300070: cave_narrowNS1
+    3300072: cave_narrowNS2
+    3300074: cave_narrowNS3
+    3300076: cave_narrowWE1
+    3300078: cave_narrowWE2
+    3300080: cave_narrowWE3
+    3300082: cave_tturnENS
+    3300084: cave_tturnWEN
+    3300086: cave_tturnWES
+    3300088: cave_tturnWNS
+    3300090: cave_turnNW
+    3300092: cave_turnSE
+    3300094: cave_turnSW
     4300000: narrowpassage_turnSV
     4300002: Box002
     4300004: Box004
@@ -109,6 +217,33 @@ ModelImporter:
     4300034: narrowpassage_TcrossSZVxxx
     4300036: cave_turnNEW
     4300038: cave_narrowNS
+    4300040: cave_narrowWE
+    4300042: cave_turnEN
+    4300044: cave_narrowWE1
+    4300046: cave_tturnWEN
+    4300048: cave_turnNW
+    4300050: cave_narrowNS1
+    4300052: cave_tturnENS
+    4300054: cave_turnSE
+    4300056: cave_narrowWE3
+    4300058: cave_tturnWES
+    4300060: cave_turnSW
+    4300062: cave_tturnWNS
+    4300064: cave_narrowNS3
+    4300066: cave_narrowNS2
+    4300068: cave_cross1
+    4300070: cave_narrowWE2
+    4300072: cave_deadN
+    4300074: cave_cross2
+    4300076: cave_deadS
+    4300078: cave_deadW
+    4300080: cave_deadE
+    4300082: cave_bridgeW
+    4300084: cave_bridgeWE
+    4300086: cave_bridgeE
+    4300088: cave_bridgeN
+    4300090: cave_bridgeNS
+    4300092: cave_bridgeS
   materials:
     importMaterials: 1
     materialName: 0
