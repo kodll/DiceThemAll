@@ -16,13 +16,13 @@ public class camera_lowfps : MonoBehaviour {
 	}
 	
 	// Update is called once per frame
-	void FixedUpdate ()
+	void Update ()
 	{
 		float counter;
-		counter = 0.2f;
+		counter = 0.02f;
 		if (avatarobject_local.avatarmoving)
 		{
-			counter = 0.04f;
+			counter = 0.02f;
 		}
 
 		fpstime = fpstime + Time.deltaTime;

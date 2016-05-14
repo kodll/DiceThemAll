@@ -54,6 +54,21 @@ ModelImporter:
     100092: Bip001 Xtra12Opp
     100094: Bip001ShoulderArmorL
     100096: //RootNode
+    100098: Bip001 HeadNub
+    100100: Bip001 L Toe0Nub
+    100102: Bip001 Ponytail1Nub
+    100104: Bip001 Ponytail2Nub
+    100106: Bip001 R Toe0Nub
+    100108: Bip001 Xtra01Nub
+    100110: Bip001 Xtra02Nub
+    100112: Bip001 Xtra03Nub
+    100114: Bip001 Xtra08Nub
+    100116: Bip001 Xtra09Nub
+    100118: Bip001 Xtra10Nub
+    100120: Bip001 Xtra11Nub
+    100122: Bip001 Xtra11OppNub
+    100124: Bip001 Xtra12Nub
+    100126: Bip001 Xtra12OppNub
     400000: Bip001
     400002: Bip001 Head
     400004: Bip001 L Calf
@@ -103,6 +118,21 @@ ModelImporter:
     400092: Bip001 Xtra12Opp
     400094: Bip001ShoulderArmorL
     400096: //RootNode
+    400098: Bip001 HeadNub
+    400100: Bip001 L Toe0Nub
+    400102: Bip001 Ponytail1Nub
+    400104: Bip001 Ponytail2Nub
+    400106: Bip001 R Toe0Nub
+    400108: Bip001 Xtra01Nub
+    400110: Bip001 Xtra02Nub
+    400112: Bip001 Xtra03Nub
+    400114: Bip001 Xtra08Nub
+    400116: Bip001 Xtra09Nub
+    400118: Bip001 Xtra10Nub
+    400120: Bip001 Xtra11Nub
+    400122: Bip001 Xtra11OppNub
+    400124: Bip001 Xtra12Nub
+    400126: Bip001 Xtra12OppNub
     7400000: hero_fulplate_idle01
     9500000: //RootNode
   materials:
@@ -130,7 +160,7 @@ ModelImporter:
       name: hero_fulplate_idle01
       takeName: Take 001
       firstFrame: 0
-      lastFrame: 40
+      lastFrame: 240
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -169,9 +199,8 @@ ModelImporter:
       - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 L Thigh/Bip001 L Calf/Bip001
           L Foot/Bip001 L Toe0
         weight: 1
-      - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 L Thigh/Bip001 Xtra04
-        weight: 1
-      - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 L Thigh/Bip001 Xtra05
+      - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 L Thigh/Bip001 L Calf/Bip001
+          L Foot/Bip001 L Toe0/Bip001 L Toe0Nub
         weight: 1
       - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 R Thigh
         weight: 1
@@ -183,9 +212,8 @@ ModelImporter:
       - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 R Thigh/Bip001 R Calf/Bip001
           R Foot/Bip001 R Toe0
         weight: 1
-      - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 R Thigh/Bip001 Xtra06
-        weight: 1
-      - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 R Thigh/Bip001 Xtra07
+      - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 R Thigh/Bip001 R Calf/Bip001
+          R Foot/Bip001 R Toe0/Bip001 R Toe0Nub
         weight: 1
       - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1
         weight: 1
@@ -194,10 +222,19 @@ ModelImporter:
       - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 Head
         weight: 1
       - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 Head/Bip001
+          HeadNub
+        weight: 1
+      - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 Head/Bip001
           Ponytail1
         weight: 1
       - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 Head/Bip001
+          Ponytail1/Bip001 Ponytail1Nub
+        weight: 1
+      - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 Head/Bip001
           Ponytail2
+        weight: 1
+      - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 Head/Bip001
+          Ponytail2/Bip001 Ponytail2Nub
         weight: 1
       - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Neck/Bip001 L
           Clavicle
@@ -250,24 +287,48 @@ ModelImporter:
       - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Xtra11Opp
         weight: 1
       - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Xtra11Opp/Bip001
+          Xtra11OppNub
+        weight: 1
+      - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Xtra11Opp/Bip001
           Xtra12Opp
+        weight: 1
+      - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001 Xtra11Opp/Bip001
+          Xtra12Opp/Bip001 Xtra12OppNub
         weight: 1
       - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001ShoulderArmorL
         weight: 1
       - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001ShoulderArmorL/Bip001
+          Xtra11Nub
+        weight: 1
+      - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001ShoulderArmorL/Bip001
           Xtra12
+        weight: 1
+      - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Spine1/Bip001ShoulderArmorL/Bip001
+          Xtra12/Bip001 Xtra12Nub
         weight: 1
       - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Xtra01
         weight: 1
+      - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Xtra01/Bip001 Xtra01Nub
+        weight: 1
       - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Xtra02
+        weight: 1
+      - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Xtra02/Bip001 Xtra02Nub
         weight: 1
       - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Xtra03
         weight: 1
+      - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Xtra03/Bip001 Xtra03Nub
+        weight: 1
       - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Xtra08
+        weight: 1
+      - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Xtra08/Bip001 Xtra08Nub
         weight: 1
       - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Xtra09
         weight: 1
+      - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Xtra09/Bip001 Xtra09Nub
+        weight: 1
       - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Xtra10
+        weight: 1
+      - path: Bip001/Bip001 Pelvis/Bip001 Spine/Bip001 Xtra10/Bip001 Xtra10Nub
         weight: 1
       - path: Bip001/Bip001 Shield
         weight: 1

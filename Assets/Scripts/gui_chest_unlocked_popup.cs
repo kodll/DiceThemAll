@@ -7,10 +7,6 @@ public class gui_chest_unlocked_popup : MonoBehaviour {
 	[HideInInspector] public GameObject AvatarInfrontOfChestObject;
 	static avatarstatemachine avatarobject_local;
 	static map_manager map_manager_local;
-	[HideInInspector] public bool destroyavatar = false;
-	static float mytime = 0;
-	[HideInInspector] public float wait;
-
 	public GameObject LootLayoutObject;
 	public GameObject PrefabLootItemObject;
 	public GameObject PanelDicesToRollPlaceholderObject;
@@ -60,23 +56,11 @@ public class gui_chest_unlocked_popup : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
 	{
-		if (destroyavatar)
-		{
-			mytime = mytime + Time.deltaTime;
-			if (mytime > wait)
-			{
-				Destroy (AvatarInfrontOfChestObject);
-				destroyavatar = false;
-			}
-		}
+		
 	}
 
 	public void InitChestAppearance()
 	{
-		mytime = 0;
-		wait = 0.25f;
-		destroyavatar = false;
-
 		StartCoroutine (ShowPossibleReward ());
 	}
 
@@ -108,21 +92,24 @@ public class gui_chest_unlocked_popup : MonoBehaviour {
 		}
 	}
 
+	public void CloseWindow()
+	{
+		this.GetComponent<Animator> ().SetTrigger ("PanelHide");
+		map_manager_local.charactercamera.GetComponent<Animator> ().SetTrigger ("smalldetail_out");
+		avatarobject_local.avatarcamera.GetComponent<Animator> ().SetTrigger ("zoomout");
+		map_manager_local.GUIDungeonMovement.GetComponent<Animator> ().SetTrigger ("PanelShow");
+		map_manager_local.TriggerScrolling (true);
+		avatarobject_local.camerafolowobject.transform.localPosition = Vector3.zero;
+		PanelToRollDicesObject.GetComponent<panel_dicestoroll> ().InitDicesToRoll (false);
+	}
+
 	IEnumerator ThrowDices()
 	{
 		PanelToRollDicesObject.GetComponent<panel_dicestoroll> ().RollDices();
 		yield return new WaitForSeconds(4.0f);
-		this.GetComponent<Animator> ().SetTrigger ("PanelHide");
+
 		ActiveElementObject.GetComponent<map_piece_def> ().SetActiveElement (3);
-		avatarobject_local.avatarobject.GetComponent<Animator> ().SetTrigger ("show");
-		map_manager_local.charactercamera.GetComponent<Animator> ().SetTrigger ("smalldetail_out");
-		destroyavatar = true;
-		yield return new WaitForSeconds(0.5f);
-
-		map_manager_local.GUIDungeonMovement.GetComponent<Animator> ().SetTrigger ("PanelShow");
-		map_manager_local.TriggerScrolling (true);
-
-		PanelToRollDicesObject.GetComponent<panel_dicestoroll> ().InitDicesToRoll (false);
+		CloseWindow();
 
 	}
 
@@ -137,11 +124,7 @@ public class gui_chest_unlocked_popup : MonoBehaviour {
 			else
 			{
 				ActiveElementObject.GetComponent<map_piece_def> ().SetActiveElement (1);
-				avatarobject_local.avatarobject.GetComponent<Animator> ().SetTrigger ("show");
-				destroyavatar = true;
-
-				PanelToRollDicesObject.GetComponent<panel_dicestoroll> ().InitDicesToRoll (false);
-
+				CloseWindow ();
 			}
 
 		}

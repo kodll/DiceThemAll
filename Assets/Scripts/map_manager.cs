@@ -7,7 +7,7 @@ public class map_manager : MonoBehaviour
     public GameObject[,] mapfield;
     [HideInInspector] public int mapsize = 50;
     [HideInInspector] public minimap minimaplocal;
-    public GameObject myavatar;
+	static avatarstatemachine avatarobject_local;
     public GameObject maptapvalid;
     public GameObject mapmover;
     public GameObject mapcamera;
@@ -89,6 +89,7 @@ public class map_manager : MonoBehaviour
                 mapfield[i, j] = null;
             }
 
+		avatarobject_local = GameObject.FindObjectOfType(typeof(avatarstatemachine)) as avatarstatemachine;
         map_piece_def[] myItems = FindObjectsOfType(typeof(map_piece_def)) as map_piece_def[];
         foreach (map_piece_def item in myItems)
         {
@@ -105,11 +106,12 @@ public class map_manager : MonoBehaviour
         minimaplocal.MapInit();
 
 		// systems initiation----------------------------------------------------------
-        myavatar.GetComponent<avatarstatemachine>().PathFindingInit();
-        myavatar.GetComponent<avatarstatemachine>().PathFindingSetRooms(mapfield);
-        myavatar.GetComponent<avatarstatemachine>().FogInit();
-        myavatar.GetComponent<avatarstatemachine>().SetCharacter(27, 22);
-        myavatar.GetComponent<avatarstatemachine>().FogUpdate();
+		avatarobject_local.PathFindingInit();
+		avatarobject_local.PathFindingSetRooms(mapfield);
+		avatarobject_local.FogInit();
+		avatarobject_local.SetCharacter(27, 22);
+		avatarobject_local.FogUpdate();
+
 		GUIChestOpenedPopup.GetComponent<gui_chest_unlocked_popup>().InitGuiChestSystem ();
 		//--------------------------------------------------------------------------------
 
@@ -145,7 +147,7 @@ public class map_manager : MonoBehaviour
         Vector2 mpos;
         float rayDistance;
 
-		myavatar.GetComponent<avatarstatemachine> ().Actualize (Time.deltaTime);
+		avatarobject_local.Actualize (Time.deltaTime);
 
 		if (canscrollmanually)
 		{
@@ -182,6 +184,7 @@ public class map_manager : MonoBehaviour
     {
         Vector3 actual;
         Vector3 newpos;
+		Vector3 follow;
         float cuttedscrollmultiplier;
 		Vector3 deltamousevector;
 
@@ -230,8 +233,11 @@ public class map_manager : MonoBehaviour
             
 
 
+			follow.x = avatarobject_local.camerafolowobject.transform.position.x;
+			follow.y = avatarobject_local.camerafolowobject.transform.position.z;
+			follow.z = avatarobject_local.camerafolowobject.transform.position.y;
 
-            newpos = actual - myavatar.transform.localPosition;
+			newpos = actual - follow;
 			newpos = -actual + newpos * Time.deltaTime * cameraspeed * avatarstatictime * cuttedscrollmultiplier;
             newpos.z = 0;
             
@@ -262,7 +268,7 @@ public class map_manager : MonoBehaviour
         {
             lastdeltatime = 0;
             lastdelta = Vector3.zero;
-            myavatar.GetComponent<avatarstatemachine>().FindPath(clickeditemX, clickeditemY);
+			avatarobject_local.FindPath(clickeditemX, clickeditemY);
             tapindicator = Instantiate(maptapvalid, Vector3.zero, Quaternion.identity) as GameObject;
             tapindicator.transform.SetParent(this.transform);
             tapindicator.transform.localScale = Vector3.one;
@@ -292,7 +298,7 @@ public class map_manager : MonoBehaviour
 		else
 		{
 			//Time.timeScale = 0.2F;
-			myavatar.GetComponent<avatarstatemachine>().AvatarStop();
+			avatarobject_local.AvatarStop();
 		}
 	}
 }

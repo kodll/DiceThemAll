@@ -19,11 +19,13 @@ public class avatarstatemachine : MonoBehaviour
     static int[,] roomfield;
     public const int maxsizepath = 400;
 	public GameObject avatarobject;
+	public GameObject avatarcamera;
 	public GameObject minimapobject;
-	float avatarshift = 0;
+	public GameObject camerafolowobject;
+	float avatarshift = 15;
 
-    static float avatarspeed = 240;
-    static float avatarrotationspeed = 7;
+    static float avatarspeed = 200;
+    static float avatarrotationspeed = 8;
 
     [HideInInspector] public Vector2 avataractualposition;
 
@@ -53,6 +55,7 @@ public class avatarstatemachine : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		
     }
 
     public void RotateAvatarByPath()
@@ -98,6 +101,7 @@ public class avatarstatemachine : MonoBehaviour
         }
         else finalangle = 0;
         this.transform.Rotate(0, 0, finalangle);
+
     }
         
 
@@ -346,7 +350,7 @@ public class avatarstatemachine : MonoBehaviour
         Vector3 pos;
         pos = Vector3.zero;
 		pos.x = (x - map_manager_local.mapoffset) * map_manager_local.mappiecesize + avatarshift;
-		pos.y = (y - map_manager_local.mapoffset) * map_manager_local.mappiecesize - avatarshift;
+		pos.y = (y - map_manager_local.mapoffset) * map_manager_local.mappiecesize/* - avatarshift*/;
         pos.z = map_manager_local.floorZ;
 
         transform.localPosition = pos;
@@ -400,40 +404,44 @@ public class avatarstatemachine : MonoBehaviour
             _avatarpos = avatar_old_worldposition;
 
 			_wheretogo.x = (finalpath[avatarwhereinpath + 1].x - map_manager_local.mapoffset) * map_manager_local.mappiecesize + avatarshift;
-			_wheretogo.y = (finalpath[avatarwhereinpath + 1].y - map_manager_local.mapoffset) * map_manager_local.mappiecesize - avatarshift;
+			_wheretogo.y = (finalpath[avatarwhereinpath + 1].y - map_manager_local.mapoffset) * map_manager_local.mappiecesize/* - avatarshift*/;
             _wheretogo.z = map_manager_local.floorZ;
 
             _deltavector = _wheretogo - transform.localPosition;
             _norm = _deltavector.normalized * avatarspeed * timestep;
 
-            if (_deltavector.magnitude < _norm.magnitude || _deltavector.magnitude == 0)
-            {
-                _norm = _deltavector;
-                avatarmoving = false;
-                avatarwhereinpath = avatarwhereinpath + 1;
-                avataractualposition = finalpath[avatarwhereinpath];
-                avatar_old_worldposition = avatar_actual_worldposition;
+			if (_deltavector.magnitude < _norm.magnitude || _deltavector.magnitude == 0)
+			{
+				_norm = _deltavector;
+				avatarmoving = false;
+				avatarwhereinpath = avatarwhereinpath + 1;
+				avataractualposition = finalpath [avatarwhereinpath];
+				avatar_old_worldposition = avatar_actual_worldposition;
 
-                FogUpdate();
+				FogUpdate ();
 
-                if (finalpath[avatarwhereinpath + 1] == Vector2.zero)
-                {
-                    map_manager_local.avatarstatictime = 0.4f;
-                    map_manager_local.camerafadeouttime = 0.15f;
-                    map_manager_local.cameraspeed = map_manager_local.cameraspeedhi;
+				if (finalpath [avatarwhereinpath + 1] == Vector2.zero)
+				{
+					map_manager_local.avatarstatictime = 0.4f;
+					map_manager_local.camerafadeouttime = 0.15f;
+					map_manager_local.cameraspeed = map_manager_local.cameraspeedhi;
 
 					avatarobject.GetComponent<Animator> ().SetTrigger ("idle");
 					camera_lowfps_local.fpstime = 100;
 
-					map_manager_local.mapfield [(int) finalpath [avatarwhereinpath].x, (int) finalpath [avatarwhereinpath].y].GetComponent<map_piece_def> ().SetActiveElement(1);
-                }
+					map_manager_local.mapfield [(int)finalpath [avatarwhereinpath].x, (int)finalpath [avatarwhereinpath].y].GetComponent<map_piece_def> ().SetActiveElement (1);
+				}
+					
 
-            }
-
+			}
             _avatarpos = _avatarpos + _norm;
             avatar_actual_worldposition = _avatarpos;
             transform.localPosition = _avatarpos;
 
+			if (avatarmoving)
+			{
+				RotateAvatarByPath ();
+			}
         }
         
         if (finalpath[avatarwhereinpath + 1] != Vector2.zero)
@@ -443,10 +451,6 @@ public class avatarstatemachine : MonoBehaviour
 
             //Debug.Log("avatar position on path [" + avatarwhereinpath + "]: " + finalpath[avatarwhereinpath] + " ARRAY:" + finalpath[0] + ", " + finalpath[1] + ", " + finalpath[2] + ", " + finalpath[3] + ", " + finalpath[4]);
         }
-        
-            
-       
-        RotateAvatarByPath();
     }
 
 	void DeactivateActiveElements()
