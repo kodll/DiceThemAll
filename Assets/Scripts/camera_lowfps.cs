@@ -19,7 +19,7 @@ public class camera_lowfps : MonoBehaviour {
 	void Update ()
 	{
 		float counter;
-		counter = 0.02f;
+		counter = 0.1f;
 		if (avatarobject_local.avatarmoving)
 		{
 			counter = 0.02f;
