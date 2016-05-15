@@ -11,7 +11,7 @@ GameObject:
   - 222: {fileID: 22277388}
   - 114: {fileID: 11401620}
   - 114: {fileID: 11470822}
-  m_Layer: 5
+  m_Layer: 16
   m_Name: PrefabRollSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29,7 +29,7 @@ GameObject:
   - 33: {fileID: 3343268}
   - 65: {fileID: 6565620}
   - 23: {fileID: 2334486}
-  m_Layer: 5
+  m_Layer: 16
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48,7 +48,7 @@ GameObject:
   - 65: {fileID: 6537246}
   - 23: {fileID: 2362244}
   - 54: {fileID: 5407082}
-  m_Layer: 5
+  m_Layer: 16
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -264,6 +264,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Layer
+      value: 16
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

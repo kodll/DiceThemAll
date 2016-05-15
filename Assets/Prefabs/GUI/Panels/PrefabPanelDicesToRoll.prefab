@@ -11,7 +11,7 @@ GameObject:
   - 33: {fileID: 3351448}
   - 65: {fileID: 6527564}
   - 23: {fileID: 2331392}
-  m_Layer: 5
+  m_Layer: 16
   m_Name: Cube (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -28,7 +28,7 @@ GameObject:
   - 224: {fileID: 22459014}
   - 222: {fileID: 22270252}
   - 114: {fileID: 11473780}
-  m_Layer: 5
+  m_Layer: 16
   m_Name: PrefabPanelDicesToRoll
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -46,7 +46,7 @@ GameObject:
   - 33: {fileID: 3300550}
   - 65: {fileID: 6587454}
   - 23: {fileID: 2348224}
-  m_Layer: 5
+  m_Layer: 16
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -65,7 +65,7 @@ GameObject:
   - 23: {fileID: 2341874}
   - 54: {fileID: 5474970}
   - 65: {fileID: 6528766}
-  m_Layer: 5
+  m_Layer: 16
   m_Name: Quad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,7 +83,7 @@ GameObject:
   - 222: {fileID: 22224920}
   - 114: {fileID: 11435258}
   - 114: {fileID: 11407404}
-  m_Layer: 5
+  m_Layer: 16
   m_Name: PanelDicesToRollLayoutGroup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -101,7 +101,7 @@ GameObject:
   - 33: {fileID: 3386808}
   - 65: {fileID: 6590776}
   - 23: {fileID: 2333678}
-  m_Layer: 5
+  m_Layer: 16
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -119,7 +119,7 @@ GameObject:
   - 33: {fileID: 3395732}
   - 65: {fileID: 6507722}
   - 23: {fileID: 2389214}
-  m_Layer: 5
+  m_Layer: 16
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -557,6 +557,10 @@ Prefab:
       propertyPath: LayoutObject
       value: 
       objectReference: {fileID: 161492}
+    - target: {fileID: 0}
+      propertyPath: m_Layer
+      value: 16
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 120436}

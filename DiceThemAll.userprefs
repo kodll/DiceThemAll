@@ -1,16 +1,18 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\camera_lowfps.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\BitmapFontImporter.cs">
     <Files>
-      <File FileName="Assets\Scripts\camera_lowfps.cs" Line="22" Column="18" />
-      <File FileName="Assets\Scripts\avatarstatemachine.cs" Line="22" Column="33" />
-      <File FileName="Assets\Scripts\map_piece_def.cs" Line="10" Column="47" />
-      <File FileName="Assets\Scripts\gui_chest_unlocked_popup.cs" Line="101" Column="45" />
+      <File FileName="Assets\Scripts\aspectratio.cs" Line="9" Column="30" />
+      <File FileName="Assets\Scripts\camera_lowfps.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\avatarstatemachine.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\map_piece_def.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\gui_chest_unlocked_popup.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\destroy_intime.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\map_manager.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\fog_controller.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\minimap.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\global_billboard.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\BitmapFontImporter.cs" Line="82" Column="3" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
