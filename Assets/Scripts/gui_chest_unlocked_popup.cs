@@ -97,6 +97,7 @@ public class gui_chest_unlocked_popup : MonoBehaviour {
 		this.GetComponent<Animator> ().SetTrigger ("PanelHide");
 		map_manager_local.charactercamera.GetComponent<Animator> ().SetTrigger ("smalldetail_out");
 		avatarobject_local.avatarcamera.GetComponent<Animator> ().SetTrigger ("zoomout");
+		avatarobject_local.SetHiMaterial (false);
 		map_manager_local.GUIDungeonMovement.GetComponent<Animator> ().SetTrigger ("PanelShow");
 		map_manager_local.TriggerScrolling (true);
 		avatarobject_local.camerafolowobject.transform.localPosition = Vector3.zero;

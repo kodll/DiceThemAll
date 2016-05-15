@@ -22,6 +22,9 @@ public class avatarstatemachine : MonoBehaviour
 	public GameObject avatarcamera;
 	public GameObject minimapobject;
 	public GameObject camerafolowobject;
+	public GameObject AvatarSkin;
+	public Material AvatarMaterialLow;
+	public Material AvatarMaterialHi;
 	float avatarshift = 15;
 
     static float avatarspeed = 200;
@@ -57,6 +60,19 @@ public class avatarstatemachine : MonoBehaviour
     {
 		
     }
+
+	public void SetHiMaterial (bool hi)
+	{
+		if (hi)
+		{
+			AvatarSkin.GetComponent<Renderer> ().sharedMaterial = AvatarMaterialHi;
+			Debug.Log("Hi Material");
+		} else
+		{
+			AvatarSkin.GetComponent<Renderer> ().sharedMaterial = AvatarMaterialLow;
+			Debug.Log("Low Material");
+		}
+	}
 
     public void RotateAvatarByPath()
     {
@@ -372,6 +388,7 @@ public class avatarstatemachine : MonoBehaviour
         avatarmoving = false;
 		camera_lowfps_local.fpstime = 100;
         map_manager_local.avatarstatictime = 0;
+		SetHiMaterial (false);
 
         
         //Debug.Log("avatar on place - Erased path: " + x + "," + y);
