@@ -95,7 +95,7 @@ public class gui_chest_unlocked_popup : MonoBehaviour {
 	public void CloseWindow()
 	{
 		this.GetComponent<Animator> ().SetTrigger ("PanelHide");
-		map_manager_local.charactercamera.GetComponent<Animator> ().SetTrigger ("smalldetail_out");
+		map_manager_local.mapcamera.GetComponent<Animator> ().SetTrigger ("smalldetail_out");
 		avatarobject_local.avatarcamera.GetComponent<Animator> ().SetTrigger ("zoomout");
 		avatarobject_local.SetHiMaterial (false);
 		map_manager_local.GUIDungeonMovement.GetComponent<Animator> ().SetTrigger ("PanelShow");

@@ -76,7 +76,7 @@ public class map_piece_def : MonoBehaviour
 
 			SetActiveElement (0);
 			map_manager_local.TriggerScrolling (false);
-			map_manager_local.charactercamera.GetComponent<Animator> ().SetTrigger ("smalldetail_in");
+			map_manager_local.mapcamera.GetComponent<Animator> ().SetTrigger ("smalldetail_in");
 			map_manager_local.GUIChestOpenedPopup.GetComponent<Animator> ().SetTrigger ("PanelShow");
 			avatarobject_local.avatarcamera.GetComponent<Animator> ().SetTrigger ("zoomin");
 			avatarobject_local.SetHiMaterial (true);
