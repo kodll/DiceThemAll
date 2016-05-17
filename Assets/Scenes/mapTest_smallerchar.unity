@@ -6025,7 +6025,7 @@ GameObject:
   - 33: {fileID: 1528616423}
   - 23: {fileID: 1528616422}
   m_Layer: 12
-  m_Name: GlowRed
+  m_Name: GlowGreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6038,7 +6038,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1528616420}
   m_LocalRotation: {x: -0.000000029802319, y: 0, z: 0.7071068, w: 0.70710677}
-  m_LocalPosition: {x: 14, y: -174, z: 66}
+  m_LocalPosition: {x: 511, y: 659, z: 66}
   m_LocalScale: {x: 2446.7764, y: 2446.777, z: 2446.777}
   m_Children: []
   m_Father: {fileID: 1247765447}
