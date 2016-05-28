@@ -241,7 +241,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 32909978}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6a5e7daca14e0a94dace8b204e6c6cec, type: 3}
   m_Name: 
@@ -1164,7 +1164,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &219836458
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2521,7 +2521,7 @@ MonoBehaviour:
   mouse3d: {fileID: 179104, guid: 4b24aad5321e16b4a842edc68013cc6c, type: 2}
   fogcontainer: {fileID: 596277956}
   fogroomprefab: {fileID: 179188, guid: 0e684bdd4a43fbd46bf0e4164e2c165c, type: 2}
-  DiceObject: {fileID: 198208, guid: b739d2035bc1ca941ae9b82d7ab0b5c9, type: 2}
+  DiceObject: {fileID: 135358, guid: b739d2035bc1ca941ae9b82d7ab0b5c9, type: 2}
   PrefabPanelDicesToRollObject: {fileID: 120436, guid: cb2d893fee13cce4aacfb51dc635740c,
     type: 2}
   DiceNumberRotation: []
@@ -5673,6 +5673,7 @@ MonoBehaviour:
   avataractualposition: {x: 0, y: 0}
   avatar_actual_worldposition: {x: 0, y: 0, z: 0}
   avatarmoving: 0
+  avatardetail: 0
 --- !u!54 &1478600438
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -6411,7 +6412,7 @@ Camera:
   m_Depth: 10
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 32
+    m_Bits: 65536
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -6439,7 +6440,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1580988483
 MonoBehaviour:
   m_ObjectHideFlags: 0

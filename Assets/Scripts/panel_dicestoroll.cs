@@ -6,13 +6,15 @@ public class panel_dicestoroll : MonoBehaviour
 	public GameObject SlotPrefabObject;
 	public GameObject LayoutObject;
 	static map_manager map_manager_local;
-	bool dicesrolled = false;
+
 
 	public struct DiceSlot
 	{
 		public GameObject Slot;
 		public GameObject Dice;
+		public bool dicesrolled;
 	}
+	const float betweendiceswait = 0.15f;
 
 	DiceSlot[] DicesField;
 
@@ -35,43 +37,41 @@ public class panel_dicestoroll : MonoBehaviour
 	void Update ()
 	{
 		int i;
-		if (!dicesrolled)
+		Vector3 rot;
+
+		for (i = 0; i < 6; i++)
 		{
-			for (i = 0; i < 6; i++) {
-				if (DicesField[i].Dice!=null) DicesField [i].Dice.transform.RotateAround (DicesField[i].Dice.transform.position, Vector3.up, 100 * Time.deltaTime);
+			if (DicesField [i].Dice != null && !DicesField [i].dicesrolled) 
+			{
+					DicesField [i].Dice.transform.RotateAround (DicesField [i].Dice.transform.position, Vector3.up, 100 * Time.deltaTime);
+			}
+			else if (DicesField [i].Dice != null)
+			{
+					rot = DicesField [i].Dice.transform.localEulerAngles;
+
+					DicesField [i].Dice.transform.localEulerAngles = rot/2;
 			}
 		}
 	}
+	public void RollDice(int index)
+	{
+		DicesField [index].dicesrolled = true;
+		DicesField [index].Dice.GetComponent<dice_machine> ().diceanimation.GetComponent<Animator> ().SetTrigger ("roll31");
+	}
 
-	public void RollDices()
+	IEnumerator ThrowAllDicesSequence()
 	{
 		int i;
 		Vector3 force, pos;
-		dicesrolled = true;
 		for (i = 0; i < 6; i++)
 		{
-			force.x = Random.Range(1,100)*1000000-50000000;
-			force.y = Random.Range(1,100)*1000000-50000000;
-			force.z = Random.Range(1,100)*1000000-50000000;
-
-			pos.x = Random.Range(0,50)*100-2500;
-			pos.y = Random.Range(0,50)*100-2500;
-			pos.z = Random.Range(0,50)*100-2500;
-
-			DicesField [i].Dice.GetComponent<Rigidbody> ().isKinematic = false;
-			DicesField [i].Dice.GetComponent<Rigidbody> ().useGravity = true;
-			DicesField [i].Dice.GetComponent<Rigidbody> ().AddForceAtPosition(force/50, pos);
-			//DicesField [i].Dice.GetComponent<Rigidbody>().AddRelativeTorque(Vector3.left*force.x);
-			//DicesField [i].Dice.GetComponent<Rigidbody>().AddRelativeTorque(Vector3.up*force.y);
-			//DicesField [i].Dice.GetComponent<Rigidbody>().AddRelativeTorque(Vector3.forward*force.z);
-			DicesField [i].Dice.GetComponent<Rigidbody>().AddRelativeTorque(force*1000000);
-			DicesField [i].Dice.GetComponent<Rigidbody>().AddRelativeTorque(force*1000000);
-			DicesField [i].Dice.GetComponent<Rigidbody>().AddRelativeTorque(force*1000000);
-			DicesField [i].Dice.GetComponent<Rigidbody>().AddRelativeTorque(force*1000000);
-			DicesField [i].Dice.GetComponent<Rigidbody>().AddRelativeTorque(force*1000000);
+			RollDice (i);
+			yield return new WaitForSeconds(betweendiceswait);
 		}
-
-		
+	}
+	public void RollAllDices()
+	{
+		StartCoroutine (ThrowAllDicesSequence ());
 	}
 
 
@@ -101,8 +101,9 @@ public class panel_dicestoroll : MonoBehaviour
 				DicesField [i].Dice.transform.localPosition = Offset;
 				DicesField [i].Dice.transform.localScale = map_manager_local.DiceObject.transform.localScale;
 				DicesField [i].Dice.transform.Rotate (RandomRot.x, RandomRot.y, RandomRot.z);
+				DicesField [i].dicesrolled = false;
 			}
-			dicesrolled = false;
+
 		}
 		else //DEINIT
 		{

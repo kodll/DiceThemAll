@@ -19,10 +19,13 @@ public class camera_lowfps : MonoBehaviour {
 	void Update ()
 	{
 		float counter;
-		counter = 0.1f;
-		if (avatarobject_local.avatarmoving)
+		if (avatarobject_local.avatardetail)
 		{
-			counter = 0.02f;
+			counter = 0.2f;
+		}
+		else
+		{
+			counter = 0;
 		}
 
 		fpstime = fpstime + Time.deltaTime;

@@ -37,6 +37,7 @@ public class avatarstatemachine : MonoBehaviour
     static Vector2[] finalpath;
     static int avatarwhereinpath = 0;
     [HideInInspector] public bool avatarmoving;
+	[HideInInspector] public bool avatardetail = false;
 
     static map_manager map_manager_local;
 	static camera_lowfps camera_lowfps_local;

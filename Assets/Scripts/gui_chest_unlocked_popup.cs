@@ -97,6 +97,8 @@ public class gui_chest_unlocked_popup : MonoBehaviour {
 		this.GetComponent<Animator> ().SetTrigger ("PanelHide");
 		map_manager_local.mapcamera.GetComponent<Animator> ().SetTrigger ("smalldetail_out");
 		avatarobject_local.avatarcamera.GetComponent<Animator> ().SetTrigger ("zoomout");
+		avatarobject_local.avatarobject.GetComponent<Animator> ().SetTrigger ("idle");
+		avatarobject_local.avatardetail = false;
 		avatarobject_local.SetHiMaterial (false);
 		map_manager_local.GUIDungeonMovement.GetComponent<Animator> ().SetTrigger ("PanelShow");
 		map_manager_local.TriggerScrolling (true);
@@ -106,9 +108,8 @@ public class gui_chest_unlocked_popup : MonoBehaviour {
 
 	IEnumerator ThrowDices()
 	{
-		PanelToRollDicesObject.GetComponent<panel_dicestoroll> ().RollDices();
-		yield return new WaitForSeconds(4.0f);
-
+		PanelToRollDicesObject.GetComponent<panel_dicestoroll> ().RollAllDices();
+		yield return new WaitForSeconds(3.0f);
 		ActiveElementObject.GetComponent<map_piece_def> ().SetActiveElement (3);
 		CloseWindow();
 

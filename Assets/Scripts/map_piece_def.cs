@@ -50,6 +50,13 @@ public class map_piece_def : MonoBehaviour
 
 	}
 
+	IEnumerator SetDetailAnim()
+	{
+		yield return new WaitForSeconds(0.5f);
+		avatarobject_local.avatardetail = true;
+
+	}
+
 	public void PressedButton()
 	{
 		Vector3 deltamousevector;
@@ -79,6 +86,8 @@ public class map_piece_def : MonoBehaviour
 			map_manager_local.mapcamera.GetComponent<Animator> ().SetTrigger ("smalldetail_in");
 			map_manager_local.GUIChestOpenedPopup.GetComponent<Animator> ().SetTrigger ("PanelShow");
 			avatarobject_local.avatarcamera.GetComponent<Animator> ().SetTrigger ("zoomin");
+			avatarobject_local.avatarobject.GetComponent<Animator> ().SetTrigger ("chestwaiting");
+			StartCoroutine (SetDetailAnim ());
 			avatarobject_local.SetHiMaterial (true);
 			map_manager_local.GUIChestOpenedPopup.GetComponent<gui_chest_unlocked_popup> ().InitChestAppearance ();
 			map_manager_local.GUIChestOpenedPopup.GetComponent<gui_chest_unlocked_popup> ().ActiveElementObject = this.gameObject;
