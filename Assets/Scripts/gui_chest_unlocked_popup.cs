@@ -5,6 +5,7 @@ public class gui_chest_unlocked_popup : MonoBehaviour {
 
 	[HideInInspector] public GameObject ActiveElementObject;
 	[HideInInspector] public GameObject AvatarInfrontOfChestObject;
+	static camera_lowfps camera_lowfps_local;
 	static avatarstatemachine avatarobject_local;
 	static map_manager map_manager_local;
 	public GameObject LootLayoutObject;
@@ -24,6 +25,7 @@ public class gui_chest_unlocked_popup : MonoBehaviour {
 	{
 		int i;
 
+		camera_lowfps_local = GameObject.FindObjectOfType(typeof(camera_lowfps)) as camera_lowfps;
 		map_manager_local = GameObject.FindObjectOfType(typeof(map_manager)) as map_manager;
 		avatarobject_local = GameObject.FindObjectOfType(typeof(avatarstatemachine)) as avatarstatemachine;
 
@@ -34,7 +36,7 @@ public class gui_chest_unlocked_popup : MonoBehaviour {
 			LootItemObjectField[i] = Instantiate (PrefabLootItemObject, Vector3.zero, Quaternion.identity) as GameObject;
 			LootItemObjectField[i].transform.SetParent(LootLayoutObject.transform);
 			LootItemObjectField[i].transform.localScale = PrefabLootItemObject.transform.localScale;
-			LootItemObjectField[i].SetActive (false);
+			//LootItemObjectField[i].SetActive (false);
 
 			DiceRewardField[i] = Instantiate (map_manager_local.DiceObject, Vector3.zero, Quaternion.identity) as GameObject;
 			DiceRewardField[i].transform.SetParent(LootItemObjectField[i].GetComponent<loot_item_def>().DiceSlot.transform);
@@ -88,17 +90,22 @@ public class gui_chest_unlocked_popup : MonoBehaviour {
 		{
 			LootItemObjectField [i].SetActive (true);
 
-			yield return new WaitForSeconds(0.05f);
+			//yield return new WaitForSeconds(0.05f);
 		}
 	}
 
 	public void CloseWindow()
 	{
+		//ActiveElementObject.GetComponent<map_piece_def> ().CancelZoom();
+		ActiveElementObject.GetComponent<map_piece_def> ().cancelzoom = true;
+
 		this.GetComponent<Animator> ().SetTrigger ("PanelHide");
 		map_manager_local.mapcamera.GetComponent<Animator> ().SetTrigger ("smalldetail_out");
 		avatarobject_local.avatarcamera.GetComponent<Animator> ().SetTrigger ("zoomout");
 		avatarobject_local.avatarobject.GetComponent<Animator> ().SetTrigger ("idle");
 		avatarobject_local.avatardetail = false;
+		camera_lowfps_local.fpstime = 100;
+		Debug.Log("AvatarHiFPS");
 		avatarobject_local.SetHiMaterial (false);
 		map_manager_local.GUIDungeonMovement.GetComponent<Animator> ().SetTrigger ("PanelShow");
 		map_manager_local.TriggerScrolling (true);

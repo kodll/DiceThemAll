@@ -30,7 +30,7 @@ public class camera_lowfps : MonoBehaviour {
 
 		fpstime = fpstime + Time.deltaTime;
 
-		if (fpstime>counter)
+		if (fpstime>=counter)
 		{
 			mycamera.enabled = true;
 			fpstime = 0;

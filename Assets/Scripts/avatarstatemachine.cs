@@ -31,6 +31,7 @@ public class avatarstatemachine : MonoBehaviour
     static float avatarrotationspeed = 8;
 
     [HideInInspector] public Vector2 avataractualposition;
+	[HideInInspector] public Vector2 avatarafterstaticposition;
 
     static Vector3 avatar_old_worldposition;
     [HideInInspector] public Vector3 avatar_actual_worldposition;
@@ -67,11 +68,11 @@ public class avatarstatemachine : MonoBehaviour
 		if (hi)
 		{
 			AvatarSkin.GetComponent<Renderer> ().sharedMaterial = AvatarMaterialHi;
-			Debug.Log("Hi Material");
+			//Debug.Log("Hi Material");
 		} else
 		{
 			AvatarSkin.GetComponent<Renderer> ().sharedMaterial = AvatarMaterialLow;
-			Debug.Log("Low Material");
+			//Debug.Log("Low Material");
 		}
 	}
 
@@ -398,15 +399,26 @@ public class avatarstatemachine : MonoBehaviour
 	public void AvatarStop()
 	{
 		int i;
+		if (finalpath [avatarwhereinpath] != Vector2.zero)
+		{
+			avatarafterstaticposition = finalpath [avatarwhereinpath + 1];
+			map_manager_local.mapfield [(int)finalpath [avatarwhereinpath].x, (int)finalpath [avatarwhereinpath].y].GetComponent<map_piece_def> ().SetActiveElement (1);
+		}
+		if (finalpath [avatarwhereinpath+1] != Vector2.zero)
+		{
+			map_manager_local.mapfield [(int)finalpath [avatarwhereinpath+1].x, (int)finalpath [avatarwhereinpath+1].y].GetComponent<map_piece_def> ().SetActiveElement (1);
+		}
+
 
 		for (i = 0; i < maxsizepath; i++)
 		{
-			
-			if (i != avatarwhereinpath + 1)
-				finalpath [i] = Vector2.zero;
+			finalpath [i] = Vector2.zero;
 		}
-		finalpath [avatarwhereinpath + 2] = finalpath [avatarwhereinpath + 1];
 
+
+		avatarmoving = false;
+		avatarobject.GetComponent<Animator> ().SetTrigger ("idle");
+		camera_lowfps_local.fpstime = 100;
 	}
 
     public void Actualize(float timestep)
@@ -486,6 +498,7 @@ public class avatarstatemachine : MonoBehaviour
     {
         int i, j, k;
         Vector2[] oldpath;
+		Vector2 whereclick;
         int shortest = 0;
 
         oldpath = new Vector2[maxsizepath];
@@ -552,7 +565,9 @@ public class avatarstatemachine : MonoBehaviour
         }
         //sort
 
-        if (successfulpaths[0] != -1)
+		whereclick.x = whereX;
+		whereclick.y = whereY;
+		if (successfulpaths[0] != -1 && whereclick!=avataractualposition)
         {
             //Debug.Log("Path Length:" + paths[shortest].indexinsidepath);
             //Debug.Log("START[" + avatarwhereinpath + "]:" + avataractualposition);
@@ -589,9 +604,16 @@ public class avatarstatemachine : MonoBehaviour
                 for (i = 0; i < maxsizepath; i++) finalpath[i] = paths[shortest].singlepath[i];
             }
 
-			DeactivateActiveElements ();
-			avatarobject.GetComponent<Animator> ().SetTrigger ("run");
 
+			if (avatarafterstaticposition==finalpath[2] && finalpath[2]!=Vector2.zero) 
+			{
+				avatarwhereinpath = 1;
+				Debug.Log("Append path");  
+			}
+
+			DeactivateActiveElements ();
+
+			avatarobject.GetComponent<Animator> ().SetTrigger ("run");
         }
 
 

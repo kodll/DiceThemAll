@@ -8,6 +8,7 @@ public class map_manager : MonoBehaviour
     [HideInInspector] public int mapsize = 50;
     [HideInInspector] public minimap minimaplocal;
 	static avatarstatemachine avatarobject_local;
+	static character_definitions character_definitions_local;
     public GameObject maptapvalid;
     public GameObject mapmover;
     public GameObject mapcamera;
@@ -33,7 +34,7 @@ public class map_manager : MonoBehaviour
     bool tap;
     float taplength;
     Ray ray;
-	bool canscrollmanually;
+	[HideInInspector] public bool canscrollmanually;
     Vector3 oldmousepos;
 	[HideInInspector] public Vector3 newmousepos;
 	[HideInInspector] public Vector3 initialmousepos;
@@ -69,13 +70,14 @@ public class map_manager : MonoBehaviour
 		{
 			DiceNumberRotation[i] = Vector3.zero;
 		}
-		DiceNumberRotation [0].x = 180;
 		DiceNumberRotation [1].x = 90;
-		DiceNumberRotation [1].y = 180;
 		DiceNumberRotation [2].y = 90;
 		DiceNumberRotation [2].x = 90;
 		DiceNumberRotation [3].y = 270;
 		DiceNumberRotation [4].x = 90;
+		DiceNumberRotation [4].y = 180;
+		DiceNumberRotation [5].y = 180;
+
 		//----------------------------------------------------------------------
 
         mapvectoroffset = Vector3.zero;
@@ -90,6 +92,9 @@ public class map_manager : MonoBehaviour
             }
 
 		avatarobject_local = GameObject.FindObjectOfType(typeof(avatarstatemachine)) as avatarstatemachine;
+
+		character_definitions_local = GameObject.FindObjectOfType(typeof(character_definitions)) as character_definitions;
+
         map_piece_def[] myItems = FindObjectsOfType(typeof(map_piece_def)) as map_piece_def[];
         foreach (map_piece_def item in myItems)
         {
@@ -113,6 +118,8 @@ public class map_manager : MonoBehaviour
 		avatarobject_local.FogUpdate();
 
 		GUIChestOpenedPopup.GetComponent<gui_chest_unlocked_popup>().InitGuiChestSystem ();
+
+		character_definitions_local.character_definitions_init ();
 		//--------------------------------------------------------------------------------
 
 
@@ -288,7 +295,7 @@ public class map_manager : MonoBehaviour
 
 	public void TriggerScrolling(bool scrolling)
 	{
-		Debug.Log("Scrolling: " + scrolling);
+		//Debug.Log("Scrolling: " + scrolling);
 		canscrollmanually = scrolling;
 		tap = false;
 		if (scrolling)

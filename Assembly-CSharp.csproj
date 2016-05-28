@@ -49,6 +49,7 @@
      <Compile Include="Assets\Scripts\aspectratio.cs" />
      <Compile Include="Assets\Scripts\avatarstatemachine.cs" />
      <Compile Include="Assets\Scripts\camera_lowfps.cs" />
+     <Compile Include="Assets\Scripts\character_definitions.cs" />
      <Compile Include="Assets\Scripts\destroy_intime.cs" />
      <Compile Include="Assets\Scripts\dice_machine.cs" />
      <Compile Include="Assets\Scripts\fog_controller.cs" />
