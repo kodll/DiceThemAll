@@ -24,12 +24,13 @@ public class dice_machine : MonoBehaviour {
 		diceobject.transform.localPosition = diceobject.transform.localPosition*9;
 		diceobject.transform.rotation = diceanimateddummy.transform.rotation;
 		vect = diceobject.transform.eulerAngles;
-		vect.x = Mathf.Round (vect.x / cuttedangle) * cuttedangle;
+
+		/*vect.x = Mathf.Round (vect.x / cuttedangle) * cuttedangle;
 		vect.y = Mathf.Round (vect.y / cuttedangle) * cuttedangle;
 		vect.z = Mathf.Round (vect.z / cuttedangle) * cuttedangle;
-		diceobject.transform.eulerAngles = vect;
+		diceobject.transform.eulerAngles = vect;*/
 
-		vect.x = (diceobject.transform.localPosition.y + 2)/30+1;
+		vect.x = (diceobject.transform.localPosition.y + 2)/50+1;
 		vect.y = vect.x;
 		vect.z = vect.x;
 		diceobject.transform.localScale = vect;

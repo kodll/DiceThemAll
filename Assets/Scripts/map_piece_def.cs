@@ -65,8 +65,20 @@ public class map_piece_def : MonoBehaviour
 		Vector3 cross;
 		Vector3 ActiveElementZero;
 		Vector3 AvatarElementZero;
+		int i;
 
+		yield return null;
 
+		if (!avatarobject_local.avatarmoving)
+		{
+			for (i = 0; i < 50; i++)
+			{
+				avatarobject_local.RotateAvatarToWaypoint (ActiveElementObject.transform.position, 3);
+				yield return null;
+			}
+			//avatarobject_local.RotateAvatarToWaypoint (ActiveElementObject.transform.position, -1);
+		}
+		/*
 		ActiveElementZero = ActiveElementObject.transform.position;
 		AvatarElementZero = avatarobject_local.transform.position;
 		ActiveElementZero.y = 0;
@@ -81,6 +93,7 @@ public class map_piece_def : MonoBehaviour
 		}
 		targetdir = Vector3.zero;
 		targetdir.z = activelementangle;
+		*/
 
 		/*avatarobject_local.camerafolowobject.transform.position = (ActiveElementZero + AvatarElementZero) / 2;
 		ActiveElementZero = avatarobject_local.camerafolowobject.transform.position;
@@ -89,13 +102,14 @@ public class map_piece_def : MonoBehaviour
 */
 		yield return new WaitForSeconds(0.5f);
 
-		avatarobject_local.transform.localEulerAngles = targetdir;
+		//avatarobject_local.avatarrotationobject.transform.localEulerAngles = targetdir;
 
 		if (!cancelzoom) {
 			avatarobject_local.avatarobject.GetComponent<Animator> ().SetTrigger ("chestwaiting");
 			avatarobject_local.avatardetail = true;
 			Debug.Log ("AvatarLowFPS");
 		}
+		avatarobject_local.RotateAvatarToWaypoint (ActiveElementObject.transform.position,-1);
 
 		cancelzoom = false;
 

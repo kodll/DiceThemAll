@@ -13,6 +13,7 @@ public class panel_dicestoroll : MonoBehaviour
 		public GameObject Slot;
 		public GameObject Dice;
 		public bool dicesrolled;
+		public int rollednumber;
 	}
 	const float betweendiceswait = 0.15f;
 
@@ -30,6 +31,8 @@ public class panel_dicestoroll : MonoBehaviour
 		{
 			DicesField[i].Slot = null;
 			DicesField[i].Dice = null;
+			DicesField[i].dicesrolled = false;
+			DicesField[i].rollednumber = -1;
 		}
 	}
 	
@@ -55,8 +58,15 @@ public class panel_dicestoroll : MonoBehaviour
 	}
 	public void RollDice(int index)
 	{
+		int randomrollednumber;
+		int randomvariant;
+		randomrollednumber = Random.Range (1, 6);
+		randomvariant = Random.Range (1, 3);
+		randomvariant = 1;
+
 		DicesField [index].dicesrolled = true;
-		DicesField [index].Dice.GetComponent<dice_machine> ().diceanimation.GetComponent<Animator> ().SetTrigger ("roll31");
+		DicesField [index].rollednumber = randomrollednumber;
+		DicesField [index].Dice.GetComponent<dice_machine> ().diceanimation.GetComponent<Animator> ().SetTrigger ("roll"+randomrollednumber+randomvariant);
 	}
 
 	IEnumerator ThrowAllDicesSequence()

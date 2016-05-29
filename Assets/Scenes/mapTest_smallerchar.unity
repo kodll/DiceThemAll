@@ -563,7 +563,7 @@ Transform:
   m_LocalScale: {x: 443.06888, y: 443.06873, z: 0}
   m_Children: []
   m_Father: {fileID: 1478600433}
-  m_RootOrder: 3
+  m_RootOrder: 2
 --- !u!212 &70669843
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2811,12 +2811,12 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 739496932}
-  m_LocalRotation: {x: -0.000000029802319, y: 0, z: 0.7071068, w: 0.70710677}
-  m_LocalPosition: {x: 0, y: 0, z: 9.023529}
-  m_LocalScale: {x: 33.150787, y: 51.024616, z: 39.206394}
+  m_LocalRotation: {x: 0.000000119209275, y: -0.7071068, z: 0.7071068, w: -0.000000029802365}
+  m_LocalPosition: {x: 0, y: -4.123529, z: 0}
+  m_LocalScale: {x: 33.15078, y: 51.02461, z: 39.20639}
   m_Children: []
-  m_Father: {fileID: 1478600433}
-  m_RootOrder: 2
+  m_Father: {fileID: 1266489491}
+  m_RootOrder: 1
 --- !u!23 &739496934
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4791,8 +4791,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1257991072}
+  - {fileID: 739496933}
   m_Father: {fileID: 1478600433}
-  m_RootOrder: 4
+  m_RootOrder: 3
 --- !u!1001 &1269692885
 Prefab:
   m_ObjectHideFlags: 0
@@ -5665,7 +5666,6 @@ Transform:
   m_Children:
   - {fileID: 1899464766}
   - {fileID: 2009488087}
-  - {fileID: 739496933}
   - {fileID: 70669842}
   - {fileID: 1266489491}
   - {fileID: 1766042612}
@@ -5728,6 +5728,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   avatarobject: {fileID: 1257991071}
+  avatarrotationobject: {fileID: 1266489490}
   avatarcamera: {fileID: 1766042611}
   minimapobject: {fileID: 969807373}
   camerafolowobject: {fileID: 1899464765}
@@ -7565,14 +7566,14 @@ Transform:
   - {fileID: 32909979}
   - {fileID: 41818499}
   m_Father: {fileID: 1478600433}
-  m_RootOrder: 5
+  m_RootOrder: 4
 --- !u!114 &1766042613
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1766042611}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a9f3c5eb0f6bba44d93038b56a327956, type: 3}
   m_Name: 

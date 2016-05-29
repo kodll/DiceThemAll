@@ -19,21 +19,24 @@ public class avatarstatemachine : MonoBehaviour
     static int[,] roomfield;
     public const int maxsizepath = 400;
 	public GameObject avatarobject;
+	public GameObject avatarrotationobject;
 	public GameObject avatarcamera;
 	public GameObject minimapobject;
 	public GameObject camerafolowobject;
 	public GameObject AvatarSkin;
 	public Material AvatarMaterialLow;
 	public Material AvatarMaterialHi;
-	float avatarshift = 15;
+	float avatarshift = 20;
 
     static float avatarspeed = 200;
-    static float avatarrotationspeed = 8;
+    static float avatarrotationspeed = 12;
+	static float curveoffset = 20;
 
     [HideInInspector] public Vector2 avataractualposition;
 	[HideInInspector] public Vector2 avatarafterstaticposition;
 
     static Vector3 avatar_old_worldposition;
+	static float avatar_old_rotationx = 0;
     [HideInInspector] public Vector3 avatar_actual_worldposition;
     static Vector2[] finalpath;
     static int avatarwhereinpath = 0;
@@ -76,49 +79,55 @@ public class avatarstatemachine : MonoBehaviour
 		}
 	}
 
-    public void RotateAvatarByPath()
+	public void RotateAvatarToWaypoint(Vector3 _wheretogo, float strength)
     {
-        Vector3 delta;
-        float oldangle;
+       	Vector3 wheretogodirection;
+		//Vector3 delta;
+		Vector3 finalrotation;
+		Vector3 cross;
+		//float oldangle;
         float finalangle = 0;
+		float angleincrement;
+	
 
-        delta = avatar_actual_worldposition - avatar_old_worldposition;
-        delta = delta.normalized;
+		wheretogodirection = _wheretogo - avatar_actual_worldposition;
 
-        //Debug.Log("Delta: " + delta);       
+		finalangle = Vector3.Angle(Vector3.right,wheretogodirection);
 
-        oldangle = transform.localRotation.eulerAngles.z;
+		cross = Vector3.Cross(Vector3.right,wheretogodirection);
+		if (cross.z > 0)
+		{
+			finalangle = 360 - finalangle;
+		}
 
-        if (delta.x == 0 && delta.y == 1) finalangle = 90;
-        else if (delta.x == 0 && delta.y == -1) finalangle = 270;
-        else if (delta.x == -1 && delta.y == 0) finalangle = 180;
-        else if (delta.x == 1 && delta.y == 0) finalangle = 0;
-        else finalangle = oldangle;
+		//finalrotation = avatarrotationobject.transform.localEulerAngles;
 
-        if (Mathf.Round(oldangle) != Mathf.Round(finalangle))
-        {
-            if (Mathf.Abs(finalangle - oldangle) <= 180)
-            {
-                finalangle = (finalangle - oldangle) * Time.deltaTime * avatarrotationspeed;
-            }
-            else
-            {
-                if ((finalangle - oldangle) > 0)
-                {
-                    //Debug.Log("PLUS 180");
-                    finalangle = -(finalangle + 360 - oldangle) * Time.deltaTime * avatarrotationspeed;
-                    
-                }
-                else
-                {
-                    finalangle = (finalangle + 360 - oldangle) * Time.deltaTime * avatarrotationspeed;
-                    //Debug.Log("MINUS 180");
-                }
+		angleincrement = finalangle - avatar_old_rotationx;
+		if (angleincrement >180) angleincrement = -(360 - angleincrement);
+		else if (angleincrement <-180) angleincrement = 360 + angleincrement;
 
-            }
-        }
-        else finalangle = 0;
-        this.transform.Rotate(0, 0, finalangle);
+		if (strength != -1)
+		{
+			finalrotation.x = avatar_old_rotationx + angleincrement * Time.deltaTime * avatarrotationspeed * strength;
+		}
+		else
+		{
+			finalrotation.x = avatar_old_rotationx + angleincrement;
+		}
+
+		//finalrotation.x = finalangle;
+		finalrotation.y = 90;
+		finalrotation.z = 270;
+
+		Debug.Log("OriginalRotation: " + avatar_old_rotationx + ", FinalRotation:" + finalangle + " Increment: " + angleincrement);
+
+		avatarrotationobject.transform.localEulerAngles=finalrotation;
+
+		avatar_old_rotationx = finalrotation.x;
+		if (avatar_old_rotationx < 0)
+			avatar_old_rotationx = avatar_old_rotationx + 360;
+		if (avatar_old_rotationx > 360)
+			avatar_old_rotationx = avatar_old_rotationx - 360;
 
     }
         
@@ -427,6 +436,12 @@ public class avatarstatemachine : MonoBehaviour
         Vector3 _norm = Vector3.zero;
         Vector3 _avatarpos = Vector3.zero;
         Vector3 _wheretogo = Vector3.zero;
+		Vector3 _wheretogo0 = Vector3.zero;
+		Vector3 _wheretogo2 = Vector3.zero;
+		Vector2 path1;
+		Vector2 path2;
+		float waypointdistance1;
+		float waypointdistance2;
 
         if (avatarmoving) //avatar is moving
         {
@@ -436,6 +451,45 @@ public class avatarstatemachine : MonoBehaviour
 			_wheretogo.x = (finalpath[avatarwhereinpath + 1].x - map_manager_local.mapoffset) * map_manager_local.mappiecesize + avatarshift;
 			_wheretogo.y = (finalpath[avatarwhereinpath + 1].y - map_manager_local.mapoffset) * map_manager_local.mappiecesize/* - avatarshift*/;
             _wheretogo.z = map_manager_local.floorZ;
+
+			path1 = finalpath [avatarwhereinpath + 1] - finalpath [avatarwhereinpath];
+
+			if (finalpath [avatarwhereinpath + 2] != Vector2.zero) {
+				path2 = finalpath [avatarwhereinpath + 2] - finalpath [avatarwhereinpath + 1];
+
+				_wheretogo0.x = (finalpath [avatarwhereinpath].x - map_manager_local.mapoffset) * map_manager_local.mappiecesize + avatarshift;
+				_wheretogo0.y = (finalpath [avatarwhereinpath].y - map_manager_local.mapoffset) * map_manager_local.mappiecesize/* - avatarshift*/;
+				_wheretogo0.z = map_manager_local.floorZ;
+
+				_wheretogo2.x = (finalpath [avatarwhereinpath + 2].x - map_manager_local.mapoffset) * map_manager_local.mappiecesize + avatarshift;
+				_wheretogo2.y = (finalpath [avatarwhereinpath + 2].y - map_manager_local.mapoffset) * map_manager_local.mappiecesize/* - avatarshift*/;
+				_wheretogo2.z = map_manager_local.floorZ;
+
+				_deltavector = transform.localPosition - _wheretogo0;
+				waypointdistance1 = _deltavector.magnitude;
+				_deltavector = _wheretogo2 - transform.localPosition;
+				waypointdistance2 = _deltavector.magnitude;
+
+				if (path1 != path2 && waypointdistance1 > map_manager_local.mappiecesize * 0.3f) {
+					_wheretogo.x = _wheretogo.x - path1.x * curveoffset * 1.5f + path2.x * curveoffset; 
+					_wheretogo.y = _wheretogo.y - path1.y * curveoffset * 1.5f + path2.y * curveoffset; 
+
+					Debug.Log ("waypoint1:" + finalpath [avatarwhereinpath] + " waypoint2:" + finalpath [avatarwhereinpath + 1] + " waypoint3:" + finalpath [avatarwhereinpath + 2]);
+					Debug.Log ("path1:" + path1 + " path2:" + path2);
+					Debug.Log ("offset:" + _wheretogo);
+				}
+			}
+			else
+			{
+				_deltavector = _wheretogo - transform.localPosition;
+				waypointdistance2 = _deltavector.magnitude;
+				if (waypointdistance2 < map_manager_local.mappiecesize * 0.9f && waypointdistance2 > map_manager_local.mappiecesize * 0.7f) {
+					_wheretogo.x = _wheretogo.x - path1.x * map_manager_local.mappiecesize * 0.6f; 
+					_wheretogo.y = _wheretogo.y - path1.y * map_manager_local.mappiecesize * 0.6f; 
+				}
+			}
+			//Debug.Log("offset:" + _wheretogo);
+
 
             _deltavector = _wheretogo - transform.localPosition;
             _norm = _deltavector.normalized * avatarspeed * timestep;
@@ -466,11 +520,12 @@ public class avatarstatemachine : MonoBehaviour
 			}
             _avatarpos = _avatarpos + _norm;
             avatar_actual_worldposition = _avatarpos;
+				
             transform.localPosition = _avatarpos;
 
 			if (avatarmoving)
 			{
-				RotateAvatarByPath ();
+				RotateAvatarToWaypoint (_wheretogo,1);
 			}
         }
         
