@@ -54,7 +54,7 @@ public class dice_machine : MonoBehaviour {
 		vect.z = Mathf.Round (vect.z / cuttedangle) * cuttedangle;
 		diceobject.transform.eulerAngles = vect;
 
-		vect.x = 1-(dice2dimageobject.transform.localPosition.z + 2)/20;
+		vect.x = 1-(dice2dimageobject.transform.localPosition.z + 2)/40;
 		vect.y = vect.x;
 		vect.z = vect.x;
 		dice2dimageobject.transform.localScale = vect;

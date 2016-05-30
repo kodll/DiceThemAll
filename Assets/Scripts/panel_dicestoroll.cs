@@ -105,7 +105,7 @@ public class panel_dicestoroll : MonoBehaviour
 		{
 			if (DicesField [i].Dice != null && !DicesField [i].dicesrolled) 
 			{
-				DicesField [i].dice_machine_local.dicelookatrotation.transform.RotateAround (DicesField [i].Dice.transform.position, Vector3.up, 100 * Time.deltaTime);
+				DicesField [i].dice_machine_local.dicelookatrotation.transform.RotateAround (DicesField [i].Dice.transform.position, Vector3.up, -100 * Time.deltaTime);
 			}
 			else if (DicesField [i].Dice != null)
 			{
