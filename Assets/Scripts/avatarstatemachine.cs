@@ -119,7 +119,7 @@ public class avatarstatemachine : MonoBehaviour
 		finalrotation.y = 90;
 		finalrotation.z = 270;
 
-		Debug.Log("OriginalRotation: " + avatar_old_rotationx + ", FinalRotation:" + finalangle + " Increment: " + angleincrement);
+		//Debug.Log("OriginalRotation: " + avatar_old_rotationx + ", FinalRotation:" + finalangle + " Increment: " + angleincrement);
 
 		avatarrotationobject.transform.localEulerAngles=finalrotation;
 
@@ -474,9 +474,9 @@ public class avatarstatemachine : MonoBehaviour
 					_wheretogo.x = _wheretogo.x - path1.x * curveoffset * 1.5f + path2.x * curveoffset; 
 					_wheretogo.y = _wheretogo.y - path1.y * curveoffset * 1.5f + path2.y * curveoffset; 
 
-					Debug.Log ("waypoint1:" + finalpath [avatarwhereinpath] + " waypoint2:" + finalpath [avatarwhereinpath + 1] + " waypoint3:" + finalpath [avatarwhereinpath + 2]);
-					Debug.Log ("path1:" + path1 + " path2:" + path2);
-					Debug.Log ("offset:" + _wheretogo);
+					//Debug.Log ("waypoint1:" + finalpath [avatarwhereinpath] + " waypoint2:" + finalpath [avatarwhereinpath + 1] + " waypoint3:" + finalpath [avatarwhereinpath + 2]);
+					//Debug.Log ("path1:" + path1 + " path2:" + path2);
+					//Debug.Log ("offset:" + _wheretogo);
 				}
 			}
 			else

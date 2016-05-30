@@ -42,8 +42,8 @@ public class gui_chest_unlocked_popup : MonoBehaviour {
 			DiceRewardField[i].transform.SetParent(LootItemObjectField[i].GetComponent<loot_item_def>().DiceSlot.transform);
 			DiceRewardField[i].transform.localPosition = Vector3.zero;
 			DiceRewardField[i].transform.localScale = map_manager_local.DiceObject.transform.localScale;
-			DiceRewardField[i].transform.Rotate(map_manager_local.DiceNumberRotation[i].x,map_manager_local.DiceNumberRotation[i].y,map_manager_local.DiceNumberRotation[i].z);
-
+			//DiceRewardField[i].transform.Rotate(map_manager_local.DiceNumberRotation[i].x,map_manager_local.DiceNumberRotation[i].y,map_manager_local.DiceNumberRotation[i].z);
+			DiceRewardField[i].GetComponent<dice_machine>().dicelookatrotation.transform.Rotate(map_manager_local.DiceNumberRotation[i].x,map_manager_local.DiceNumberRotation[i].y,map_manager_local.DiceNumberRotation[i].z);
 		}
 
 		PanelToRollDicesObject = Instantiate (map_manager_local.PrefabPanelDicesToRollObject, Vector3.zero, Quaternion.identity) as GameObject;
@@ -97,7 +97,7 @@ public class gui_chest_unlocked_popup : MonoBehaviour {
 	public void CloseWindow()
 	{
 		//ActiveElementObject.GetComponent<map_piece_def> ().CancelZoom();
-		ActiveElementObject.GetComponent<map_piece_def> ().cancelzoom = true;
+		ActiveElementObject.GetComponent<map_piece_def> ().CancelZoom();
 
 		this.GetComponent<Animator> ().SetTrigger ("PanelHide");
 		map_manager_local.mapcamera.GetComponent<Animator> ().SetTrigger ("smalldetail_out");

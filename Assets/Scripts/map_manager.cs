@@ -156,9 +156,11 @@ public class map_manager : MonoBehaviour
 
 		avatarobject_local.Actualize (Time.deltaTime);
 
+		oldmousepos = newmousepos;
+
 		if (canscrollmanually)
 		{
-			oldmousepos = newmousepos;
+			
 
 			mpos = Input.mousePosition;
 			ray = tapcameracomponent.ScreenPointToRay (new Vector3 (mpos.x, mpos.y, 0));

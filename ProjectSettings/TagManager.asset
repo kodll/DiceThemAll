@@ -21,8 +21,8 @@ TagManager:
   - 3dlighteffects
   - characters_shadow
   - backgroundmap
-  - pixelatedgui
-  - fontlayer
+  - 2dgui
+  - pixelateddices
   - 
   - 
   - 

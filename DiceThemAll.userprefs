@@ -1,20 +1,19 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\dice_machine.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\gui_chest_unlocked_popup.cs">
     <Files>
-      <File FileName="Assets\Scripts\avatarstatemachine.cs" Line="130" Column="49" />
+      <File FileName="Assets\Scripts\panel_dicestoroll.cs" Line="107" Column="142" />
+      <File FileName="Assets\Scripts\map_piece_def.cs" Line="116" Column="70" />
+      <File FileName="Assets\Scripts\avatarstatemachine.cs" Line="604" Column="24" />
       <File FileName="Assets\Scripts\camera_lowfps.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\map_manager.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\map_piece_def.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\dice_machine.cs" Line="28" Column="45" />
-      <File FileName="Assets\Scripts\gui_chest_unlocked_popup.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\aspectratio.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\map_manager.cs" Line="164" Column="4" />
+      <File FileName="Assets\Scripts\dice_machine.cs" Line="51" Column="26" />
+      <File FileName="Assets\Scripts\gui_chest_unlocked_popup.cs" Line="46" Column="1" />
+      <File FileName="Assets\Scripts\aspectratio.cs" Line="6" Column="2" />
       <File FileName="Assets\Scripts\destroy_intime.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\fog_controller.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\minimap.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\global_billboard.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\panel_dicestoroll.cs" Line="65" Column="21" />
-      <File FileName="Assets\Scripts\character_definitions.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\character_definitions.cs" Line="6" Column="32" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

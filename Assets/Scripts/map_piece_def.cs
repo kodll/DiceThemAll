@@ -19,6 +19,7 @@ public class map_piece_def : MonoBehaviour
 	static map_manager map_manager_local;
 	static avatarstatemachine avatarobject_local;
 	static camera_lowfps camera_lowfps_local;
+	private IEnumerator setdetailcoroutine;
 
     // Use this for initialization
     void Start ()
@@ -68,6 +69,16 @@ public class map_piece_def : MonoBehaviour
 		int i;
 
 		yield return null;
+		/*
+		ActiveElementZero = ActiveElementObject.transform.position;
+		AvatarElementZero = avatarobject_local.transform.position;
+		ActiveElementZero.y = 0;
+
+		avatarobject_local.camerafolowobject.transform.position = (ActiveElementZero + AvatarElementZero) / 2;
+		ActiveElementZero = avatarobject_local.camerafolowobject.transform.position;
+		ActiveElementZero.x = ActiveElementZero.x + 2f;
+		avatarobject_local.camerafolowobject.transform.position = ActiveElementZero;
+		*/
 
 		if (!avatarobject_local.avatarmoving)
 		{
@@ -76,33 +87,15 @@ public class map_piece_def : MonoBehaviour
 				avatarobject_local.RotateAvatarToWaypoint (ActiveElementObject.transform.position, 3);
 				yield return null;
 			}
-			//avatarobject_local.RotateAvatarToWaypoint (ActiveElementObject.transform.position, -1);
+
 		}
-		/*
-		ActiveElementZero = ActiveElementObject.transform.position;
-		AvatarElementZero = avatarobject_local.transform.position;
-		ActiveElementZero.y = 0;
-		AvatarElementZero.y = 0;
 
-		targetdir=ActiveElementZero-AvatarElementZero;
-		activelementangle = Vector3.Angle(Vector3.right,targetdir);
-		cross = Vector3.Cross(Vector3.right,targetdir);
-		if (cross.y > 0)
-		{
-			activelementangle = 360 - activelementangle;
-		}
-		targetdir = Vector3.zero;
-		targetdir.z = activelementangle;
-		*/
+		if (!avatarobject_local.avatarmoving)
+			yield return new WaitForSeconds(0.15f);
+		else 
+			yield return new WaitForSeconds(0.5f);
 
-		/*avatarobject_local.camerafolowobject.transform.position = (ActiveElementZero + AvatarElementZero) / 2;
-		ActiveElementZero = avatarobject_local.camerafolowobject.transform.position;
-		ActiveElementZero.x = ActiveElementZero.x + 2f;
-		avatarobject_local.camerafolowobject.transform.position = ActiveElementZero;
-*/
-		yield return new WaitForSeconds(0.5f);
 
-		//avatarobject_local.avatarrotationobject.transform.localEulerAngles = targetdir;
 
 		if (!cancelzoom) {
 			avatarobject_local.avatarobject.GetComponent<Animator> ().SetTrigger ("chestwaiting");
@@ -115,13 +108,14 @@ public class map_piece_def : MonoBehaviour
 
 	}
 
-	/*public void CancelZoom()
+	public void CancelZoom()
 	{
-		StopCoroutine(SetDetailAnim ());
+		cancelzoom = true;
+		StopCoroutine(setdetailcoroutine);
 		avatarobject_local.avatardetail = false;
 		camera_lowfps_local.fpstime = 100;
 		Debug.Log("CancelZoom");  
-	}*/
+	}
 
 	public void PressedButton()
 	{
@@ -149,7 +143,9 @@ public class map_piece_def : MonoBehaviour
 			map_manager_local.GUIChestOpenedPopup.GetComponent<Animator> ().SetTrigger ("PanelShow");
 			avatarobject_local.avatarcamera.GetComponent<Animator> ().SetTrigger ("zoomin");
 
-			StartCoroutine (SetDetailAnim ());
+			cancelzoom = false;
+			setdetailcoroutine = SetDetailAnim ();
+			StartCoroutine (setdetailcoroutine);
 
 			avatarobject_local.SetHiMaterial (true);
 			map_manager_local.GUIChestOpenedPopup.GetComponent<gui_chest_unlocked_popup> ().InitChestAppearance ();
