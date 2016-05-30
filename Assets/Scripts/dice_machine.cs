@@ -9,7 +9,7 @@ public class dice_machine : MonoBehaviour {
 	public GameObject dice2dimageobject;
 	public GameObject pixelcamera;
 	public RenderTexture myrendertexture;
-	const int texturesize = 42;
+	const int texturesize = 52;
 
 	const float cuttedangle = 11.25f;
 
@@ -48,11 +48,12 @@ public class dice_machine : MonoBehaviour {
 		dice2dimageobject.transform.localPosition = dice2dimageobject.transform.localPosition*5;
 		diceobject.transform.rotation = diceanimateddummy.transform.rotation;
 
-		vect = diceobject.transform.eulerAngles;
+		/*vect = diceobject.transform.eulerAngles;
 		vect.x = Mathf.Round (vect.x / cuttedangle) * cuttedangle;
 		vect.y = Mathf.Round (vect.y / cuttedangle) * cuttedangle;
 		vect.z = Mathf.Round (vect.z / cuttedangle) * cuttedangle;
 		diceobject.transform.eulerAngles = vect;
+		*/
 
 		vect.x = 1-(dice2dimageobject.transform.localPosition.z + 2)/40;
 		vect.y = vect.x;

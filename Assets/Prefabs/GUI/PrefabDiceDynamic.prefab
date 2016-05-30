@@ -239,7 +239,7 @@ Camera:
   far clip plane: 5000
   field of view: 60
   orthographic: 1
-  orthographic size: 160
+  orthographic size: 200
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -353,6 +353,7 @@ MonoBehaviour:
   dicelookatrotation: {fileID: 159478}
   dice2dimageobject: {fileID: 102612}
   pixelcamera: {fileID: 158472}
+  myrendertexture: {fileID: 0}
 --- !u!222 &22290064
 CanvasRenderer:
   m_ObjectHideFlags: 1
@@ -418,6 +419,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_Layer
       value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: orthographic size
+      value: 200
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
