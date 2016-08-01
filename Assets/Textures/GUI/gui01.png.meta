@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: e0a10290b97a6a244a7ddda25f7bbe95
-timeCreated: 1464641370
+timeCreated: 1468176485
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -10,6 +10,10 @@ TextureImporter:
     21300006: gui_panel_above_header01
     21300008: gui_header_skull
     21300010: gui_header_topframe
+    21300012: gui_attackicon_shadow
+    21300014: gui_attackicon_swords2
+    21300016: gui_attackicon_skeleton
+    21300018: gui01_3
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -682,6 +686,56 @@ TextureImporter:
         - {x: -8.5, y: -31}
         - {x: -5.5, y: -27}
         - {x: -5.5, y: -18}
+    - name: gui_attackicon_shadow
+      rect:
+        serializedVersion: 2
+        x: 204
+        y: 1005
+        width: 30
+        height: 7
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+    - name: gui_attackicon_swords2
+      rect:
+        serializedVersion: 2
+        x: 237
+        y: 992
+        width: 36
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -18, y: 16}
+        - {x: -18, y: -9}
+        - {x: -16, y: -16}
+        - {x: 17, y: -16}
+        - {x: 18, y: -12}
+        - {x: 18, y: 16}
+    - name: gui_attackicon_skeleton
+      rect:
+        serializedVersion: 2
+        x: 274
+        y: 995
+        width: 21
+        height: 29
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+    - name: gui01_3
+      rect:
+        serializedVersion: 2
+        x: 295
+        y: 1006
+        width: 13
+        height: 18
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
     outline: []
   spritePackingTag: 
   userData: 

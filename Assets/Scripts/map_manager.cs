@@ -48,9 +48,11 @@ public class map_manager : MonoBehaviour
 
     public GameObject fogcontainer;
     public GameObject fogroomprefab;
-    
-	//---GLOBAL DEFINITIONS------------------------------------------------------
-	public GameObject DiceObject;
+
+    public GameObject mapcontainer;
+
+    //---GLOBAL DEFINITIONS------------------------------------------------------
+    public GameObject DiceObject;
 	public GameObject PrefabPanelDicesToRollObject;
 
 	[HideInInspector] public Vector3[] DiceNumberRotation;
@@ -114,16 +116,19 @@ public class map_manager : MonoBehaviour
 		avatarobject_local.PathFindingInit();
 		avatarobject_local.PathFindingSetRooms(mapfield);
 		avatarobject_local.FogInit();
-		avatarobject_local.SetCharacter(27, 22);
-		avatarobject_local.FogUpdate();
-
 		GUIChestOpenedPopup.GetComponent<gui_chest_unlocked_popup>().InitGuiChestSystem ();
 
-		character_definitions_local.character_definitions_init ();
-		//--------------------------------------------------------------------------------
+		character_definitions_local.character_definitions_init (true);
 
+        avatarobject_local.SetCharacter(27, 22); //start position
+        avatarobject_local.FogUpdate();
+        //--------------------------------------------------------------------------------
+        // battles -----------------------------------------------------
+        character_definitions_local.AddBattle(26, 23);
+        character_definitions_local.AddBattle(25, 25);
 
-		canscrollmanually = true;
+        //--------------------------------------------------------------
+        canscrollmanually = true;
         avatarstatictime = 0.4f;
         camerafadeouttime = 0.3f;
         cameraspeed = cameraspeedhi;
