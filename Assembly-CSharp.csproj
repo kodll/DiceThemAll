@@ -47,6 +47,7 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\additional_scrolling.cs" />
      <Compile Include="Assets\Scripts\aspectratio.cs" />
+     <Compile Include="Assets\Scripts\attack_icon.cs" />
      <Compile Include="Assets\Scripts\avatarstatemachine.cs" />
      <Compile Include="Assets\Scripts\camera_lowfps.cs" />
      <Compile Include="Assets\Scripts\character_definitions.cs" />
@@ -54,6 +55,7 @@
      <Compile Include="Assets\Scripts\dice_machine.cs" />
      <Compile Include="Assets\Scripts\fog_controller.cs" />
      <Compile Include="Assets\Scripts\global_billboard.cs" />
+     <Compile Include="Assets\Scripts\gui_battle_popup.cs" />
      <Compile Include="Assets\Scripts\gui_chest_unlocked_popup.cs" />
      <Compile Include="Assets\Scripts\loot_item_def.cs" />
      <Compile Include="Assets\Scripts\map_manager.cs" />

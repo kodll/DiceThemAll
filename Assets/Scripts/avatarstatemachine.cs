@@ -26,9 +26,9 @@ public class avatarstatemachine : MonoBehaviour
 	public GameObject AvatarSkin;
 	public Material AvatarMaterialLow;
 	public Material AvatarMaterialHi;
-	float avatarshift = 20;
+    [HideInInspector] public float avatarshift = 20;
 
-    static float avatarspeed = 200;
+    static float avatarspeed = 150;
     static float avatarrotationspeed = 12;
 	static float curveoffset = 20;
 
@@ -38,8 +38,8 @@ public class avatarstatemachine : MonoBehaviour
     static Vector3 avatar_old_worldposition;
 	static float avatar_old_rotationx = 0;
     [HideInInspector] public Vector3 avatar_actual_worldposition;
-    static Vector2[] finalpath;
-    static int avatarwhereinpath = 0;
+    [HideInInspector] public Vector2[] finalpath;
+    [HideInInspector] public int avatarwhereinpath = 0;
     [HideInInspector] public bool avatarmoving;
 	[HideInInspector] public bool avatardetail = false;
     [HideInInspector] public bool battlefoundinfog = false;
@@ -458,6 +458,7 @@ public class avatarstatemachine : MonoBehaviour
 		Vector2 path2;
 		float waypointdistance1;
 		float waypointdistance2;
+        int battleindex;
 
         if (avatarmoving) //avatar is moving
         {
@@ -520,10 +521,14 @@ public class avatarstatemachine : MonoBehaviour
 
                 FogUpdate();
 
-                Debug.Log("Checking Battle: " + (int)avataractualposition.x + ", " + (int)avataractualposition.y);
-                if (character_definitions_local.CheckBattle((int) avataractualposition.x, (int) avataractualposition.y)>=0)
+                //Debug.Log("Checking Battle: " + (int)avataractualposition.x + ", " + (int)avataractualposition.y);
+                battleindex = character_definitions_local.CheckBattle((int)avataractualposition.x, (int)avataractualposition.y);
+                if (battleindex>=0 && avatarwhereinpath>1)
                 {
                     //battle
+                    Debug.Log("battle, path index: " + avatarwhereinpath);
+                    map_manager_local.GUIBattlePopup.GetComponent<gui_battle_popup>().ShowGUI(true, battleindex);
+
                 }
 
                 
@@ -687,7 +692,7 @@ public class avatarstatemachine : MonoBehaviour
 			if (avatarafterstaticposition==finalpath[2] && finalpath[2]!=Vector2.zero) 
 			{
 				avatarwhereinpath = 1;
-				Debug.Log("Append path");  
+				//Debug.Log("Append path");  
 			}
 
 			DeactivateActiveElements ();
@@ -698,7 +703,7 @@ public class avatarstatemachine : MonoBehaviour
 
     }
 
-    static void CheckDirection(int pathindex, int whereX, int whereY)
+    static void CheckDirection(int pathindex, int whereX, int whereY) // path index and final path goal
     {
         int first = 0;
         int ways = 0;
@@ -718,10 +723,10 @@ public class avatarstatemachine : MonoBehaviour
         {
             itterations = itterations + 1;
             ways = 0;
-			if (fogfield[paths[pathindex].actualX + 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX + 1, paths[pathindex].actualY]) ways = ways + 1;
-			if (fogfield[paths[pathindex].actualX - 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX - 1, paths[pathindex].actualY]) ways = ways + 1;
-			if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY + 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY + 1]) ways = ways + 1;
-			if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY - 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY - 1]) ways = ways + 1;
+			if (fogfield[paths[pathindex].actualX + 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX + 1, paths[pathindex].actualY] && (character_definitions_local.CheckBattle(paths[pathindex].actualX + 1, paths[pathindex].actualY) == -1 || (paths[pathindex].actualX + 1 == whereX && paths[pathindex].actualY == whereY))) ways = ways + 1;
+			if (fogfield[paths[pathindex].actualX - 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX - 1, paths[pathindex].actualY] && (character_definitions_local.CheckBattle(paths[pathindex].actualX - 1, paths[pathindex].actualY) == -1 || (paths[pathindex].actualX - 1 == whereX && paths[pathindex].actualY == whereY))) ways = ways + 1;
+			if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY + 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY + 1] && (character_definitions_local.CheckBattle(paths[pathindex].actualX, paths[pathindex].actualY + 1) == -1 || (paths[pathindex].actualX == whereX && paths[pathindex].actualY + 1 == whereY))) ways = ways + 1;
+			if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY - 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY - 1] && (character_definitions_local.CheckBattle(paths[pathindex].actualX, paths[pathindex].actualY - 1) == -1 || (paths[pathindex].actualX == whereX && paths[pathindex].actualY - 1 == whereY))) ways = ways + 1;
 
             if (ways > 1) //crossing
             {
@@ -729,26 +734,26 @@ public class avatarstatemachine : MonoBehaviour
                 first = 0;
                 firstdelta = Vector2.zero;
 
-				if (fogfield[paths[pathindex].actualX + 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX + 1, paths[pathindex].actualY] && paths[pathindex].valid == 0)
+				if (fogfield[paths[pathindex].actualX + 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX + 1, paths[pathindex].actualY] && paths[pathindex].valid == 0 && (character_definitions_local.CheckBattle(paths[pathindex].actualX + 1, paths[pathindex].actualY) == -1 || (paths[pathindex].actualX + 1 == whereX && paths[pathindex].actualY == whereY)))
                 {
                     deltatest = Crossing(pathindex, whereX, whereY, 1, 0, first);
                     firstdelta = deltatest;
                     first = first + 1;
                 }
-				if (fogfield[paths[pathindex].actualX - 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX - 1, paths[pathindex].actualY] && paths[pathindex].valid == 0)
+				if (fogfield[paths[pathindex].actualX - 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX - 1, paths[pathindex].actualY] && paths[pathindex].valid == 0 && (character_definitions_local.CheckBattle(paths[pathindex].actualX - 1, paths[pathindex].actualY) == -1 || (paths[pathindex].actualX - 1 == whereX && paths[pathindex].actualY == whereY)))
                 {
 
                     deltatest = Crossing(pathindex, whereX, whereY, -1, 0, first);
                     if (deltatest != Vector2.zero) firstdelta = deltatest;
                     first = first + 1;
                 }
-				if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY + 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY + 1] && paths[pathindex].valid == 0)
+				if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY + 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY + 1] && paths[pathindex].valid == 0 && (character_definitions_local.CheckBattle(paths[pathindex].actualX, paths[pathindex].actualY + 1) == -1 || (paths[pathindex].actualX == whereX && paths[pathindex].actualY + 1 == whereY)))
                 {
                     deltatest = Crossing(pathindex, whereX, whereY, 0, 1, first);
                     if (deltatest != Vector2.zero) firstdelta = deltatest;
                     first = first + 1;
                 }
-				if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY - 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY - 1] && paths[pathindex].valid == 0)
+				if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY - 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY - 1] && paths[pathindex].valid == 0 && (character_definitions_local.CheckBattle(paths[pathindex].actualX, paths[pathindex].actualY - 1) == -1 || (paths[pathindex].actualX == whereX && paths[pathindex].actualY - 1 == whereY)))
                 {
                     deltatest = Crossing(pathindex, whereX, whereY, 0, -1, first);
                     if (deltatest != Vector2.zero) firstdelta = deltatest;
@@ -769,19 +774,19 @@ public class avatarstatemachine : MonoBehaviour
             {
                 first = 0;
 
-				if (fogfield[paths[pathindex].actualX + 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX + 1, paths[pathindex].actualY] && paths[pathindex].valid == 0)
+				if (fogfield[paths[pathindex].actualX + 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX + 1, paths[pathindex].actualY] && paths[pathindex].valid == 0 && (character_definitions_local.CheckBattle(paths[pathindex].actualX + 1, paths[pathindex].actualY) == -1 || (paths[pathindex].actualX + 1 == whereX && paths[pathindex].actualY == whereY)))
                 {
                     firstdelta = Crossing(pathindex, whereX, whereY, 1, 0, first);
                 }
-				else if (fogfield[paths[pathindex].actualX - 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX - 1, paths[pathindex].actualY] && paths[pathindex].valid == 0)
+				else if (fogfield[paths[pathindex].actualX - 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX - 1, paths[pathindex].actualY] && paths[pathindex].valid == 0 && (character_definitions_local.CheckBattle(paths[pathindex].actualX - 1, paths[pathindex].actualY) == -1 || (paths[pathindex].actualX - 1 == whereX && paths[pathindex].actualY == whereY)))
                 {
                     firstdelta = Crossing(pathindex, whereX, whereY, -1, 0, first);
                 }
-				else if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY + 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY + 1] && paths[pathindex].valid == 0)
+				else if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY + 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY + 1] && paths[pathindex].valid == 0 && (character_definitions_local.CheckBattle(paths[pathindex].actualX, paths[pathindex].actualY + 1) == -1 || (paths[pathindex].actualX == whereX && paths[pathindex].actualY + 1 == whereY)))
                 {
                     firstdelta = Crossing(pathindex, whereX, whereY, 0, 1, first);
                 }
-				else if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY - 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY - 1] && paths[pathindex].valid == 0)
+				else if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY - 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY - 1] && paths[pathindex].valid == 0 && (character_definitions_local.CheckBattle(paths[pathindex].actualX, paths[pathindex].actualY - 1) == -1 || (paths[pathindex].actualX == whereX && paths[pathindex].actualY - 1 == whereY)))
                 {
                     firstdelta = Crossing(pathindex, whereX, whereY, 0, -1, first);
                 }

@@ -3,23 +3,27 @@ using System.Collections;
 
 public class character_definitions:MonoBehaviour
 {
+    public GameObject[] prefab_enemy; //enemy visual prefab
+
 	public struct actual_character
 	{
         public bool living;
-        public int enemytype;
+        public int enemyTemplateIndex;
 		public int level;
 		public float actual_lives;
+        public float max_lives;
 		public float actual_damage;
 		public float actual_attspeed;
+        public float actual_atttime;
         public GameObject battleicon;
         public Vector2 battleposition;
 	}
 	public struct def_character
 	{
-		
-		public float init_lives;
-		public float init_damage;
-		public float init_attspeed;
+		public float init_damage; //REPAIR!!! - change to attribute combination
+		public float init_attspeed; //REPAIR!!! - change to attribute combination
+
+        public int visualTypeIndex;
         
         //basic attributes - must be 6
         public float strength;
@@ -50,13 +54,13 @@ public class character_definitions:MonoBehaviour
 		public float vitality_levelup_increment;
 
 	}
-	public def_character[,] def_enemy_list; // visual type, level
-	public def_character[] def_hero_list; // visual type
+	public def_character[] def_enemy_list; // enemy template definitions
+    public def_character[] def_hero_list; // hero template definition
 
 	public actual_character[] actual_enemy_list; // index of enemy in level
 	public actual_character[] actual_hero_list; // index of hero
 
-	public int ActiveHero;
+	public int ActiveHeroIndex;
     public int EnemyBattlesCount;
     public GameObject attackicon;
     static map_manager map_manager_local;
@@ -65,9 +69,13 @@ public class character_definitions:MonoBehaviour
 	{
         if (firstinit)
         {
-            def_enemy_list = new def_character[100, 200];
+            def_enemy_list = new def_character[200]; //enemy template definitions
+
+            SetupEnemyTemplates();
+
             def_hero_list = new def_character[10];
 
+            SetupHeroTemplates();
 
             //actual enemies
             actual_enemy_list = new actual_character[200];
@@ -76,23 +84,29 @@ public class character_definitions:MonoBehaviour
             actual_hero_list = new actual_character[5];
 
             map_manager_local = GameObject.FindObjectOfType(typeof(map_manager)) as map_manager;
+
+            ActiveHeroIndex = 0;
+
+            SetupNewHero(ActiveHeroIndex,0);
         }
 
-        ActiveHero = 0;
+        
         EnemyBattlesCount = 0;
     }
 
 	public float GetMaxLives(int type,int level)
 	{
 		float lives;
-		Debug.Log ("Enemy Set");
-		// Basic stats affect
-		lives = 
-			def_enemy_list[type, level].strength_to_lives_multi*def_enemy_list[type, level].strength+
-			def_enemy_list[type, level].dexterity_to_lives_multi*def_enemy_list[type, level].dexterity+
-			def_enemy_list[type, level].wisdom_to_lives_multi*def_enemy_list[type, level].wisdom+
-			def_enemy_list[type, level].vitality_to_lives_multi*def_enemy_list[type, level].vitality;
-
+        //Debug.Log ("Enemy Set");
+        // Basic stats affect
+        
+        lives = 
+			def_enemy_list[type].strength_to_lives_multi*def_enemy_list[type].strength+
+			def_enemy_list[type].dexterity_to_lives_multi*def_enemy_list[type].dexterity+
+			def_enemy_list[type].wisdom_to_lives_multi*def_enemy_list[type].wisdom+
+			def_enemy_list[type].vitality_to_lives_multi*def_enemy_list[type].vitality;
+            
+       
 		return lives;
 
 	}
@@ -100,7 +114,7 @@ public class character_definitions:MonoBehaviour
 	public float GetMaxLives(int hero)
 	{
 		float lives;
-		Debug.Log ("Hero Set");
+		//Debug.Log ("Hero Set");
 		lives = 
 			def_hero_list[hero].strength_to_lives_multi*def_hero_list[hero].strength+
 			def_hero_list[hero].dexterity_to_lives_multi*def_hero_list[hero].dexterity+
@@ -110,7 +124,7 @@ public class character_definitions:MonoBehaviour
 		return lives;
 	}
 
-    public void AddBattle(int x, int y)
+    public void AddBattle(int x, int y, int enemyTemplateIndex, int enemyLevel)
     {
         Vector3 pos;
         Vector2 battlepos;
@@ -132,10 +146,28 @@ public class character_definitions:MonoBehaviour
 
         actual_enemy_list[EnemyBattlesCount].living = true;
 
-        Debug.Log("Adding Battle: " + (int)battlepos.x + ", " + (int)battlepos.y);
+        actual_enemy_list[EnemyBattlesCount].enemyTemplateIndex = enemyTemplateIndex;
+
+        actual_enemy_list[EnemyBattlesCount].actual_damage = def_enemy_list[enemyTemplateIndex].init_damage;
+        actual_enemy_list[EnemyBattlesCount].actual_attspeed = def_enemy_list[enemyTemplateIndex].init_attspeed;
+        actual_enemy_list[EnemyBattlesCount].max_lives = GetMaxLives(enemyTemplateIndex, enemyLevel);
+        actual_enemy_list[EnemyBattlesCount].actual_lives = actual_enemy_list[EnemyBattlesCount].max_lives;
+
+        Debug.Log("Max Enemy[" + EnemyBattlesCount + "] Lives: " + actual_enemy_list[EnemyBattlesCount].max_lives + ", BattleSpeed:" + def_hero_list[enemyTemplateIndex].init_attspeed);
+        Debug.Log("EnemyTemplate Index: " + enemyTemplateIndex);
+
+        //Debug.Log("Adding Battle: " + (int)battlepos.x + ", " + (int)battlepos.y);
+
+
 
         EnemyBattlesCount = EnemyBattlesCount + 1;
     }
+
+    public void RemoveBattle(int index)
+    {
+        actual_enemy_list[index].living = false;
+        actual_enemy_list[index].battleicon.SetActive(false);
+    } 
 
     public int CheckBattle(int x, int y)
     {
@@ -158,7 +190,7 @@ public class character_definitions:MonoBehaviour
         {
             if (actual_enemy_list[foundindex].living)
             {
-                Debug.Log("Battle Found: " + foundindex);
+                //Debug.Log("Battle Found: " + foundindex);
                 return foundindex;
             }
             else
@@ -172,5 +204,66 @@ public class character_definitions:MonoBehaviour
         }
         
     }
+
+    public void SetupNewHero(int actualIndex, int templateIndex)
+    {
+        actual_hero_list[actualIndex].actual_damage = def_hero_list[templateIndex].init_damage;
+        actual_hero_list[actualIndex].actual_attspeed = def_hero_list[templateIndex].init_attspeed;
+        actual_hero_list[actualIndex].max_lives = GetMaxLives(templateIndex);
+        actual_hero_list[actualIndex].actual_lives = actual_hero_list[actualIndex].max_lives;
+
+        Debug.Log("Max Hero Lives: " + actual_hero_list[actualIndex].max_lives);
+    }
+
+    public void SetupHeroTemplates()
+    {
+        def_hero_list[0].init_damage = 10;
+        def_hero_list[0].init_attspeed = 4f;
+        def_hero_list[0].strength = 25;
+        def_hero_list[0].dexterity = 10;
+        def_hero_list[0].wisdom = 5;
+        def_hero_list[0].vitality = 40;
+        def_hero_list[0].defense = 20; //**
+        def_hero_list[0].resistance = 5; //**
+        def_hero_list[0].strength_to_lives_multi = 1;
+        def_hero_list[0].dexterity_to_lives_multi = 0;
+        def_hero_list[0].wisdom_to_lives_multi = 0;
+        def_hero_list[0].vitality_to_lives_multi = 1;
+
+
+}
+
+    public void SetupEnemyTemplates()
+    {
+        def_enemy_list[0].init_damage = 1;
+        def_enemy_list[0].init_attspeed = 3f;
+        def_enemy_list[0].visualTypeIndex = 0;
+        def_enemy_list[0].strength = 25;
+        def_enemy_list[0].dexterity = 10;
+        def_enemy_list[0].wisdom = 5;
+        def_enemy_list[0].vitality = 40;
+        def_enemy_list[0].defense = 20; //**
+        def_enemy_list[0].resistance = 5; //**
+        def_enemy_list[0].strength_to_lives_multi = 1;
+        def_enemy_list[0].dexterity_to_lives_multi = 0;
+        def_enemy_list[0].wisdom_to_lives_multi = 0;
+        def_enemy_list[0].vitality_to_lives_multi = 1;
+
+        def_enemy_list[1].init_damage = 1;
+        def_enemy_list[1].init_attspeed = 3f;
+        def_enemy_list[1].visualTypeIndex = 1;
+        def_enemy_list[1].strength = 35;
+        def_enemy_list[1].dexterity = 10;
+        def_enemy_list[1].wisdom = 5;
+        def_enemy_list[1].vitality = 40;
+        def_enemy_list[1].defense = 20; //**
+        def_enemy_list[1].resistance = 5; //**
+        def_enemy_list[1].strength_to_lives_multi = 0;
+        def_enemy_list[1].dexterity_to_lives_multi = 1;
+        def_enemy_list[1].wisdom_to_lives_multi = 0;
+        def_enemy_list[1].vitality_to_lives_multi = 1;
+    }
+
+    
 }
 

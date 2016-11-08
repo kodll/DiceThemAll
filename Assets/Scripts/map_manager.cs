@@ -8,7 +8,7 @@ public class map_manager : MonoBehaviour
     [HideInInspector] public int mapsize = 50;
     [HideInInspector] public minimap minimaplocal;
 	static avatarstatemachine avatarobject_local;
-	static character_definitions character_definitions_local;
+	public character_definitions character_definitions_local;
     public GameObject maptapvalid;
     public GameObject mapmover;
     public GameObject mapcamera;
@@ -16,6 +16,7 @@ public class map_manager : MonoBehaviour
     public GameObject tapcamera;
 	public GameObject GUIChestOpenedPopup;
 	public GameObject GUIDungeonMovement;
+    public GameObject GUIBattlePopup;
 
 
     [HideInInspector] public float mappiecesize = 100;
@@ -95,7 +96,7 @@ public class map_manager : MonoBehaviour
 
 		avatarobject_local = GameObject.FindObjectOfType(typeof(avatarstatemachine)) as avatarstatemachine;
 
-		character_definitions_local = GameObject.FindObjectOfType(typeof(character_definitions)) as character_definitions;
+        character_definitions_local = GameObject.FindObjectOfType(typeof(character_definitions)) as character_definitions;
 
         map_piece_def[] myItems = FindObjectsOfType(typeof(map_piece_def)) as map_piece_def[];
         foreach (map_piece_def item in myItems)
@@ -118,14 +119,16 @@ public class map_manager : MonoBehaviour
 		avatarobject_local.FogInit();
 		GUIChestOpenedPopup.GetComponent<gui_chest_unlocked_popup>().InitGuiChestSystem ();
 
-		character_definitions_local.character_definitions_init (true);
+        character_definitions_local.character_definitions_init (true);
 
-        avatarobject_local.SetCharacter(27, 22); //start position
+        avatarobject_local.SetCharacter(26, 23); //start position
         avatarobject_local.FogUpdate();
         //--------------------------------------------------------------------------------
+        // main hero init-----------------------------------------------------
+        
         // battles -----------------------------------------------------
-        character_definitions_local.AddBattle(26, 23);
-        character_definitions_local.AddBattle(25, 25);
+        character_definitions_local.AddBattle(27, 22, 0, 1);
+        character_definitions_local.AddBattle(25, 25, 1, 1);
 
         //--------------------------------------------------------------
         canscrollmanually = true;
