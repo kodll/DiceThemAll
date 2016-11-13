@@ -53,6 +53,7 @@ ModelImporter:
     100090: cave_turnNW
     100092: cave_turnSE
     100094: cave_turnSW
+    100096: Camera001
     400000: //RootNode
     400002: Box002
     400004: Box004
@@ -101,6 +102,7 @@ ModelImporter:
     400090: cave_turnNW
     400092: cave_turnSE
     400094: cave_turnSW
+    400096: Camera001
     2300000: //RootNode
     2300002: Box002
     2300004: Box004
