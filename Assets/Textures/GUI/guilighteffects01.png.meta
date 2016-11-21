@@ -1,11 +1,12 @@
 fileFormatVersion: 2
 guid: c09a42b8317191e4197fd179c7c2ed76
-timeCreated: 1464642302
+timeCreated: 1479690548
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
     21300000: gui_roomfog
     21300002: gui_vignette
+    21300004: gui_roomfogsquare
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -86,6 +87,24 @@ TextureImporter:
         - {x: -196.5, y: -108.5}
         - {x: 196.5, y: -108.5}
         - {x: 196.5, y: 108.5}
+    - name: gui_roomfogsquare
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 873
+        width: 66
+        height: 66
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline:
+      - - {x: -26, y: 26}
+        - {x: -26, y: -21}
+        - {x: -24, y: -26}
+        - {x: 24, y: -26}
+        - {x: 26, y: -25}
+        - {x: 26, y: 20}
+        - {x: 23, y: 26}
     outline: []
   spritePackingTag: 
   userData: 

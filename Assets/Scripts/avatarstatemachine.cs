@@ -274,6 +274,7 @@ public class avatarstatemachine : MonoBehaviour
 
         FogUpdateCross(x, y, 0.01f, true);
 
+        if (character_definitions_local.CheckBattle(x, y) < 0) battlefoundinfog = false;
         if (!battlefoundinfog)
         {
             if (roomfield[x + 1, y] > 0)

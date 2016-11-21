@@ -2,8 +2,7 @@
 using System.Collections;
 
 public class fog_controller : MonoBehaviour {
-
-    public GameObject ObjectSubfog;
+	
     bool changedcolor = false;
     float deltatime = 0;
     float actualtime = 0;
@@ -21,13 +20,11 @@ public class fog_controller : MonoBehaviour {
         {
             Color newmaincolor, newsubcolor;
             newmaincolor = this.gameObject.GetComponent<SpriteRenderer>().color;
-            newsubcolor = ObjectSubfog.gameObject.GetComponent<SpriteRenderer>().color;
 			newmaincolor.a = newmaincolor.a - Time.deltaTime;
             if (newmaincolor.a < 0) newmaincolor.a = 0;
             newsubcolor.a = newmaincolor.a;
 
             this.gameObject.GetComponent<SpriteRenderer>().color = newmaincolor;
-            ObjectSubfog.gameObject.GetComponent<SpriteRenderer>().color = newsubcolor;
         }
         if (changedcolor)
         {

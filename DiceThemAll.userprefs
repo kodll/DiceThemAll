@@ -1,7 +1,8 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\dice_machine.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\fog_controller.cs">
     <Files>
+      <File FileName="Assets\Scripts\fog_controller.cs" Line="24" Column="56" />
       <File FileName="Assets\Scripts\dice_machine.cs" Line="12" Column="29" />
       <File FileName="Assets\Scripts\map_piece_def.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\panel_dicestoroll.cs" Line="1" Column="1" />
@@ -11,7 +12,6 @@
       <File FileName="Assets\Scripts\gui_chest_unlocked_popup.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\aspectratio.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\destroy_intime.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\fog_controller.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\global_billboard.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\character_definitions.cs" Line="1" Column="1" />
     </Files>

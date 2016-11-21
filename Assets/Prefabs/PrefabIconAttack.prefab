@@ -107,13 +107,13 @@ GameObject:
   m_Component:
   - 4: {fileID: 476366}
   - 212: {fileID: 21294780}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: GlowFogOfWar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &152234
 GameObject:
   m_ObjectHideFlags: 1
