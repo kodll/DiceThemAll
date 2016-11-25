@@ -195,6 +195,49 @@ public class avatarstatemachine : MonoBehaviour
             }
     }
 
+    public Vector2 ClosestRoom(Vector2 mousepos)
+    {
+        int i;
+        int j;
+        float minDistance;
+        float testedDistance;
+        Vector2 vectorDelta;
+        Vector2 foundRoom;
+        Vector2 testedRoom;
+        foundRoom = Vector2.zero;
+        minDistance = 5;
+        mousepos.x = mousepos.x + 0.10f;
+        for (i = 0; i < map_manager_local.mapsize; i++)
+            for (j = 0; j < map_manager_local.mapsize; j++)
+            {
+                if (fogfield[i, j].enabledpath)
+                {
+                    testedRoom.x = i;
+                    testedRoom.y = j;
+                    vectorDelta = mousepos - testedRoom;
+                    testedDistance = vectorDelta.magnitude;
+                    if (testedDistance<minDistance && testedDistance<2)
+                    {
+                        foundRoom = testedRoom;
+                        minDistance = testedDistance;
+                    }
+                }
+            }
+        //Debug.Log("ClosestRoom: " + foundRoom);
+        return foundRoom;
+        
+    }
+
+    bool isVisitedRoomsAround(int x, int y)
+    {
+        if ((roomfield[x, y + 1] > 1) && (fogfield[x, y + 1].visitedstate == 0)) return true;
+        if ((roomfield[x, y -1] > 1) && (fogfield[x, y - 1].visitedstate == 0)) return true;
+        if ((roomfield[x + 1, y] > 1) && (fogfield[x + 1, y].visitedstate == 0)) return true;
+        if ((roomfield[x - 1, y] > 1) && (fogfield[x - 1, y].visitedstate == 0)) return true;
+
+        return false;
+    }
+
 	void FogUpdateCross(int x, int y, float intime, bool cross)
     {
         if (character_definitions_local.CheckBattle(x, y) >= 0)
@@ -214,9 +257,9 @@ public class avatarstatemachine : MonoBehaviour
                     fogfield[x, y].visitedstate = 1;
                     minimapobject.GetComponent<minimap>().MapUpdate(x, y, 1);
                 }
-                map_manager_local.mapfield[x, y].GetComponent<UnityEngine.UI.Button>().interactable = true;
+                //map_manager_local.mapfield[x, y].GetComponent<UnityEngine.UI.Button>().interactable = true;
             }
-
+            
             if (cross)
             {
                 if (character_definitions_local.CheckBattle(x + 1, y) >= 0 || character_definitions_local.CheckBattle(x - 1, y) >= 0 || character_definitions_local.CheckBattle(x, y - 1) >= 0 || character_definitions_local.CheckBattle(x, y + 1) >= 0)
@@ -224,35 +267,97 @@ public class avatarstatemachine : MonoBehaviour
                     battlefoundinfog = true;
                 }
 
-                fogfield[x + 1, y].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 100);
-                fogfield[x - 1, y].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 100);
-                fogfield[x, y - 1].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 100);
-                fogfield[x, y + 1].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 100);
+                if ((roomfield[x + 2, y] > 1) && (fogfield[x + 2, y].visitedstate != 0) || !isVisitedRoomsAround(x + 2, y) || (roomfield[x + 1, y] > 0))
+                {
+                    fogfield[x + 1, y].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 100);
+                    if (roomfield[x + 1, y] > 1) fogfield[x + 1, y].enabledpath = true;
+                }
 
-                if (roomfield[x + 1, y] > 1) fogfield[x + 1, y].enabledpath = true;
-                if (roomfield[x - 1, y] > 1) fogfield[x - 1, y].enabledpath = true;
-                if (roomfield[x, y + 1] > 1) fogfield[x, y + 1].enabledpath = true;
-                if (roomfield[x, y - 1] > 1) fogfield[x, y - 1].enabledpath = true;
+                if ((roomfield[x - 2, y] > 1) && (fogfield[x - 2, y].visitedstate != 0) || !isVisitedRoomsAround(x - 2, y) || (roomfield[x - 1, y] > 0))
+                {
+                    fogfield[x - 1, y].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 100);
+                    if (roomfield[x - 1, y] > 1) fogfield[x - 1, y].enabledpath = true;
+                }
 
+                if ((roomfield[x, y - 2] > 1) && (fogfield[x, y - 2].visitedstate != 0) || !isVisitedRoomsAround(x, y - 2) || (roomfield[x, y - 1] > 0))
+                {
+                    fogfield[x, y - 1].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 100);
+                    if (roomfield[x, y - 1] > 1) fogfield[x, y - 1].enabledpath = true;
+                }
+
+                if ((roomfield[x, y + 2] > 1) && (fogfield[x, y + 2].visitedstate != 0) || !isVisitedRoomsAround(x, y + 2) || (roomfield[x, y + 1] > 0))
+                {
+                    fogfield[x, y + 1].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 100);
+                    if (roomfield[x, y + 1] > 1) fogfield[x, y + 1].enabledpath = true;
+                }
+
+                //empty space fog
+                
+                /*if (!isVisitedRoomsAround(x + 2, y))
+                {
+                    fogfield[x + 2, y].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 25);
+                }
+                if (!isVisitedRoomsAround(x - 2, y))
+                {
+                    fogfield[x - 2, y].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 25);
+                }
+                if (!isVisitedRoomsAround(x, y + 2))
+                {
+                    fogfield[x, y + 2].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 25);
+                }
+                if (!isVisitedRoomsAround(x, y - 2))
+                {
+                    fogfield[x, y - 2].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 25);
+                }
+                
+                
+                if (!isVisitedRoomsAround(x - 1, y + 1))
+                {
+                    fogfield[x - 1, y + 1].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 50);
+                }
+                if (!isVisitedRoomsAround(x + 1, y + 1))
+                {
+                    fogfield[x + 1, y + 1].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 50);
+                }
+                if (!isVisitedRoomsAround(x + 1, y - 1))
+                {
+                    fogfield[x + 1, y - 1].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 50);
+                }
+                if (!isVisitedRoomsAround(x - 1, y - 1))
+                {
+                    fogfield[x - 1, y - 1].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 50);
+                }
+                */
+
+
+                //enable triggers
                 if (map_manager_local.mapfield[x + 1, y] != null)
                 {
-                    if (fogfield[x + 1, y].visitedstate == 0) minimapobject.GetComponent<minimap>().MapUpdate(x + 1, y, 1);
-                    map_manager_local.mapfield[x + 1, y].GetComponent<UnityEngine.UI.Button>().interactable = true;
+                    
+                        if (fogfield[x + 1, y].visitedstate == 0) minimapobject.GetComponent<minimap>().MapUpdate(x + 1, y, 1);
+                        //map_manager_local.mapfield[x + 1, y].GetComponent<UnityEngine.UI.Button>().interactable = true;
+                    
                 }
                 if (map_manager_local.mapfield[x - 1, y] != null)
                 {
-                    if (fogfield[x - 1, y].visitedstate == 0) minimapobject.GetComponent<minimap>().MapUpdate(x - 1, y, 1);
-                    map_manager_local.mapfield[x - 1, y].GetComponent<UnityEngine.UI.Button>().interactable = true;
+                    
+                        if (fogfield[x - 1, y].visitedstate == 0) minimapobject.GetComponent<minimap>().MapUpdate(x - 1, y, 1);
+                        //map_manager_local.mapfield[x - 1, y].GetComponent<UnityEngine.UI.Button>().interactable = true;
+                    
                 }
                 if (map_manager_local.mapfield[x, y + 1] != null)
                 {
-                    if (fogfield[x, y + 1].visitedstate == 0) minimapobject.GetComponent<minimap>().MapUpdate(x, y + 1, 1);
-                    map_manager_local.mapfield[x, y + 1].GetComponent<UnityEngine.UI.Button>().interactable = true;
+                    
+                        if (fogfield[x, y + 1].visitedstate == 0) minimapobject.GetComponent<minimap>().MapUpdate(x, y + 1, 1);
+                        //map_manager_local.mapfield[x, y + 1].GetComponent<UnityEngine.UI.Button>().interactable = true;
+                    
                 }
                 if (map_manager_local.mapfield[x, y - 1] != null)
                 {
-                    if (fogfield[x, y - 1].visitedstate == 0) minimapobject.GetComponent<minimap>().MapUpdate(x, y - 1, 1);
-                    map_manager_local.mapfield[x, y - 1].GetComponent<UnityEngine.UI.Button>().interactable = true;
+                    
+                        if (fogfield[x, y - 1].visitedstate == 0) minimapobject.GetComponent<minimap>().MapUpdate(x, y - 1, 1);
+                        //map_manager_local.mapfield[x, y - 1].GetComponent<UnityEngine.UI.Button>().interactable = true;
+                    
                 }
             }
         }
@@ -358,6 +463,22 @@ public class avatarstatemachine : MonoBehaviour
         bool found;
 
         fogfield = new fogroomstruct[map_manager_local.mapsize, map_manager_local.mapsize];
+
+        /*for (i = 0; i < map_manager_local.mapsize; i++)
+            for (j = 0; j < map_manager_local.mapsize; j++)
+            {
+                if (roomfield[i, j] > 2) map_manager_local.mapfield[i, j].GetComponent<UnityEngine.UI.Button>().interactable = false;
+                fogfield[i, j].fog = Instantiate(map_manager_local.fogroomprefab, Vector3.zero, Quaternion.identity) as GameObject;
+                fogfield[i, j].fog.transform.SetParent(map_manager_local.fogcontainer.transform);
+                fogfield[i, j].fog.transform.localRotation = Quaternion.identity;
+                pos = Vector3.zero;
+                pos.x = (i - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
+                pos.y = (j - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
+                fogfield[i, j].fog.transform.localPosition = pos;
+                fogfield[i, j].visitedstate = 0;
+                fogfield[i, j].enabledpath = false;
+            }
+    */
         for (i = 1; i < map_manager_local.mapsize-1; i++)
             for (j = 1; j < map_manager_local.mapsize-1; j++)
             {
@@ -367,10 +488,15 @@ public class avatarstatemachine : MonoBehaviour
 					if (roomfield[i,j] > 2) map_manager_local.mapfield[i, j].GetComponent<UnityEngine.UI.Button>().interactable = false;
                     found = true;
                 }
-				if (roomfield[i+1, j] != 0) found = true;
-				if (roomfield[i-1, j] != 0) found = true;
-				if (roomfield[i, j+1] != 0) found = true;
-				if (roomfield[i, j-1] != 0) found = true;
+				if (roomfield[i + 1, j] != 0) found = true;
+				if (roomfield[i - 1, j] != 0) found = true;
+				if (roomfield[i, j + 1] != 0) found = true;
+				if (roomfield[i, j - 1] != 0) found = true;
+
+                if (roomfield[i + 1, j + 1] != 0) found = true;
+                if (roomfield[i - 1, j + 1] != 0) found = true;
+                if (roomfield[i + 1, j - 1] != 0) found = true;
+                if (roomfield[i - 1, j - 1] != 0) found = true;
 
                 if (found)
                 {
@@ -378,7 +504,7 @@ public class avatarstatemachine : MonoBehaviour
                     fogfield[i, j].fog.transform.SetParent(map_manager_local.fogcontainer.transform);
                     fogfield[i, j].fog.transform.localRotation = Quaternion.identity;
                     pos = Vector3.zero;
-                    pos.x = (i - map_manager_local.mapoffset) * map_manager_local.mappiecesize-30;
+                    pos.x = (i - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
                     pos.y = (j - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
                     fogfield[i, j].fog.transform.localPosition = pos;
 					fogfield[i, j].visitedstate = 0;
@@ -524,7 +650,7 @@ public class avatarstatemachine : MonoBehaviour
 
                 //Debug.Log("Checking Battle: " + (int)avataractualposition.x + ", " + (int)avataractualposition.y);
                 battleindex = character_definitions_local.CheckBattle((int)avataractualposition.x, (int)avataractualposition.y);
-                if (battleindex>=0 && avatarwhereinpath>1)
+                if (battleindex>=0 && avatarwhereinpath>1)//!!!
                 {
                     //battle
                     Debug.Log("battle, path index: " + avatarwhereinpath);
@@ -587,8 +713,6 @@ public class avatarstatemachine : MonoBehaviour
         int shortest = 0;
 
         oldpath = new Vector2[maxsizepath];
-        
-        
 
         for (i = 0; i < maxsizepath; i++)
         {
@@ -652,20 +776,13 @@ public class avatarstatemachine : MonoBehaviour
 
 		whereclick.x = whereX;
 		whereclick.y = whereY;
-		if (successfulpaths[0] != -1 && whereclick!=avataractualposition)
+		if (successfulpaths[0] != -1 && 
+            ((!avatarmoving && whereclick != avataractualposition) ||
+             (avatarmoving && whereclick==finalpath[avatarwhereinpath+1] && character_definitions_local.CheckBattle((int)finalpath[avatarwhereinpath + 1].x, (int)finalpath[avatarwhereinpath + 1].y) < 0) ||
+             (avatarmoving && whereclick != finalpath[avatarwhereinpath + 1])
+            )
+           )
         {
-            //Debug.Log("Path Length:" + paths[shortest].indexinsidepath);
-            //Debug.Log("START[" + avatarwhereinpath + "]:" + avataractualposition);
-            //Debug.Log("OLD PATH NOW [" + avatarwhereinpath + "]: " + finalpath[avatarwhereinpath]);
-            //Debug.Log("OLD PATH NEXT [" + (avatarwhereinpath + 1) + "]: " + finalpath[avatarwhereinpath + 1]);
-
-            //for (i = 0; i < 7; i++) Debug.Log("ORIGINAL PATH [" + i + "]: " + finalpath[i]);
-
-            //for (i = 0; i < 3; i++) Debug.Log("MOVING TO PATH ID: " + shortest + " [" + i + "]: " + paths[shortest].singlepath[i]);
-
-            //Debug.Log("OLD PATH [" + avatarwhereinpath + "]: " + oldpath[avatarwhereinpath] + " ARRAY:" + oldpath[0] + ", " + oldpath[1] + ", " + oldpath[2] + ", " + oldpath[3] + ", " + oldpath[4]);
-            //Debug.Log("NEW PATH ARRAY:" + paths[shortest].singlepath[0] + ", " + paths[shortest].singlepath[1] + ", " + paths[shortest].singlepath[2] + ", " + paths[shortest].singlepath[3] + ", " + paths[shortest].singlepath[4]);
-
             if (paths[shortest].singlepath[1] != oldpath[avatarwhereinpath+1]) // TESTING!!! BUG!!! BAD ARRAY INDEX
             {
                 //Debug.Log("DIFFERENT DIRECTION PATH");

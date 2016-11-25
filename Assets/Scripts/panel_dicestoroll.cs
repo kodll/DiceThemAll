@@ -132,7 +132,6 @@ public class panel_dicestoroll : MonoBehaviour
 	IEnumerator ThrowAllDicesSequence()
 	{
 		int i;
-		Vector3 force, pos;
 		for (i = 0; i < 6; i++)
 		{
 			RollDice (i);

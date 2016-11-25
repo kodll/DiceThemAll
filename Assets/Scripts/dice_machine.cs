@@ -23,8 +23,6 @@ public class dice_machine : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
 	{
-		Vector2 rectsize;
-
 		if ( pixelcamera.GetComponent<Camera>().targetTexture != null ) {
 			pixelcamera.GetComponent<Camera>().targetTexture.Release( );
 		}

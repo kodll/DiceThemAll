@@ -61,24 +61,9 @@ public class map_piece_def : MonoBehaviour
 
 	IEnumerator SetDetailAnim()
 	{
-		float activelementangle;
-		Vector3 targetdir;
-		Vector3 cross;
-		Vector3 ActiveElementZero;
-		Vector3 AvatarElementZero;
 		int i;
 
 		yield return null;
-		/*
-		ActiveElementZero = ActiveElementObject.transform.position;
-		AvatarElementZero = avatarobject_local.transform.position;
-		ActiveElementZero.y = 0;
-
-		avatarobject_local.camerafolowobject.transform.position = (ActiveElementZero + AvatarElementZero) / 2;
-		ActiveElementZero = avatarobject_local.camerafolowobject.transform.position;
-		ActiveElementZero.x = ActiveElementZero.x + 2f;
-		avatarobject_local.camerafolowobject.transform.position = ActiveElementZero;
-		*/
 
 		if (!avatarobject_local.avatarmoving)
 		{

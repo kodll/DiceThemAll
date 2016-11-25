@@ -50,6 +50,7 @@
      <Compile Include="Assets\Scripts\attack_icon.cs" />
      <Compile Include="Assets\Scripts\avatarstatemachine.cs" />
      <Compile Include="Assets\Scripts\camera_lowfps.cs" />
+     <Compile Include="Assets\Scripts\character_animevents.cs" />
      <Compile Include="Assets\Scripts\character_definitions.cs" />
      <Compile Include="Assets\Scripts\destroy_intime.cs" />
      <Compile Include="Assets\Scripts\dice_machine.cs" />

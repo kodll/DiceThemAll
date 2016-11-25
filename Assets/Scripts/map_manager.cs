@@ -39,13 +39,15 @@ public class map_manager : MonoBehaviour
     Vector3 oldmousepos;
 	[HideInInspector] public Vector3 newmousepos;
 	[HideInInspector] public Vector3 initialmousepos;
-	[HideInInspector] public float _clickdistance = 10;
+    [HideInInspector] public Vector3 worldmousepos;
+    [HideInInspector] public float _clickdistance = 10;
     Vector3 lastdelta;
     float lastdeltatime;
     public GameObject mouse3d;
     GameObject mymouse3d;
     Plane floorcollision;
     Camera tapcameracomponent;
+    Camera charactercameracomponent;
 
     public GameObject fogcontainer;
     public GameObject fogroomprefab;
@@ -106,8 +108,8 @@ public class map_manager : MonoBehaviour
             i = item.gameObject.GetComponent<map_piece_def>().Xcoor;
             j = item.gameObject.GetComponent<map_piece_def>().Ycoor;
             mapfield[i, j] = item.gameObject;
-            UnityEngine.UI.Button button = item.gameObject.GetComponent<UnityEngine.UI.Button>();
-            AddListener(button, i, j);
+            /*UnityEngine.UI.Button button = item.gameObject.GetComponent<UnityEngine.UI.Button>();
+            AddListener(button, i, j);*/
         }
         minimaplocal = GameObject.FindObjectOfType(typeof(minimap)) as minimap;
         //Debug.Log("Found minimap: " + minimaplocal.name);
@@ -147,6 +149,7 @@ public class map_manager : MonoBehaviour
         colpos.y = -floorZ;
         floorcollision = new Plane(Vector3.up, colpos);
         tapcameracomponent = tapcamera.GetComponent<Camera>();
+        charactercameracomponent = charactercamera.GetComponent<Camera>();
         oldmousepos = Vector3.zero;
         newmousepos = Vector3.zero;
 
@@ -171,7 +174,15 @@ public class map_manager : MonoBehaviour
 			
 
 			mpos = Input.mousePosition;
-			ray = tapcameracomponent.ScreenPointToRay (new Vector3 (mpos.x, mpos.y, 0));
+
+            ray = charactercameracomponent.ScreenPointToRay(new Vector3(mpos.x, mpos.y, 0));
+            if (floorcollision.Raycast(ray, out rayDistance))
+            {
+                m3d = ray.GetPoint(rayDistance);
+                worldmousepos = m3d;
+            }
+
+            ray = tapcameracomponent.ScreenPointToRay (new Vector3 (mpos.x, mpos.y, 0));
 
 			if (floorcollision.Raycast (ray, out rayDistance)) {
 				m3d = ray.GetPoint (rayDistance);
@@ -189,6 +200,7 @@ public class map_manager : MonoBehaviour
 				taplength = 0;
 				//Debug.Log ("released button ");
 				lastdeltatime = 1;
+                MouseClicked();
 			}
 
 		
@@ -267,39 +279,41 @@ public class map_manager : MonoBehaviour
   
     }
 
-    void AddListener(UnityEngine.UI.Button b, int clickeditemX, int clickeditemY)
-    {
-        b.onClick.AddListener(() => MapClicked(clickeditemX, clickeditemY));
+    
 
-    }
-
-    void MapClicked(int clickeditemX, int clickeditemY)
+    void MouseClicked()
     {
+        Vector2 posmap;
         GameObject tapindicator;
         Vector3 pos;
-		Vector3 deltamousevector;
+        Vector3 deltamousevector;
 
-		//EventSystem.current.SetSelectedGameObject(null);
-		deltamousevector = initialmousepos - newmousepos;
-		if (deltamousevector.magnitude<_clickdistance)
-        {
-            lastdeltatime = 0;
-            lastdelta = Vector3.zero;
-			avatarobject_local.FindPath(clickeditemX, clickeditemY);
-            tapindicator = Instantiate(maptapvalid, Vector3.zero, Quaternion.identity) as GameObject;
-            tapindicator.transform.SetParent(this.transform);
-            tapindicator.transform.localScale = Vector3.one;
-            tapindicator.transform.localRotation = Quaternion.identity;
-            pos = Vector3.zero;
-            pos.x = (clickeditemX - mapoffset) * mappiecesize;
-            pos.y = (clickeditemY - mapoffset) * mappiecesize;
-            //pos.z = floorZ;
-            tapindicator.transform.localPosition = pos;
-            
-			avatarstatictime = 1.5f;
-			camerafadeouttime = 0.05f;
-			cameraspeed = cameraspeedlow;
-			scrollmultiplier = 1;
+        deltamousevector = initialmousepos - newmousepos;
+        if (deltamousevector.magnitude < _clickdistance)
+        {           
+            posmap.x = worldmousepos.x / mappiecesize + mapoffset;
+            posmap.y = worldmousepos.z / mappiecesize + mapoffset;
+            posmap = avatarobject_local.ClosestRoom(posmap);
+            if (posmap!=Vector2.zero)
+            {
+                lastdeltatime = 0;
+                lastdelta = Vector3.zero;
+                avatarobject_local.FindPath((int)posmap.x, (int)posmap.y);
+                tapindicator = Instantiate(maptapvalid, Vector3.zero, Quaternion.identity) as GameObject;
+                tapindicator.transform.SetParent(this.transform);
+                tapindicator.transform.localScale = Vector3.one;
+                tapindicator.transform.localRotation = Quaternion.identity;
+                pos = Vector3.zero;
+                pos.x = (posmap.x - mapoffset) * mappiecesize;
+                pos.y = (posmap.y - mapoffset) * mappiecesize;
+                //pos.z = floorZ;
+                tapindicator.transform.localPosition = pos;
+
+                avatarstatictime = 1.5f;
+                camerafadeouttime = 0.05f;
+                cameraspeed = cameraspeedlow;
+                scrollmultiplier = 1;
+            }
         }
     }
 
