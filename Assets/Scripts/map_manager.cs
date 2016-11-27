@@ -1,14 +1,59 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
+using System;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 public class map_manager : MonoBehaviour
 {
-    public GameObject[,] mapfield;
+    [System.Serializable]
+    public struct wallquadrant
+    {
+        public GameObject wallobject;
+        public int walltypeNWCW;
+    }
+    public wallquadrant[] wallquadrantsdef;
+
+    public struct quadrantobj
+    {
+        public GameObject quadrantobject;
+    }
+
+    [System.Serializable]
+    public struct quadrant
+    {
+        public int quadrantID;
+    }
+
+    [System.Serializable]
+    public struct maptile
+    {
+        public bool isroom;
+        public quadrant[] quadrantsfield;
+    }
+    public struct maptileobj
+    {
+        public quadrantobj[] quadrantsfield;
+    }
+
+    maptileobj[,] maptileobjects;
+
+    [System.Serializable]
+    public struct mapdef
+    {
+        public maptile[,] maptiles;
+    }
+
+    public mapdef dungeonmap;
+
+    
+
+    //public GameObject[,] mapfield;
     [HideInInspector] public int mapsize = 50;
     [HideInInspector] public minimap minimaplocal;
 	static avatarstatemachine avatarobject_local;
-	public character_definitions character_definitions_local;
+    [HideInInspector] public character_definitions character_definitions_local;
     public GameObject maptapvalid;
     public GameObject mapmover;
     public GameObject mapcamera;
@@ -21,7 +66,6 @@ public class map_manager : MonoBehaviour
 
     [HideInInspector] public float mappiecesize = 100;
     [HideInInspector] public float mapoffset = 25;
-    [HideInInspector] public Vector3 mapvectoroffset;
     [HideInInspector] public float floorZ = -19;
 
     [HideInInspector] public float cameraspeedlow = 1.5f;
@@ -44,7 +88,10 @@ public class map_manager : MonoBehaviour
     Vector3 lastdelta;
     float lastdeltatime;
     public GameObject mouse3d;
+    public GameObject mouse3droomindicator;
     GameObject mymouse3d;
+    GameObject mymouse3droomindicator;
+    Vector2 mouseposmap;
     Plane floorcollision;
     Camera tapcameracomponent;
     Camera charactercameracomponent;
@@ -52,7 +99,11 @@ public class map_manager : MonoBehaviour
     public GameObject fogcontainer;
     public GameObject fogroomprefab;
 
+    public GameObject fogofwarobject;
+
     public GameObject mapcontainer;
+
+    public int gamemode; //editor = 10, dungeon = 1
 
     //---GLOBAL DEFINITIONS------------------------------------------------------
     public GameObject DiceObject;
@@ -61,11 +112,62 @@ public class map_manager : MonoBehaviour
 	[HideInInspector] public Vector3[] DiceNumberRotation;
 
 	//---END OF GLOBAL DEFINITIONS------------------------------------------------------
+    public void SaveMap()
+    {
+        BinaryFormatter bf = new BinaryFormatter();
+        string name;
+        FileStream file;
+
+        name = "Assets/Resources/maps/level1.map";
+
+        if (!File.Exists(name))
+        {
+            file = File.Create(name);
+        }
+        else
+        {
+            file = File.Open(name, FileMode.Open);
+        }
+
+        bf = new BinaryFormatter();
+ 
+        bf.Serialize(file, dungeonmap);
+        file.Close();
+    }
+
+    public void LoadMap()
+    {
+        BinaryFormatter bf = new BinaryFormatter();
+        string name;
+        FileStream file;
+
+        name = "Assets/Resources/maps/level1.map";
+
+        if (File.Exists(name))
+        {
+
+
+            file = File.Open(name,FileMode.Open);
+
+
+            bf = new BinaryFormatter();
+
+            DestroyMap(false);
+
+            dungeonmap = (mapdef)bf.Deserialize(file);
+            file.Close();
+            FillMapArt();
+        }
+        else
+        {
+            Debug.Log("Error!!!");
+        }
+    }
 
     // Use this for initialization
     void Start ()
     {
-        int i,j;
+        int i,j,k;
         Vector3 colpos;
 
 		//------------------------DICES ROTATION-------------------------------
@@ -85,54 +187,43 @@ public class map_manager : MonoBehaviour
 
 		//----------------------------------------------------------------------
 
-        mapvectoroffset = Vector3.zero;
-        mapvectoroffset.x = mapoffset * mappiecesize;
-        mapvectoroffset.y = mapoffset * mappiecesize;
+        dungeonmap.maptiles = new maptile[mapsize, mapsize];
+        maptileobjects = new maptileobj[mapsize, mapsize];
 
-        mapfield = new GameObject[mapsize, mapsize];
-        for (i = 0; i < mapsize; i++)
-            for (j = 0; j < mapsize; j++)
-            {
-                mapfield[i, j] = null;
-            }
 
 		avatarobject_local = GameObject.FindObjectOfType(typeof(avatarstatemachine)) as avatarstatemachine;
 
         character_definitions_local = GameObject.FindObjectOfType(typeof(character_definitions)) as character_definitions;
 
         map_piece_def[] myItems = FindObjectsOfType(typeof(map_piece_def)) as map_piece_def[];
-        foreach (map_piece_def item in myItems)
+
+        foreach (map_piece_def item in myItems) //delete scene data
         {
 
-            item.GetFieldCoor(mappiecesize,mapoffset);
-            i = item.gameObject.GetComponent<map_piece_def>().Xcoor;
-            j = item.gameObject.GetComponent<map_piece_def>().Ycoor;
-            mapfield[i, j] = item.gameObject;
-            /*UnityEngine.UI.Button button = item.gameObject.GetComponent<UnityEngine.UI.Button>();
-            AddListener(button, i, j);*/
+            Destroy(item.gameObject);
         }
-        minimaplocal = GameObject.FindObjectOfType(typeof(minimap)) as minimap;
-        //Debug.Log("Found minimap: " + minimaplocal.name);
-        minimaplocal.MapInit();
 
-		// systems initiation----------------------------------------------------------
-		avatarobject_local.PathFindingInit();
-		avatarobject_local.PathFindingSetRooms(mapfield);
-		avatarobject_local.FogInit();
+        DestroyMap(true);
+
+        minimaplocal = GameObject.FindObjectOfType(typeof(minimap)) as minimap;
+
+        // systems initiation----------------------------------------------------------
+        minimaplocal.MapInit(true);
+        avatarobject_local.PathFindingInit();
+		avatarobject_local.FogInit(true);
 		GUIChestOpenedPopup.GetComponent<gui_chest_unlocked_popup>().InitGuiChestSystem ();
 
         character_definitions_local.character_definitions_init (true);
-
-        avatarobject_local.SetCharacter(26, 23); //start position
-        avatarobject_local.FogUpdate();
         //--------------------------------------------------------------------------------
         // main hero init-----------------------------------------------------
-        
+        avatarobject_local.SetCharacter(26, 23); //start position
+        LoadMap();
         // battles -----------------------------------------------------
         character_definitions_local.AddBattle(27, 22, 0, 1);
         character_definitions_local.AddBattle(25, 25, 1, 1);
 
         //--------------------------------------------------------------
+
         canscrollmanually = true;
         avatarstatictime = 0.4f;
         camerafadeouttime = 0.3f;
@@ -141,7 +232,9 @@ public class map_manager : MonoBehaviour
         scrollpreviousframe = Vector3.zero;
 
         //mymouse3d = Instantiate(mouse3d, Vector3.zero, Quaternion.identity) as GameObject;
-        //mymouse3d.transform.SetParent(tapcamera.transform);
+        //mymouse3d.transform.SetParent(mapcontainer.transform);
+        mymouse3droomindicator = Instantiate(mouse3droomindicator, Vector3.zero, Quaternion.identity) as GameObject;
+        mymouse3droomindicator.transform.SetParent(mapcontainer.transform);
         //Cursor.visible = false;
 
         tap = false;
@@ -153,7 +246,7 @@ public class map_manager : MonoBehaviour
         oldmousepos = Vector3.zero;
         newmousepos = Vector3.zero;
 
-        
+        SwitchGameMode(1);
 
     }
     
@@ -165,7 +258,11 @@ public class map_manager : MonoBehaviour
         Vector2 mpos;
         float rayDistance;
 
-		avatarobject_local.Actualize (Time.deltaTime);
+        if (gamemode==1)//dungeon
+        {
+            avatarobject_local.Actualize(Time.deltaTime);
+        }
+		    
 
 		oldmousepos = newmousepos;
 
@@ -180,13 +277,20 @@ public class map_manager : MonoBehaviour
             {
                 m3d = ray.GetPoint(rayDistance);
                 worldmousepos = m3d;
+                mouseposmap.x = worldmousepos.x / mappiecesize + mapoffset;
+                mouseposmap.y = worldmousepos.z / mappiecesize + mapoffset;
+
+                m3d.x = Mathf.Round(mouseposmap.x - mapoffset) * mappiecesize;
+                m3d.z = Mathf.Round(mouseposmap.y - mapoffset) * mappiecesize;
+                m3d.y = 0;
+                mymouse3droomindicator.transform.position = m3d;
             }
 
             ray = tapcameracomponent.ScreenPointToRay (new Vector3 (mpos.x, mpos.y, 0));
 
 			if (floorcollision.Raycast (ray, out rayDistance)) {
 				m3d = ray.GetPoint (rayDistance);
-				//mymouse3d.transform.position = m3d;
+				
 				newmousepos = m3d;
 			}
 			if (Input.GetMouseButtonDown (0)) {
@@ -283,36 +387,43 @@ public class map_manager : MonoBehaviour
 
     void MouseClicked()
     {
-        Vector2 posmap;
         GameObject tapindicator;
         Vector3 pos;
         Vector3 deltamousevector;
+        Vector2 posmap;
 
         deltamousevector = initialmousepos - newmousepos;
-        if (deltamousevector.magnitude < _clickdistance)
-        {           
-            posmap.x = worldmousepos.x / mappiecesize + mapoffset;
-            posmap.y = worldmousepos.z / mappiecesize + mapoffset;
-            posmap = avatarobject_local.ClosestRoom(posmap);
-            if (posmap!=Vector2.zero)
+        if (deltamousevector.magnitude < _clickdistance && !EventSystem.current.IsPointerOverGameObject())
+        {
+            if (gamemode == 1)//dungeon
             {
-                lastdeltatime = 0;
-                lastdelta = Vector3.zero;
-                avatarobject_local.FindPath((int)posmap.x, (int)posmap.y);
-                tapindicator = Instantiate(maptapvalid, Vector3.zero, Quaternion.identity) as GameObject;
-                tapindicator.transform.SetParent(this.transform);
-                tapindicator.transform.localScale = Vector3.one;
-                tapindicator.transform.localRotation = Quaternion.identity;
-                pos = Vector3.zero;
-                pos.x = (posmap.x - mapoffset) * mappiecesize;
-                pos.y = (posmap.y - mapoffset) * mappiecesize;
-                //pos.z = floorZ;
-                tapindicator.transform.localPosition = pos;
+                posmap = avatarobject_local.ClosestRoom(mouseposmap);
+                if (posmap != Vector2.zero)
+                {
+                    lastdeltatime = 0;
+                    lastdelta = Vector3.zero;
+                    avatarobject_local.FindPath((int)posmap.x, (int)posmap.y);
+                    tapindicator = Instantiate(maptapvalid, Vector3.zero, Quaternion.identity) as GameObject;
+                    tapindicator.transform.SetParent(this.transform);
+                    tapindicator.transform.localScale = Vector3.one;
+                    tapindicator.transform.localRotation = Quaternion.identity;
+                    pos = Vector3.zero;
+                    pos.x = (posmap.x - mapoffset) * mappiecesize;
+                    pos.y = (posmap.y - mapoffset) * mappiecesize;
+                    //pos.z = floorZ;
+                    tapindicator.transform.localPosition = pos;
 
-                avatarstatictime = 1.5f;
-                camerafadeouttime = 0.05f;
-                cameraspeed = cameraspeedlow;
-                scrollmultiplier = 1;
+                    avatarstatictime = 1.5f;
+                    camerafadeouttime = 0.05f;
+                    cameraspeed = cameraspeedlow;
+                    scrollmultiplier = 1;
+                }
+            }
+            else if (gamemode == 10)
+            {
+                posmap.x = Mathf.Round(mouseposmap.x);
+                posmap.y = Mathf.Round(mouseposmap.y);
+                EditTile((int)posmap.x, (int)posmap.y);
             }
         }
     }
@@ -332,4 +443,218 @@ public class map_manager : MonoBehaviour
 			avatarobject_local.AvatarStop();
 		}
 	}
+    public void SwitchGameMode(int mode)
+    {
+        if (mode == 1)
+        {
+            mymouse3droomindicator.SetActive(false);
+            fogofwarobject.SetActive(true);
+        }
+        else if (mode ==10)
+        {
+            mymouse3droomindicator.SetActive(true);
+            fogofwarobject.SetActive(false);
+        }
+        gamemode = mode;
+        
+    }
+
+    void EditTile(int x, int y)
+    {
+        if (dungeonmap.maptiles[x, y].isroom)
+        {
+            
+            DeleteTile(x, y);
+            
+        }
+        else
+        {
+            CreateTile(x, y, 1);
+            
+        }
+            
+    }
+    void SetQuadrantID(int x, int y, int quadrant)
+    {
+        int id;
+        if (quadrant == 0)
+        {
+            id = 10;
+            if (dungeonmap.maptiles[x - 1, y].isroom)
+                id = id + 100;
+            if (dungeonmap.maptiles[x - 1, y - 1].isroom && dungeonmap.maptiles[x - 1, y].isroom && dungeonmap.maptiles[x, y - 1].isroom)
+                id = id + 1000;
+            if (dungeonmap.maptiles[x , y - 1].isroom)
+                id = id + 1;
+
+            dungeonmap.maptiles[x, y].quadrantsfield[0].quadrantID = id; 
+        }
+        else if (quadrant == 1)
+        {
+            id = 1;
+            if (dungeonmap.maptiles[x - 1, y].isroom)
+                id = id + 1000;
+            if (dungeonmap.maptiles[x - 1, y + 1].isroom && dungeonmap.maptiles[x - 1, y].isroom && dungeonmap.maptiles[x, y + 1].isroom)
+                id = id + 100;
+            if (dungeonmap.maptiles[x, y + 1].isroom)
+                id = id + 10;
+
+            dungeonmap.maptiles[x, y].quadrantsfield[1].quadrantID = id;
+        }
+        else if (quadrant == 2)
+        {
+            id = 1000;
+            if (dungeonmap.maptiles[x, y + 1].isroom)
+                id = id + 100;
+            if (dungeonmap.maptiles[x + 1, y + 1].isroom && dungeonmap.maptiles[x, y + 1].isroom && dungeonmap.maptiles[x + 1, y].isroom)
+                id = id + 10;
+            if (dungeonmap.maptiles[x + 1, y].isroom)
+                id = id + 1;
+
+            dungeonmap.maptiles[x, y].quadrantsfield[2].quadrantID = id;
+        }
+        else
+        {
+            id = 100;
+            if (dungeonmap.maptiles[x + 1, y].isroom)
+                id = id + 10;
+            if (dungeonmap.maptiles[x + 1, y - 1].isroom && dungeonmap.maptiles[x + 1, y].isroom && dungeonmap.maptiles[x, y - 1].isroom)
+                id = id + 1;
+            if (dungeonmap.maptiles[x, y - 1].isroom)
+                id = id + 1000;
+
+            dungeonmap.maptiles[x, y].quadrantsfield[3].quadrantID = id;
+        }
+    }
+
+    GameObject FindWall(int quadrantID)
+    {
+        int i;
+        for (i = 0; i < wallquadrantsdef.Length; i++)
+        {
+            if (wallquadrantsdef[i].walltypeNWCW == quadrantID)
+                return wallquadrantsdef[i].wallobject;
+        }
+            return wallquadrantsdef[12].wallobject;
+    }
+
+    void SetupTileWalls(int x, int y, bool newtile)
+    {
+        GameObject wallobject;
+        Vector3 pos;
+        Vector3 rot;
+        int i;
+
+        rot.x = 0;
+        rot.y = 180;
+        rot.z = 270;
+
+        if (newtile || dungeonmap.maptiles[x, y].isroom)
+        {
+            for (i = 0; i < 4; i++)
+            {
+                SetQuadrantID(x, y, i);
+                wallobject = FindWall(dungeonmap.maptiles[x, y].quadrantsfield[i].quadrantID);
+
+
+                if (maptileobjects[x, y].quadrantsfield[i].quadrantobject != null) Destroy(maptileobjects[x, y].quadrantsfield[i].quadrantobject);
+
+                maptileobjects[x, y].quadrantsfield[i].quadrantobject = Instantiate(wallobject, Vector3.zero, Quaternion.identity) as GameObject;
+                maptileobjects[x, y].quadrantsfield[i].quadrantobject.transform.SetParent(mapcontainer.transform);
+                maptileobjects[x, y].quadrantsfield[i].quadrantobject.transform.localEulerAngles = rot;
+            }
+
+            pos = Vector3.zero;
+            pos.x = (x - mapoffset) * mappiecesize - 50;
+            pos.y = (y - mapoffset) * mappiecesize;
+            maptileobjects[x, y].quadrantsfield[0].quadrantobject.transform.localPosition = pos;
+            pos.x = (x - mapoffset) * mappiecesize - 50;
+            pos.y = (y - mapoffset) * mappiecesize + 50;
+            maptileobjects[x, y].quadrantsfield[1].quadrantobject.transform.localPosition = pos;
+            pos.x = (x - mapoffset) * mappiecesize;
+            pos.y = (y - mapoffset) * mappiecesize + 50;
+            maptileobjects[x, y].quadrantsfield[2].quadrantobject.transform.localPosition = pos;
+            pos.x = (x - mapoffset) * mappiecesize;
+            pos.y = (y - mapoffset) * mappiecesize;
+            maptileobjects[x, y].quadrantsfield[3].quadrantobject.transform.localPosition = pos;
+        }
+    }
+
+    void CreateTile (int x, int y, int type)
+    {
+        GameObject wallobject;
+        Vector3 pos;
+        Vector3 rot;
+        int i;
+
+        dungeonmap.maptiles[x, y].isroom = true;
+
+        SetupTileWalls(x, y, true);
+        SetupTileWalls(x-1, y, false);
+        SetupTileWalls(x+1, y, false);
+        SetupTileWalls(x, y+1, false);
+        SetupTileWalls(x, y-1, false);
+        SetupTileWalls(x - 1, y - 1, false);
+        SetupTileWalls(x + 1, y - 1, false);
+        SetupTileWalls(x - 1, y + 1, false);
+        SetupTileWalls(x + 1, y + 1, false);
+
+    }
+
+    void DeleteTile (int x, int y)
+    {
+        int i;
+
+        dungeonmap.maptiles[x, y].isroom = false;
+        for (i = 0; i < 4; i++)
+        {
+            if (maptileobjects[x, y].quadrantsfield[i].quadrantobject != null) Destroy(maptileobjects[x, y].quadrantsfield[i].quadrantobject);
+        }
+        SetupTileWalls(x - 1, y, false);
+        SetupTileWalls(x + 1, y, false);
+        SetupTileWalls(x, y + 1, false);
+        SetupTileWalls(x, y - 1, false);
+        SetupTileWalls(x - 1, y - 1, false);
+        SetupTileWalls(x + 1, y - 1, false);
+        SetupTileWalls(x - 1, y + 1, false);
+        SetupTileWalls(x + 1, y + 1, false);
+    }
+    public void FillMapArt()
+    {
+        int i, j;
+
+        for (i = 1; i < mapsize - 1; i++)
+            for (j = 1; j < mapsize - 1; j++)
+                SetupTileWalls(i, j, false);
+
+        minimaplocal.MapInit(false);
+        //avatarobject_local.PathFindingInit();
+        avatarobject_local.FogInit(false);      
+        avatarobject_local.FogUpdate();
+    }
+
+    public void DestroyMap(bool firsttime)
+    {
+        int i, j, k;
+
+        for (i = 0; i < mapsize; i++)
+            for (j = 0; j < mapsize; j++)
+            {
+                dungeonmap.maptiles[i, j].isroom = false;
+                if (firsttime)
+                {
+                    dungeonmap.maptiles[i, j].quadrantsfield = new quadrant[4];
+                    maptileobjects[i, j].quadrantsfield = new quadrantobj[4];
+                }
+
+                for (k = 0; k < 4; k++)
+                {
+                    dungeonmap.maptiles[i, j].quadrantsfield[k].quadrantID = 0;
+                    if (maptileobjects[i, j].quadrantsfield[k].quadrantobject != null)
+                        Destroy(maptileobjects[i, j].quadrantsfield[k].quadrantobject);
+                    maptileobjects[i, j].quadrantsfield[k].quadrantobject = null;
+                }
+            }
+    }
+
 }

@@ -2,8 +2,6 @@
 using System.Collections;
 
 public class minimap : MonoBehaviour {
-
-    public GameObject maproom;
 	public GameObject mappath;
     GameObject[,] minimapdata;
 	GameObject avatarobject;
@@ -21,38 +19,39 @@ public class minimap : MonoBehaviour {
 	
 	}
 
-    public void MapInit()
+    public void MapInit(bool firsttime)
     {
         int i, j;
         Vector3 pos = Vector3.zero;
 
-		avatarobject = Instantiate (mappath, Vector3.zero, Quaternion.identity) as GameObject;
-		avatarobject.transform.SetParent(transform);
-		avatarobject.transform.localScale = Vector3.one;
-		avatarobject.transform.localRotation = Quaternion.identity;
+        if (firsttime)
+        {
+            avatarobject = Instantiate(mappath, Vector3.zero, Quaternion.identity) as GameObject;
+            avatarobject.transform.SetParent(transform);
+            avatarobject.transform.localScale = Vector3.one;
+            avatarobject.transform.localRotation = Quaternion.identity;
 
-        map_manager_local = GameObject.FindObjectOfType(typeof(map_manager)) as map_manager;
+            map_manager_local = GameObject.FindObjectOfType(typeof(map_manager)) as map_manager;
 
-        //Debug.Log("Found map_manager: " + map_manager_local.name);
-        //Debug.Log("MapSize: " + map_manager_local.mapsize);
-
-        minimapdata = new GameObject[map_manager_local.mapsize, map_manager_local.mapsize];
+            minimapdata = new GameObject[map_manager_local.mapsize, map_manager_local.mapsize];
+        }
 
         for (i = 0; i < map_manager_local.mapsize; i++)
             for (j = 0; j < map_manager_local.mapsize; j++)
             {
-                if (map_manager_local.mapfield[i,j] != null)
+                if (minimapdata [i,j] !=null)
                 {
-                    //Debug.Log("Found map_piece: " + map_manager_local.mapfield[i,j]);
+                    Destroy(minimapdata[i, j]);
+                    //Debug.Log("Old minimap destroyed");
+                }
+                
+                if (map_manager_local.dungeonmap.maptiles[i,j].isroom)
+                {
+                    //Debug.Log("Found map_piece: " + map_manager_local.dungeonmap.maptiles[i,j].isroom);
 
-					if (map_manager_local.mapfield [i, j].GetComponent<map_piece_def> ().isroom)
-					{
-						//Debug.Log("Drawn room");
-						minimapdata [i, j] = Instantiate (maproom, Vector3.zero, Quaternion.identity) as GameObject;
-					} else
-					{
-						minimapdata [i, j] = Instantiate (mappath, Vector3.zero, Quaternion.identity) as GameObject;
-					}
+					
+					minimapdata [i, j] = Instantiate (mappath, Vector3.zero, Quaternion.identity) as GameObject;
+					
 
                     pos.x = i * 4;
                     pos.y = j * 4;
@@ -91,7 +90,7 @@ public class minimap : MonoBehaviour {
 			pos.y = y * 4;
 			avatarobject.transform.localPosition = pos;
 		}
-		if (map_manager_local.mapfield [x, y] != null && state !=3) 
+		if (map_manager_local.dungeonmap.maptiles[x, y].isroom && state !=3) 
 		{
 			minimapdata [x, y].GetComponent<UnityEngine.UI.Image> ().color = newcolor;
 		}

@@ -1,0 +1,138 @@
+fileFormatVersion: 2
+guid: a041fd9bb4645e044a357140a2bf2264
+timeCreated: 1480119695
+licenseType: Free
+ModelImporter:
+  serializedVersion: 19
+  fileIDToRecycleName:
+    100000: cave_piece0001
+    100002: cave_piece0010
+    100004: cave_piece0011
+    100006: cave_piece0100
+    100008: cave_piece0110
+    100010: cave_piece0111
+    100012: cave_piece1000
+    100014: cave_piece1001
+    100016: cave_piece1011
+    100018: cave_piece1100
+    100020: cave_piece1101
+    100022: cave_piece1110
+    100024: cave_piece1111
+    100026: //RootNode
+    400000: cave_piece0001
+    400002: cave_piece0010
+    400004: cave_piece0011
+    400006: cave_piece0100
+    400008: cave_piece0110
+    400010: cave_piece0111
+    400012: cave_piece1000
+    400014: cave_piece1001
+    400016: cave_piece1011
+    400018: cave_piece1100
+    400020: cave_piece1101
+    400022: cave_piece1110
+    400024: cave_piece1111
+    400026: //RootNode
+    2300000: cave_piece0001
+    2300002: cave_piece0010
+    2300004: cave_piece0011
+    2300006: cave_piece0100
+    2300008: cave_piece0110
+    2300010: cave_piece0111
+    2300012: cave_piece1000
+    2300014: cave_piece1001
+    2300016: cave_piece1011
+    2300018: cave_piece1100
+    2300020: cave_piece1101
+    2300022: cave_piece1110
+    2300024: cave_piece1111
+    3300000: cave_piece0001
+    3300002: cave_piece0010
+    3300004: cave_piece0011
+    3300006: cave_piece0100
+    3300008: cave_piece0110
+    3300010: cave_piece0111
+    3300012: cave_piece1000
+    3300014: cave_piece1001
+    3300016: cave_piece1011
+    3300018: cave_piece1100
+    3300020: cave_piece1101
+    3300022: cave_piece1110
+    3300024: cave_piece1111
+    4300000: cave_piece0001
+    4300002: cave_piece0011
+    4300004: cave_piece0010
+    4300006: cave_piece1111
+    4300008: cave_piece0110
+    4300010: cave_piece1001
+    4300012: cave_piece1100
+    4300014: cave_piece0100
+    4300016: cave_piece1000
+    4300018: cave_piece1110
+    4300020: cave_piece1101
+    4300022: cave_piece1011
+    4300024: cave_piece0111
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleRotations: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

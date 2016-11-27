@@ -16,8 +16,8 @@ public class avatarstatemachine : MonoBehaviour
     static int itterations = 0;
     static int[] successfulpaths;
     static int lastusedpath;
-    static int[,] roomfield;
-    public const int maxsizepath = 400;
+    //static int[,] roomfield;
+    public const int maxsizepath = 100;
 	public GameObject avatarobject;
 	public GameObject avatarrotationobject;
 	public GameObject avatarcamera;
@@ -137,10 +137,11 @@ public class avatarstatemachine : MonoBehaviour
     public void PathFindingInit()
     {
         int i, j, k;
+
         map_manager_local = GameObject.FindObjectOfType(typeof(map_manager)) as map_manager;
         character_definitions_local = GameObject.FindObjectOfType(typeof(character_definitions)) as character_definitions;
         camera_lowfps_local = GameObject.FindObjectOfType(typeof(camera_lowfps)) as camera_lowfps;
-        roomfield = new int[map_manager_local.mapsize, map_manager_local.mapsize];
+
         finalpath = new Vector2[maxsizepath];
         successfulpaths = new int[maxsizepath];
 
@@ -158,43 +159,7 @@ public class avatarstatemachine : MonoBehaviour
         }
     }
 
-    public void PathFindingSetRooms(GameObject[,] originalmap)
-    {
-        int i, j;
-
-		for (i = 0; i < map_manager_local.mapsize; i++)
-			for (j = 0; j < map_manager_local.mapsize; j++)
-			{
-				roomfield[i, j] = 0;
-			}
-
-        for (i = 0; i < map_manager_local.mapsize; i++)
-            for (j = 0; j < map_manager_local.mapsize; j++)
-            {
-                if (originalmap[i, j] != null)
-                {
-					if (!map_manager_local.mapfield [i, j].GetComponent<map_piece_def> ().isroom)
-					{
-						roomfield [i, j] = 3;
-					}
-					else // ROOM FOUND
-					{
-						//Debug.Log("Found Room_piece: " + originalmap[i,j].name);
-						roomfield [i, j] = 4;
-						roomfield [i-1, j] = 2;
-						roomfield [i+1, j] = 2;
-						roomfield [i, j-1] = 2;
-						roomfield [i-1, j-1] = 1;
-						roomfield [i+1, j-1] = 1;
-						roomfield [i, j+1] = 2;
-						roomfield [i-1, j+1] = 1;
-						roomfield [i+1, j+1] = 1;
-					}
-                    //Debug.Log("Found map_piece: " + originalmap[i,j].name);
-                }
-            }
-    }
-
+  
     public Vector2 ClosestRoom(Vector2 mousepos)
     {
         int i;
@@ -230,10 +195,10 @@ public class avatarstatemachine : MonoBehaviour
 
     bool isVisitedRoomsAround(int x, int y)
     {
-        if ((roomfield[x, y + 1] > 1) && (fogfield[x, y + 1].visitedstate == 0)) return true;
-        if ((roomfield[x, y -1] > 1) && (fogfield[x, y - 1].visitedstate == 0)) return true;
-        if ((roomfield[x + 1, y] > 1) && (fogfield[x + 1, y].visitedstate == 0)) return true;
-        if ((roomfield[x - 1, y] > 1) && (fogfield[x - 1, y].visitedstate == 0)) return true;
+        if ((map_manager_local.dungeonmap.maptiles[x, y + 1].isroom) && (fogfield[x, y + 1].visitedstate == 0)) return true;
+        if ((map_manager_local.dungeonmap.maptiles[x, y -1].isroom) && (fogfield[x, y - 1].visitedstate == 0)) return true;
+        if ((map_manager_local.dungeonmap.maptiles[x + 1, y].isroom) && (fogfield[x + 1, y].visitedstate == 0)) return true;
+        if ((map_manager_local.dungeonmap.maptiles[x - 1, y].isroom) && (fogfield[x - 1, y].visitedstate == 0)) return true;
 
         return false;
     }
@@ -249,7 +214,7 @@ public class avatarstatemachine : MonoBehaviour
 
             fogfield[x, y].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 200);
 
-            if (map_manager_local.mapfield[x, y] != null)
+            if (map_manager_local.dungeonmap.maptiles[x, y].isroom)
             {
                 fogfield[x, y].enabledpath = true;
                 if (fogfield[x, y].visitedstate == 0)
@@ -267,28 +232,28 @@ public class avatarstatemachine : MonoBehaviour
                     battlefoundinfog = true;
                 }
 
-                if ((roomfield[x + 2, y] > 1) && (fogfield[x + 2, y].visitedstate != 0) || !isVisitedRoomsAround(x + 2, y) || (roomfield[x + 1, y] > 0))
+                if ((map_manager_local.dungeonmap.maptiles[x + 2, y].isroom) && (fogfield[x + 2, y].visitedstate != 0) || !isVisitedRoomsAround(x + 2, y) || (map_manager_local.dungeonmap.maptiles[x + 1, y].isroom))
                 {
                     fogfield[x + 1, y].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 100);
-                    if (roomfield[x + 1, y] > 1) fogfield[x + 1, y].enabledpath = true;
+                    if (map_manager_local.dungeonmap.maptiles[x + 1, y].isroom) fogfield[x + 1, y].enabledpath = true;
                 }
 
-                if ((roomfield[x - 2, y] > 1) && (fogfield[x - 2, y].visitedstate != 0) || !isVisitedRoomsAround(x - 2, y) || (roomfield[x - 1, y] > 0))
+                if ((map_manager_local.dungeonmap.maptiles[x - 2, y].isroom) && (fogfield[x - 2, y].visitedstate != 0) || !isVisitedRoomsAround(x - 2, y) || (map_manager_local.dungeonmap.maptiles[x - 1, y].isroom))
                 {
                     fogfield[x - 1, y].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 100);
-                    if (roomfield[x - 1, y] > 1) fogfield[x - 1, y].enabledpath = true;
+                    if (map_manager_local.dungeonmap.maptiles[x - 1, y].isroom) fogfield[x - 1, y].enabledpath = true;
                 }
 
-                if ((roomfield[x, y - 2] > 1) && (fogfield[x, y - 2].visitedstate != 0) || !isVisitedRoomsAround(x, y - 2) || (roomfield[x, y - 1] > 0))
+                if ((map_manager_local.dungeonmap.maptiles[x, y - 2].isroom) && (fogfield[x, y - 2].visitedstate != 0) || !isVisitedRoomsAround(x, y - 2) || (map_manager_local.dungeonmap.maptiles[x, y - 1].isroom))
                 {
                     fogfield[x, y - 1].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 100);
-                    if (roomfield[x, y - 1] > 1) fogfield[x, y - 1].enabledpath = true;
+                    if (map_manager_local.dungeonmap.maptiles[x, y - 1].isroom) fogfield[x, y - 1].enabledpath = true;
                 }
 
-                if ((roomfield[x, y + 2] > 1) && (fogfield[x, y + 2].visitedstate != 0) || !isVisitedRoomsAround(x, y + 2) || (roomfield[x, y + 1] > 0))
+                if ((map_manager_local.dungeonmap.maptiles[x, y + 2].isroom) && (fogfield[x, y + 2].visitedstate != 0) || !isVisitedRoomsAround(x, y + 2) || (map_manager_local.dungeonmap.maptiles[x, y + 1].isroom))
                 {
                     fogfield[x, y + 1].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 100);
-                    if (roomfield[x, y + 1] > 1) fogfield[x, y + 1].enabledpath = true;
+                    if (map_manager_local.dungeonmap.maptiles[x, y + 1].isroom) fogfield[x, y + 1].enabledpath = true;
                 }
 
                 //empty space fog
@@ -330,34 +295,22 @@ public class avatarstatemachine : MonoBehaviour
                 */
 
 
-                //enable triggers
-                if (map_manager_local.mapfield[x + 1, y] != null)
-                {
-                    
+                //enable minimap
+                if (map_manager_local.dungeonmap.maptiles[x + 1, y].isroom)
+                {                    
                         if (fogfield[x + 1, y].visitedstate == 0) minimapobject.GetComponent<minimap>().MapUpdate(x + 1, y, 1);
-                        //map_manager_local.mapfield[x + 1, y].GetComponent<UnityEngine.UI.Button>().interactable = true;
-                    
                 }
-                if (map_manager_local.mapfield[x - 1, y] != null)
-                {
-                    
+                if (map_manager_local.dungeonmap.maptiles[x - 1, y].isroom)
+                {                    
                         if (fogfield[x - 1, y].visitedstate == 0) minimapobject.GetComponent<minimap>().MapUpdate(x - 1, y, 1);
-                        //map_manager_local.mapfield[x - 1, y].GetComponent<UnityEngine.UI.Button>().interactable = true;
-                    
                 }
-                if (map_manager_local.mapfield[x, y + 1] != null)
-                {
-                    
+                if (map_manager_local.dungeonmap.maptiles[x, y + 1].isroom)
+                {                   
                         if (fogfield[x, y + 1].visitedstate == 0) minimapobject.GetComponent<minimap>().MapUpdate(x, y + 1, 1);
-                        //map_manager_local.mapfield[x, y + 1].GetComponent<UnityEngine.UI.Button>().interactable = true;
-                    
                 }
-                if (map_manager_local.mapfield[x, y - 1] != null)
-                {
-                    
-                        if (fogfield[x, y - 1].visitedstate == 0) minimapobject.GetComponent<minimap>().MapUpdate(x, y - 1, 1);
-                        //map_manager_local.mapfield[x, y - 1].GetComponent<UnityEngine.UI.Button>().interactable = true;
-                    
+                if (map_manager_local.dungeonmap.maptiles[x, y - 1].isroom)
+                {                   
+                        if (fogfield[x, y - 1].visitedstate == 0) minimapobject.GetComponent<minimap>().MapUpdate(x, y - 1, 1);                    
                 }
             }
         }
@@ -382,15 +335,15 @@ public class avatarstatemachine : MonoBehaviour
         if (character_definitions_local.CheckBattle(x, y) < 0) battlefoundinfog = false;
         if (!battlefoundinfog)
         {
-            if (roomfield[x + 1, y] > 0)
+            if (map_manager_local.dungeonmap.maptiles[x + 1, y].isroom)
             {
                 FogUpdateCross(x + 1, y, 1, true);
 
-                if (roomfield[x + 2, y] > 0)
+                if (map_manager_local.dungeonmap.maptiles[x + 2, y].isroom)
                 {
                     FogUpdateCross(x + 2, y, 2, true);
 
-                    if (roomfield[x + 3, y] > 0)
+                    if (map_manager_local.dungeonmap.maptiles[x + 3, y].isroom)
                     {
                         FogUpdateCross(x + 3, y, 3, false);
 
@@ -401,15 +354,15 @@ public class avatarstatemachine : MonoBehaviour
             }
             battlefoundinfog = false;
 
-            if (roomfield[x - 1, y] > 0)
+            if (map_manager_local.dungeonmap.maptiles[x - 1, y].isroom)
             {
                 FogUpdateCross(x - 1, y, 1, true);
 
-                if (roomfield[x - 2, y] > 0)
+                if (map_manager_local.dungeonmap.maptiles[x - 2, y].isroom)
                 {
                     FogUpdateCross(x - 2, y, 2, true);
 
-                    if (roomfield[x - 3, y] > 0)
+                    if (map_manager_local.dungeonmap.maptiles[x - 3, y].isroom)
                     {
                         FogUpdateCross(x - 3, y, 3, false);
 
@@ -419,15 +372,15 @@ public class avatarstatemachine : MonoBehaviour
 
             }
             battlefoundinfog = false;
-            if (roomfield[x, y + 1] > 0)
+            if (map_manager_local.dungeonmap.maptiles[x, y + 1].isroom)
             {
                 FogUpdateCross(x, y + 1, 1, true);
 
-                if (roomfield[x, y + 2] > 0)
+                if (map_manager_local.dungeonmap.maptiles[x, y + 2].isroom)
                 {
                     FogUpdateCross(x, y + 2, 2, true);
 
-                    if (roomfield[x, y + 3] > 0)
+                    if (map_manager_local.dungeonmap.maptiles[x, y + 3].isroom)
                     {
                         FogUpdateCross(x, y + 3, 3, false);
 
@@ -437,15 +390,15 @@ public class avatarstatemachine : MonoBehaviour
 
             }
             battlefoundinfog = false;
-            if (roomfield[x, y - 1] > 0)
+            if (map_manager_local.dungeonmap.maptiles[x, y - 1].isroom)
             {
                 FogUpdateCross(x, y - 1, 1, true);
 
-                if (roomfield[x, y - 2] > 0)
+                if (map_manager_local.dungeonmap.maptiles[x, y - 2].isroom)
                 {
                     FogUpdateCross(x, y - 2, 2, true);
 
-                    if (roomfield[x, y - 3] > 0)
+                    if (map_manager_local.dungeonmap.maptiles[x, y - 3].isroom)
                     {
                         FogUpdateCross(x, y - 3, 3, false);
 
@@ -456,48 +409,37 @@ public class avatarstatemachine : MonoBehaviour
         }
     }
 
-    public void FogInit()
+    public void FogInit(bool firsttime)
     {
         int i, j;
         Vector3 pos;
         bool found;
 
-        fogfield = new fogroomstruct[map_manager_local.mapsize, map_manager_local.mapsize];
+        if (firsttime) fogfield = new fogroomstruct[map_manager_local.mapsize, map_manager_local.mapsize];
 
-        /*for (i = 0; i < map_manager_local.mapsize; i++)
-            for (j = 0; j < map_manager_local.mapsize; j++)
-            {
-                if (roomfield[i, j] > 2) map_manager_local.mapfield[i, j].GetComponent<UnityEngine.UI.Button>().interactable = false;
-                fogfield[i, j].fog = Instantiate(map_manager_local.fogroomprefab, Vector3.zero, Quaternion.identity) as GameObject;
-                fogfield[i, j].fog.transform.SetParent(map_manager_local.fogcontainer.transform);
-                fogfield[i, j].fog.transform.localRotation = Quaternion.identity;
-                pos = Vector3.zero;
-                pos.x = (i - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
-                pos.y = (j - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
-                fogfield[i, j].fog.transform.localPosition = pos;
-                fogfield[i, j].visitedstate = 0;
-                fogfield[i, j].enabledpath = false;
-            }
-    */
         for (i = 1; i < map_manager_local.mapsize-1; i++)
             for (j = 1; j < map_manager_local.mapsize-1; j++)
             {
                 found = false;
-				if (roomfield[i, j] != 0)
+				if (map_manager_local.dungeonmap.maptiles[i, j].isroom)
                 {
-					if (roomfield[i,j] > 2) map_manager_local.mapfield[i, j].GetComponent<UnityEngine.UI.Button>().interactable = false;
+					//if (roomfield[i,j] > 2) map_manager_local.mapfield[i, j].GetComponent<UnityEngine.UI.Button>().interactable = false;
                     found = true;
                 }
-				if (roomfield[i + 1, j] != 0) found = true;
-				if (roomfield[i - 1, j] != 0) found = true;
-				if (roomfield[i, j + 1] != 0) found = true;
-				if (roomfield[i, j - 1] != 0) found = true;
+				if (map_manager_local.dungeonmap.maptiles[i + 1, j].isroom) found = true;
+				if (map_manager_local.dungeonmap.maptiles[i - 1, j].isroom) found = true;
+				if (map_manager_local.dungeonmap.maptiles[i, j + 1].isroom) found = true;
+				if (map_manager_local.dungeonmap.maptiles[i, j - 1].isroom) found = true;
 
-                if (roomfield[i + 1, j + 1] != 0) found = true;
-                if (roomfield[i - 1, j + 1] != 0) found = true;
-                if (roomfield[i + 1, j - 1] != 0) found = true;
-                if (roomfield[i - 1, j - 1] != 0) found = true;
+                if (map_manager_local.dungeonmap.maptiles[i + 1, j + 1].isroom) found = true;
+                if (map_manager_local.dungeonmap.maptiles[i - 1, j + 1].isroom) found = true;
+                if (map_manager_local.dungeonmap.maptiles[i + 1, j - 1].isroom) found = true;
+                if (map_manager_local.dungeonmap.maptiles[i - 1, j - 1].isroom) found = true;
 
+                if (fogfield[i,j].fog!=null)
+                {
+                    Destroy(fogfield[i, j].fog);
+                }
                 if (found)
                 {
                     fogfield[i, j].fog = Instantiate(map_manager_local.fogroomprefab, Vector3.zero, Quaternion.identity) as GameObject;
@@ -548,17 +490,17 @@ public class avatarstatemachine : MonoBehaviour
         //Debug.Log("avatar on place - Erased path: " + x + "," + y);
     }
 
-	public void AvatarStop()
-	{
+	public void AvatarStop()// ADD ACTIVE ELEMENT!!!!!!!
+    {
 		int i;
 		if (finalpath [avatarwhereinpath] != Vector2.zero)
 		{
 			avatarafterstaticposition = finalpath [avatarwhereinpath + 1];
-			map_manager_local.mapfield [(int)finalpath [avatarwhereinpath].x, (int)finalpath [avatarwhereinpath].y].GetComponent<map_piece_def> ().SetActiveElement (1);
-		}
-		if (finalpath [avatarwhereinpath+1] != Vector2.zero)
+            //map_manager_local.mapfield [(int)finalpath [avatarwhereinpath].x, (int)finalpath [avatarwhereinpath].y].GetComponent<map_piece_def> ().SetActiveElement (1);//SET ACTIVE ELEMENT!!!!!!!
+        }
+        if (finalpath [avatarwhereinpath+1] != Vector2.zero)
 		{
-			map_manager_local.mapfield [(int)finalpath [avatarwhereinpath+1].x, (int)finalpath [avatarwhereinpath+1].y].GetComponent<map_piece_def> ().SetActiveElement (1);
+			//map_manager_local.mapfield [(int)finalpath [avatarwhereinpath+1].x, (int)finalpath [avatarwhereinpath+1].y].GetComponent<map_piece_def> ().SetActiveElement (1); //SET ACTIVE ELEMENT!!!!!!!
 		}
 
 
@@ -669,11 +611,12 @@ public class avatarstatemachine : MonoBehaviour
 					avatarobject.GetComponent<Animator> ().SetTrigger ("idle");
 					camera_lowfps_local.fpstime = 100;
 
-					map_manager_local.mapfield [(int)finalpath [avatarwhereinpath].x, (int)finalpath [avatarwhereinpath].y].GetComponent<map_piece_def> ().SetActiveElement (1);
-				}
-					
+                    //SET ACTIVE ELEMENT!!!!!!!
+                    //map_manager_local.mapfield [(int)finalpath [avatarwhereinpath].x, (int)finalpath [avatarwhereinpath].y].GetComponent<map_piece_def> ().SetActiveElement (1);//SET ACTIVE ELEMENT!!!!!!!
+                }
 
-			}
+
+            }
             _avatarpos = _avatarpos + _norm;
             avatar_actual_worldposition = _avatarpos;
 				
@@ -700,7 +643,8 @@ public class avatarstatemachine : MonoBehaviour
 		for (i = 0; i < map_manager_local.mapsize; i++)
 			for (j = 0; j < map_manager_local.mapsize; j++)
 			{
-				if (map_manager_local.mapfield [i, j] != null) map_manager_local.mapfield [i, j].GetComponent<map_piece_def> ().SetActiveElement(0);
+                //SET ACTIVE ELEMENT!!!!!!!
+                //if (map_manager_local.mapfield [i, j] != null) map_manager_local.mapfield [i, j].GetComponent<map_piece_def> ().SetActiveElement(0);
 			}
 	}
 		
