@@ -40,7 +40,6 @@ public class avatarstatemachine : MonoBehaviour
 	static float avatar_old_rotationx = 0;
     [HideInInspector] public Vector3 avatar_actual_worldposition;
     [HideInInspector] public Vector2[] finalpath;
-    [HideInInspector] public Vector2[] computedpath;
     [HideInInspector] public int avatarwhereinpath = 0;
     [HideInInspector] public bool avatarmoving;
 	[HideInInspector] public bool avatardetail = false;
@@ -174,7 +173,6 @@ public class avatarstatemachine : MonoBehaviour
 
 
         finalpath = new Vector2[maxsizepath];
-        computedpath = new Vector2[maxsizepath];
         /*successfulpaths = new int[maxsizepath];
 
         paths = new path[maxsizepath];
@@ -565,8 +563,8 @@ public class avatarstatemachine : MonoBehaviour
         Vector3 _norm = Vector3.zero;
         Vector3 _avatarpos = Vector3.zero;
         Vector3 _wheretogo = Vector3.zero;
-		//Vector3 _wheretogo0 = Vector3.zero;
-		//Vector3 _wheretogo2 = Vector3.zero;
+		Vector3 _wheretogo0 = Vector3.zero;
+		Vector3 _wheretogo2 = Vector3.zero;
 		Vector2 path1;
 		Vector2 path2;
 		float waypointdistance1;
@@ -583,8 +581,9 @@ public class avatarstatemachine : MonoBehaviour
             _wheretogo.z = map_manager_local.floorZ;
 
 			path1 = finalpath [avatarwhereinpath + 1] - finalpath [avatarwhereinpath];
-            /*
-			if (finalpath [avatarwhereinpath + 2] != Vector2.zero) {
+            
+			if (finalpath [avatarwhereinpath + 2] != Vector2.zero)
+            {
 				path2 = finalpath [avatarwhereinpath + 2] - finalpath [avatarwhereinpath + 1];
 
 				_wheretogo0.x = (finalpath [avatarwhereinpath].x - map_manager_local.mapoffset) * map_manager_local.mappiecesize + avatarshift;
@@ -617,7 +616,7 @@ public class avatarstatemachine : MonoBehaviour
 					_wheretogo.x = _wheretogo.x - path1.x * map_manager_local.mappiecesize * 0.6f; 
 					_wheretogo.y = _wheretogo.y - path1.y * map_manager_local.mappiecesize * 0.6f; 
 				}
-			}*/
+			}
 			//Debug.Log("offset:" + _wheretogo);
 
 
@@ -696,16 +695,17 @@ public class avatarstatemachine : MonoBehaviour
     public void FindPath(int whereX, int whereY)
     {
         int i, j, k;
-        Vector2[] oldpath;
+        //Vector2[] oldpath;
 		Vector2 whereclick;
         int shortest = 0;
 
+        /*
         oldpath = new Vector2[maxsizepath];
 
         for (i = 0; i < maxsizepath; i++)
         {
             oldpath[i] = finalpath[i];
-            /*successfulpaths[i] = -1;
+            successfulpaths[i] = -1;
             paths[i].valid = 0;
             paths[i].indexinsidepath = 0;
             paths[i].actualX = 0;
@@ -715,8 +715,8 @@ public class avatarstatemachine : MonoBehaviour
                 paths[i].singlepath[j] = Vector2.zero;
 
 
-            }*/
-        }
+            }
+        }*/
         /*
         for (i = 0; i < maxsizepath; i++)
             for (j = 0; j < map_manager_local.mapsize; j++)
@@ -1010,7 +1010,7 @@ public class avatarstatemachine : MonoBehaviour
         avatarwhereinpath = 0;
         avatarobject.GetComponent<Animator>().SetTrigger("run");
 
-    //Debug.Log("Path length" + currentPath.Count);
+    Debug.Log("Path length" + currentPath.Count);
 
     /*computedpath[currentPath.Count].x = x;
     computedpath[currentPath.Count].y = y;*/
