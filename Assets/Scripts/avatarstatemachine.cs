@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 public class avatarstatemachine : MonoBehaviour
 {
-    public struct path
+    /*public struct path
     {
         public Vector2[] singlepath;
         public int valid;
@@ -11,13 +12,11 @@ public class avatarstatemachine : MonoBehaviour
         public int actualX;
         public int actualY;
         public bool[,] roomchecked;
-    }
-    static path[] paths;
-    static int itterations = 0;
-    static int[] successfulpaths;
+    }*/
+    //static int itterations = 0;
     static int lastusedpath;
     //static int[,] roomfield;
-    public const int maxsizepath = 100;
+    public const int maxsizepath = 5000;
 	public GameObject avatarobject;
 	public GameObject avatarrotationobject;
 	public GameObject avatarcamera;
@@ -39,6 +38,7 @@ public class avatarstatemachine : MonoBehaviour
 	static float avatar_old_rotationx = 0;
     [HideInInspector] public Vector3 avatar_actual_worldposition;
     [HideInInspector] public Vector2[] finalpath;
+    [HideInInspector] public Vector2[] computedpath;
     [HideInInspector] public int avatarwhereinpath = 0;
     [HideInInspector] public bool avatarmoving;
 	[HideInInspector] public bool avatardetail = false;
@@ -56,6 +56,33 @@ public class avatarstatemachine : MonoBehaviour
 		public bool enabledpath;
     }
     static fogroomstruct[,] fogfield;
+
+    //-----pathfinding------------
+    public class Node
+    {
+        public List<Node> neighbours;
+        public int x;
+        public int y;
+
+        public Node()
+        {
+            neighbours = new List<Node>();
+        }
+
+        public float DistanceTo(Node n)
+        {
+            if (n == null)
+            {
+                Debug.LogError("WTF?");
+            }
+
+            return Vector2.Distance(
+                    new Vector2(x, y),
+                    new Vector2(n.x, n.y)
+                );
+        }
+    }
+    Node[,] graph;
 
     // Use this for initialization
     void Start()
@@ -141,9 +168,12 @@ public class avatarstatemachine : MonoBehaviour
         map_manager_local = GameObject.FindObjectOfType(typeof(map_manager)) as map_manager;
         character_definitions_local = GameObject.FindObjectOfType(typeof(character_definitions)) as character_definitions;
         camera_lowfps_local = GameObject.FindObjectOfType(typeof(camera_lowfps)) as camera_lowfps;
+        GeneratePathfindingGraph();
+
 
         finalpath = new Vector2[maxsizepath];
-        successfulpaths = new int[maxsizepath];
+        computedpath = new Vector2[maxsizepath];
+        /*successfulpaths = new int[maxsizepath];
 
         paths = new path[maxsizepath];
         for (i = 0; i < maxsizepath; i++)
@@ -156,7 +186,7 @@ public class avatarstatemachine : MonoBehaviour
                 {
                     paths[i].roomchecked[j, k] = false;
                 }
-        }
+        }*/
     }
 
   
@@ -451,9 +481,21 @@ public class avatarstatemachine : MonoBehaviour
                     fogfield[i, j].fog.transform.localPosition = pos;
 					fogfield[i, j].visitedstate = 0;
 					fogfield [i, j].enabledpath = false;
+
+                    
+                    //-------------Test--------------------------
+                    /*fogfield[i, j].enabledpath = true;
+                    if (fogfield[i, j].visitedstate == 0)
+                    {
+                        fogfield[i, j].visitedstate = 1;
+                        minimapobject.GetComponent<minimap>().MapUpdate(i, j, 1);
+                    }*/
+                    //-------------------------------------------
+                    
                 }
                 
             }
+        
     }
 
     public void SetCharacter(float x, float y)
@@ -661,7 +703,7 @@ public class avatarstatemachine : MonoBehaviour
         for (i = 0; i < maxsizepath; i++)
         {
             oldpath[i] = finalpath[i];
-            successfulpaths[i] = -1;
+            /*successfulpaths[i] = -1;
             paths[i].valid = 0;
             paths[i].indexinsidepath = 0;
             paths[i].actualX = 0;
@@ -671,8 +713,9 @@ public class avatarstatemachine : MonoBehaviour
                 paths[i].singlepath[j] = Vector2.zero;
 
 
-            }
+            }*/
         }
+        /*
         for (i = 0; i < maxsizepath; i++)
             for (j = 0; j < map_manager_local.mapsize; j++)
                 for (k = 0; k < map_manager_local.mapsize; k++)
@@ -687,9 +730,10 @@ public class avatarstatemachine : MonoBehaviour
         paths[0].singlepath[0].y = paths[0].actualY;
         lastusedpath = 0;
         itterations = 0;
-
-        CheckDirection(0, whereX, whereY); //START PATHFINDING RECURSE
-
+        */
+        //CheckDirection(0, whereX, whereY); //START PATHFINDING RECURSE
+        GeneratePathTo(whereX, whereY);
+        /*
 
         //FIND VALID PATHS
         j = 0;
@@ -717,27 +761,29 @@ public class avatarstatemachine : MonoBehaviour
             }
         }
         //sort
-
-		whereclick.x = whereX;
+        */
+        //for (i = 0; i < maxsizepath; i++) finalpath[i] = computedpath[i];
+        
+        whereclick.x = whereX;
 		whereclick.y = whereY;
-		if (successfulpaths[0] != -1 && 
+		if (
             ((!avatarmoving && whereclick != avataractualposition) ||
              (avatarmoving && whereclick==finalpath[avatarwhereinpath+1] && character_definitions_local.CheckBattle((int)finalpath[avatarwhereinpath + 1].x, (int)finalpath[avatarwhereinpath + 1].y) < 0) ||
              (avatarmoving && whereclick != finalpath[avatarwhereinpath + 1])
             )
            )
         {
-            if (paths[shortest].singlepath[1] != oldpath[avatarwhereinpath+1]) // TESTING!!! BUG!!! BAD ARRAY INDEX
+            if (computedpath[1] != oldpath[avatarwhereinpath+1]) // TESTING!!! BUG!!! BAD ARRAY INDEX
             {
                 //Debug.Log("DIFFERENT DIRECTION PATH");
                 avatarwhereinpath = 0;
 
-                for (i = 0; i < maxsizepath; i++) finalpath[i] = paths[shortest].singlepath[i];
+                for (i = 0; i < maxsizepath; i++) finalpath[i] = computedpath[i];
 
                 finalpath[0] = avataractualposition;
-                for (i = 0; i <= paths[shortest].indexinsidepath; i++)
+                for (i = 0; i < maxsizepath-1; i++)
                 {
-                    finalpath[i + 1] = paths[shortest].singlepath[i];
+                    finalpath[i + 1] = computedpath[i];
                     
                     //Debug.Log("CLEANING THE PATH ID: " + shortest + " [" + i + "]: " + paths[shortest].singlepath[i]);
 
@@ -747,7 +793,7 @@ public class avatarstatemachine : MonoBehaviour
             {
                 //Debug.Log("SAME DIRECTION PATH");
                 avatarwhereinpath = 0;
-                for (i = 0; i < maxsizepath; i++) finalpath[i] = paths[shortest].singlepath[i];
+                for (i = 0; i < maxsizepath; i++) finalpath[i] = computedpath[i];
             }
 
 
@@ -756,7 +802,7 @@ public class avatarstatemachine : MonoBehaviour
 				avatarwhereinpath = 1;
 				//Debug.Log("Append path");  
 			}
-
+            
 			DeactivateActiveElements ();
 
 			avatarobject.GetComponent<Animator> ().SetTrigger ("run");
@@ -765,171 +811,212 @@ public class avatarstatemachine : MonoBehaviour
 
     }
 
-    static void CheckDirection(int pathindex, int whereX, int whereY) // path index and final path goal
+    
+    //----------pathfinding------------------------
+    void GeneratePathfindingGraph()
     {
-        int first = 0;
-        int ways = 0;
-        Vector2 firstdelta = Vector2.zero;
-        Vector2 deltatest = Vector2.zero;
+        // Initialize the array
+        graph = new Node[map_manager_local.mapsize, map_manager_local.mapsize];
 
-        if (paths[pathindex].actualX == whereX && paths[pathindex].actualY == whereY)
+        // Initialize a Node for each spot in the array
+        for (int x = 0; x < map_manager_local.mapsize; x++)
         {
-            paths[pathindex].valid = 1;
-            //Debug.Log("STARTING ON GOAL POSITION - PATH INDEX: " + pathindex);
-            paths[pathindex].indexinsidepath = paths[pathindex].indexinsidepath + 1;
-            paths[pathindex].singlepath[paths[pathindex].indexinsidepath].x = paths[pathindex].actualX;
-            paths[pathindex].singlepath[paths[pathindex].indexinsidepath].y = paths[pathindex].actualY;
-        }
-
-		while (paths[pathindex].valid == 0 && pathindex < maxsizepath && itterations < maxsizepath)
-        {
-            itterations = itterations + 1;
-            ways = 0;
-			if (fogfield[paths[pathindex].actualX + 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX + 1, paths[pathindex].actualY] && (character_definitions_local.CheckBattle(paths[pathindex].actualX + 1, paths[pathindex].actualY) == -1 || (paths[pathindex].actualX + 1 == whereX && paths[pathindex].actualY == whereY))) ways = ways + 1;
-			if (fogfield[paths[pathindex].actualX - 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX - 1, paths[pathindex].actualY] && (character_definitions_local.CheckBattle(paths[pathindex].actualX - 1, paths[pathindex].actualY) == -1 || (paths[pathindex].actualX - 1 == whereX && paths[pathindex].actualY == whereY))) ways = ways + 1;
-			if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY + 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY + 1] && (character_definitions_local.CheckBattle(paths[pathindex].actualX, paths[pathindex].actualY + 1) == -1 || (paths[pathindex].actualX == whereX && paths[pathindex].actualY + 1 == whereY))) ways = ways + 1;
-			if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY - 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY - 1] && (character_definitions_local.CheckBattle(paths[pathindex].actualX, paths[pathindex].actualY - 1) == -1 || (paths[pathindex].actualX == whereX && paths[pathindex].actualY - 1 == whereY))) ways = ways + 1;
-
-            if (ways > 1) //crossing
+            for (int y = 0; y < map_manager_local.mapsize; y++)
             {
-
-                first = 0;
-                firstdelta = Vector2.zero;
-
-				if (fogfield[paths[pathindex].actualX + 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX + 1, paths[pathindex].actualY] && paths[pathindex].valid == 0 && (character_definitions_local.CheckBattle(paths[pathindex].actualX + 1, paths[pathindex].actualY) == -1 || (paths[pathindex].actualX + 1 == whereX && paths[pathindex].actualY == whereY)))
-                {
-                    deltatest = Crossing(pathindex, whereX, whereY, 1, 0, first);
-                    firstdelta = deltatest;
-                    first = first + 1;
-                }
-				if (fogfield[paths[pathindex].actualX - 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX - 1, paths[pathindex].actualY] && paths[pathindex].valid == 0 && (character_definitions_local.CheckBattle(paths[pathindex].actualX - 1, paths[pathindex].actualY) == -1 || (paths[pathindex].actualX - 1 == whereX && paths[pathindex].actualY == whereY)))
-                {
-
-                    deltatest = Crossing(pathindex, whereX, whereY, -1, 0, first);
-                    if (deltatest != Vector2.zero) firstdelta = deltatest;
-                    first = first + 1;
-                }
-				if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY + 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY + 1] && paths[pathindex].valid == 0 && (character_definitions_local.CheckBattle(paths[pathindex].actualX, paths[pathindex].actualY + 1) == -1 || (paths[pathindex].actualX == whereX && paths[pathindex].actualY + 1 == whereY)))
-                {
-                    deltatest = Crossing(pathindex, whereX, whereY, 0, 1, first);
-                    if (deltatest != Vector2.zero) firstdelta = deltatest;
-                    first = first + 1;
-                }
-				if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY - 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY - 1] && paths[pathindex].valid == 0 && (character_definitions_local.CheckBattle(paths[pathindex].actualX, paths[pathindex].actualY - 1) == -1 || (paths[pathindex].actualX == whereX && paths[pathindex].actualY - 1 == whereY)))
-                {
-                    deltatest = Crossing(pathindex, whereX, whereY, 0, -1, first);
-                    if (deltatest != Vector2.zero) firstdelta = deltatest;
-                    first = first + 1;
-                }
-
-                paths[pathindex].roomchecked[paths[pathindex].actualX + (int)firstdelta.x, paths[pathindex].actualY + (int)firstdelta.y] = true;
-                paths[pathindex].indexinsidepath = paths[pathindex].indexinsidepath + 1;
-                paths[pathindex].singlepath[paths[pathindex].indexinsidepath].x = paths[pathindex].actualX + (int)firstdelta.x;
-                paths[pathindex].singlepath[paths[pathindex].indexinsidepath].y = paths[pathindex].actualY + (int)firstdelta.y;
-
-                paths[pathindex].actualX = (int)paths[pathindex].actualX + (int)firstdelta.x;
-                paths[pathindex].actualY = (int)paths[pathindex].actualY + (int)firstdelta.y;
-
-                //Debug.Log("From Crossing! [" + pathindex + "] XY:" + paths[pathindex].actualX + ", " + paths[pathindex].actualY + ", INDEX[" + paths[pathindex].indexinsidepath + "]");
-            }
-            else if (ways == 1) //straight way
-            {
-                first = 0;
-
-				if (fogfield[paths[pathindex].actualX + 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX + 1, paths[pathindex].actualY] && paths[pathindex].valid == 0 && (character_definitions_local.CheckBattle(paths[pathindex].actualX + 1, paths[pathindex].actualY) == -1 || (paths[pathindex].actualX + 1 == whereX && paths[pathindex].actualY == whereY)))
-                {
-                    firstdelta = Crossing(pathindex, whereX, whereY, 1, 0, first);
-                }
-				else if (fogfield[paths[pathindex].actualX - 1, paths[pathindex].actualY].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX - 1, paths[pathindex].actualY] && paths[pathindex].valid == 0 && (character_definitions_local.CheckBattle(paths[pathindex].actualX - 1, paths[pathindex].actualY) == -1 || (paths[pathindex].actualX - 1 == whereX && paths[pathindex].actualY == whereY)))
-                {
-                    firstdelta = Crossing(pathindex, whereX, whereY, -1, 0, first);
-                }
-				else if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY + 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY + 1] && paths[pathindex].valid == 0 && (character_definitions_local.CheckBattle(paths[pathindex].actualX, paths[pathindex].actualY + 1) == -1 || (paths[pathindex].actualX == whereX && paths[pathindex].actualY + 1 == whereY)))
-                {
-                    firstdelta = Crossing(pathindex, whereX, whereY, 0, 1, first);
-                }
-				else if (fogfield[paths[pathindex].actualX, paths[pathindex].actualY - 1].enabledpath && !paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY - 1] && paths[pathindex].valid == 0 && (character_definitions_local.CheckBattle(paths[pathindex].actualX, paths[pathindex].actualY - 1) == -1 || (paths[pathindex].actualX == whereX && paths[pathindex].actualY - 1 == whereY)))
-                {
-                    firstdelta = Crossing(pathindex, whereX, whereY, 0, -1, first);
-                }
-
-                paths[pathindex].roomchecked[paths[pathindex].actualX + (int)firstdelta.x, paths[pathindex].actualY + (int)firstdelta.y] = true;
-                paths[pathindex].indexinsidepath = paths[pathindex].indexinsidepath + 1;
-                paths[pathindex].singlepath[paths[pathindex].indexinsidepath].x = paths[pathindex].actualX + (int)firstdelta.x;
-                paths[pathindex].singlepath[paths[pathindex].indexinsidepath].y = paths[pathindex].actualY + (int)firstdelta.y;
-
-                paths[pathindex].actualX = (int)paths[pathindex].actualX + (int)firstdelta.x;
-                paths[pathindex].actualY = (int)paths[pathindex].actualY + (int)firstdelta.y;
-
-                //Debug.Log("Straight Way! [" + pathindex + "] XY:" + paths[pathindex].actualX + ", " + paths[pathindex].actualY + ", INDEX[" + paths[pathindex].indexinsidepath + "]");
-            }
-            else //dead end
-            {
-                //Debug.Log("Dead End! [" + pathindex + "] XY:" + paths[pathindex].actualX + ", " + paths[pathindex].actualY + ", INDEX[" + paths[pathindex].indexinsidepath + "]");
-                paths[pathindex].valid = 2;
+                graph[x, y] = new Node();
+                graph[x, y].x = x;
+                graph[x, y].y = y;
             }
         }
 
-        if (paths[pathindex].valid == 1)
+        // Now that all the nodes exist, calculate their neighbours
+        for (int x = 0; x < map_manager_local.mapsize; x++)
         {
-            //Debug.Log("FOUND Goal! [" + pathindex + "] XY:" + paths[pathindex].actualX + ", " + paths[pathindex].actualY + ", INDEX[" + paths[pathindex].indexinsidepath + "]");
+            for (int y = 0; y < map_manager_local.mapsize; y++)
+            {
+                // We have a 4-way connected map
+                // This also works with 6-way hexes and 8-way tiles and n-way variable areas (like EU4)
+
+                if (x > 0)
+                    graph[x, y].neighbours.Add(graph[x - 1, y]);
+                if (x < map_manager_local.mapsize - 1)
+                    graph[x, y].neighbours.Add(graph[x + 1, y]);
+                if (y > 0)
+                    graph[x, y].neighbours.Add(graph[x, y - 1]);
+                if (y < map_manager_local.mapsize - 1)
+                    graph[x, y].neighbours.Add(graph[x, y + 1]);
+            }
+        }
+    }
+    /*
+    void GenerateMapVisual()
+    {
+        for (int x = 0; x < mapSizeX; x++)
+        {
+            for (int y = 0; y < mapSizeX; y++)
+            {
+                TileType tt = tileTypes[tiles[x, y]];
+                GameObject go = (GameObject)Instantiate(tt.tileVisualPrefab, new Vector3(x, y, 0), Quaternion.identity);
+
+                ClickableTile ct = go.GetComponent<ClickableTile>();
+                ct.tileX = x;
+                ct.tileY = y;
+                ct.map = this;
+            }
         }
     }
 
-    static Vector2 Crossing(int pathindex, int whereX, int whereY, int deltaX, int deltaY, int first)
+    public Vector3 TileCoordToWorldCoord(int x, int y)
     {
-        Vector2 back = Vector2.zero;
+        return new Vector3(x, y, 0);
+    }*/
+
+    public float CostToEnterTile(int sourceX, int sourceY, int targetX, int targetY)
+    {
+        //TileType tt = tileTypes[tiles[targetX, targetY]];
+
+        if (UnitCanEnterTile(targetX, targetY) == false)
+            return Mathf.Infinity;
+
+        float cost = 1;
+
+        if (sourceX != targetX && sourceY != targetY)
+        {
+            // We are moving diagonally!  Fudge the cost for tie-breaking
+            // Purely a cosmetic thing!
+            cost += 0.001f;
+        }
+
+        return cost;
+
+    }
+
+    public bool UnitCanEnterTile(int x, int y)
+    {
+
+        // We could test the unit's walk/hover/fly type against various
+        // terrain flags here to see if they are allowed to enter the tile.
+
+        return fogfield[x, y].enabledpath;
+    }
+
+    public void GeneratePathTo(int x, int y)
+    {
+        // Clear out our unit's old path.
+
+        if (UnitCanEnterTile(x, y) == false)
+        {
+            // We probably clicked on a mountain or something, so just quit out.
+            return;
+        }
+
+        Dictionary<Node, float> dist = new Dictionary<Node, float>();
+        Dictionary<Node, Node> prev = new Dictionary<Node, Node>();
+
+        // Setup the "Q" -- the list of nodes we haven't checked yet.
+        List<Node> unvisited = new List<Node>();
+
+        Node source = graph[
+                            (int)avataractualposition.x,
+                            (int)avataractualposition.y
+                            ];
+
+        Node target = graph[
+                            x,
+                            y
+                            ];
+
+        dist[source] = 0;
+        prev[source] = null;
+
+        // Initialize everything to have INFINITY distance, since
+        // we don't know any better right now. Also, it's possible
+        // that some nodes CAN'T be reached from the source,
+        // which would make INFINITY a reasonable value
+        foreach (Node v in graph)
+        {
+            if (v != source)
+            {
+                dist[v] = Mathf.Infinity;
+                prev[v] = null;
+            }
+
+            unvisited.Add(v);
+        }
+
+        while (unvisited.Count > 0)
+        {
+            // "u" is going to be the unvisited node with the smallest distance.
+            Node u = null;
+
+            foreach (Node possibleU in unvisited)
+            {
+                if (u == null || dist[possibleU] < dist[u])
+                {
+                    u = possibleU;
+                }
+            }
+
+            if (u == target)
+            {
+                break;  // Exit the while loop!
+            }
+
+            unvisited.Remove(u);
+
+            foreach (Node v in u.neighbours)
+            {
+                //float alt = dist[u] + u.DistanceTo(v);
+                float alt = dist[u] + CostToEnterTile(u.x, u.y, v.x, v.y);
+                if (alt < dist[v])
+                {
+                    dist[v] = alt;
+                    prev[v] = u;
+                }
+            }
+        }
+
+        // If we get there, the either we found the shortest route
+        // to our target, or there is no route at ALL to our target.
+
+        if (prev[target] == null)
+        {
+            // No route between our target and the source
+            return;
+        }
+
+        List<Node> currentPath = new List<Node>();
+
+        Node curr = target;
+
+        // Step through the "prev" chain and add it to our path
+        while (curr != null)
+        {
+            currentPath.Add(curr);
+            curr = prev[curr];
+        }
+
+        // Right now, currentPath describes a route from out target to our source
+        // So we need to invert it!
+
+        currentPath.Reverse();
+
         int i;
 
-        if (first > 0)
+        for (i = 0; i < maxsizepath; i++)
         {
-            lastusedpath = lastusedpath + 1;
-            for (i = 0; i < paths[pathindex].indexinsidepath + 1; i++)
-            {
-                paths[lastusedpath].singlepath[i] = paths[pathindex].singlepath[i];
-                paths[lastusedpath].roomchecked[(int) paths[pathindex].singlepath[i].x, (int) paths[pathindex].singlepath[i].y] = true;
-            }
-
-            paths[lastusedpath].indexinsidepath = paths[pathindex].indexinsidepath + 1;
-            paths[lastusedpath].actualX = paths[pathindex].actualX;
-            paths[lastusedpath].actualY = paths[pathindex].actualY;
-
-            pathindex = lastusedpath;
-
-            paths[pathindex].actualX = paths[pathindex].actualX + deltaX;
-            paths[pathindex].actualY = paths[pathindex].actualY + deltaY;
-            paths[pathindex].roomchecked[paths[pathindex].actualX, paths[pathindex].actualY] = true;
-
-            paths[pathindex].singlepath[paths[pathindex].indexinsidepath].x = paths[pathindex].actualX;
-            paths[pathindex].singlepath[paths[pathindex].indexinsidepath].y = paths[pathindex].actualY;
-
-            if (paths[pathindex].actualX == whereX && paths[pathindex].actualY == whereY)
-            {
-                paths[pathindex].valid = 1;
-            }
-            else
-            {
-                //Debug.Log("New Way! [" + pathindex + "] XY:" + paths[pathindex].actualX + ", " + paths[pathindex].actualY + ", INDEX[" + paths[pathindex].indexinsidepath + "]");
-                CheckDirection(pathindex, whereX, whereY);
-            }
-            return Vector2.zero; //!!!!!!!
-
+            computedpath[i] = Vector2.zero;
         }
-        else
+        for (i = 0; i < currentPath.Count; i++)
         {
-
-            //Debug.Log("Index:" + paths[pathindex].indexinsidepath);
-            if (paths[pathindex].actualX + deltaX == whereX && paths[pathindex].actualY + deltaY == whereY)
-            {
-                paths[pathindex].valid = 1;
-            }
-
-            back.x = deltaX;
-            back.y = deltaY;
-            return back;
-
+            computedpath[i].x = currentPath[i].x;
+            computedpath[i].y = currentPath[i].y;
         }
-        //Debug.Log("next check:" + paths[pathindex].actualX + ", " + paths[pathindex].actualY + ", itterations: " + itterations + " Goal:" + whereX + ", " + whereY);
+        Debug.Log("Path length" + currentPath.Count);
+        /*computedpath[currentPath.Count].x = x;
+        computedpath[currentPath.Count].y = y;*/
+        /*Gizmos.color = Color.blue;
+        Gizmos.DrawLine(transform.position, target.position);*/
     }
 
 }

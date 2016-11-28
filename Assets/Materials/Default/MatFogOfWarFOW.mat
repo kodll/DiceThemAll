@@ -150,4 +150,4 @@ Material:
       data:
         first:
           name: _ColorTint
-        second: {r: 0, g: 0.03137255, b: 0.04705883, a: 1}
+        second: {r: 0.0055147037, g: 0.0382768, b: 0.125, a: 1}
