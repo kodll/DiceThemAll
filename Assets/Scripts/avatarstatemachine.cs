@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 
 public class avatarstatemachine : MonoBehaviour
@@ -15,6 +16,7 @@ public class avatarstatemachine : MonoBehaviour
     }*/
     //static int itterations = 0;
     static int lastusedpath;
+    private IEnumerator setpathfindingcoroutine;
     //static int[,] roomfield;
     public const int maxsizepath = 5000;
 	public GameObject avatarobject;
@@ -563,8 +565,8 @@ public class avatarstatemachine : MonoBehaviour
         Vector3 _norm = Vector3.zero;
         Vector3 _avatarpos = Vector3.zero;
         Vector3 _wheretogo = Vector3.zero;
-		Vector3 _wheretogo0 = Vector3.zero;
-		Vector3 _wheretogo2 = Vector3.zero;
+		//Vector3 _wheretogo0 = Vector3.zero;
+		//Vector3 _wheretogo2 = Vector3.zero;
 		Vector2 path1;
 		Vector2 path2;
 		float waypointdistance1;
@@ -581,16 +583,16 @@ public class avatarstatemachine : MonoBehaviour
             _wheretogo.z = map_manager_local.floorZ;
 
 			path1 = finalpath [avatarwhereinpath + 1] - finalpath [avatarwhereinpath];
-
+            /*
 			if (finalpath [avatarwhereinpath + 2] != Vector2.zero) {
 				path2 = finalpath [avatarwhereinpath + 2] - finalpath [avatarwhereinpath + 1];
 
 				_wheretogo0.x = (finalpath [avatarwhereinpath].x - map_manager_local.mapoffset) * map_manager_local.mappiecesize + avatarshift;
-				_wheretogo0.y = (finalpath [avatarwhereinpath].y - map_manager_local.mapoffset) * map_manager_local.mappiecesize/* - avatarshift*/;
+				_wheretogo0.y = (finalpath [avatarwhereinpath].y - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
 				_wheretogo0.z = map_manager_local.floorZ;
 
 				_wheretogo2.x = (finalpath [avatarwhereinpath + 2].x - map_manager_local.mapoffset) * map_manager_local.mappiecesize + avatarshift;
-				_wheretogo2.y = (finalpath [avatarwhereinpath + 2].y - map_manager_local.mapoffset) * map_manager_local.mappiecesize/* - avatarshift*/;
+				_wheretogo2.y = (finalpath [avatarwhereinpath + 2].y - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
 				_wheretogo2.z = map_manager_local.floorZ;
 
 				_deltavector = transform.localPosition - _wheretogo0;
@@ -601,7 +603,7 @@ public class avatarstatemachine : MonoBehaviour
 				if (path1 != path2 && waypointdistance1 > map_manager_local.mappiecesize * 0.3f) {
 					_wheretogo.x = _wheretogo.x - path1.x * curveoffset * 1.5f + path2.x * curveoffset; 
 					_wheretogo.y = _wheretogo.y - path1.y * curveoffset * 1.5f + path2.y * curveoffset; 
-
+                    
 					//Debug.Log ("waypoint1:" + finalpath [avatarwhereinpath] + " waypoint2:" + finalpath [avatarwhereinpath + 1] + " waypoint3:" + finalpath [avatarwhereinpath + 2]);
 					//Debug.Log ("path1:" + path1 + " path2:" + path2);
 					//Debug.Log ("offset:" + _wheretogo);
@@ -615,7 +617,7 @@ public class avatarstatemachine : MonoBehaviour
 					_wheretogo.x = _wheretogo.x - path1.x * map_manager_local.mappiecesize * 0.6f; 
 					_wheretogo.y = _wheretogo.y - path1.y * map_manager_local.mappiecesize * 0.6f; 
 				}
-			}
+			}*/
 			//Debug.Log("offset:" + _wheretogo);
 
 
@@ -732,7 +734,10 @@ public class avatarstatemachine : MonoBehaviour
         itterations = 0;
         */
         //CheckDirection(0, whereX, whereY); //START PATHFINDING RECURSE
-        GeneratePathTo(whereX, whereY);
+
+        setpathfindingcoroutine = GeneratePathTo(whereX, whereY);
+        StartCoroutine(setpathfindingcoroutine);
+        //GeneratePathTo(whereX, whereY);
         /*
 
         //FIND VALID PATHS
@@ -763,7 +768,7 @@ public class avatarstatemachine : MonoBehaviour
         //sort
         */
         //for (i = 0; i < maxsizepath; i++) finalpath[i] = computedpath[i];
-        
+        /*
         whereclick.x = whereX;
 		whereclick.y = whereY;
 		if (
@@ -803,11 +808,9 @@ public class avatarstatemachine : MonoBehaviour
 				//Debug.Log("Append path");  
 			}
             
-			DeactivateActiveElements ();
-
-			avatarobject.GetComponent<Animator> ().SetTrigger ("run");
+			
         }
-
+        */
 
     }
 
@@ -845,36 +848,22 @@ public class avatarstatemachine : MonoBehaviour
                     graph[x, y].neighbours.Add(graph[x, y - 1]);
                 if (y < map_manager_local.mapsize - 1)
                     graph[x, y].neighbours.Add(graph[x, y + 1]);
+
+                //diagonal
+                /*if (x > 0 && y > 0)
+                    graph[x, y].neighbours.Add(graph[x - 1, y - 1]);
+                if (x < map_manager_local.mapsize - 1 && y > 0)
+                    graph[x, y].neighbours.Add(graph[x + 1, y - 1]);
+                if (x > 0 && y < map_manager_local.mapsize - 1)
+                    graph[x, y].neighbours.Add(graph[x - 1, y + 1]);
+                if (x < map_manager_local.mapsize - 1 && y < map_manager_local.mapsize - 1)
+                    graph[x, y].neighbours.Add(graph[x + 1, y + 1]);*/
             }
         }
     }
-    /*
-    void GenerateMapVisual()
-    {
-        for (int x = 0; x < mapSizeX; x++)
-        {
-            for (int y = 0; y < mapSizeX; y++)
-            {
-                TileType tt = tileTypes[tiles[x, y]];
-                GameObject go = (GameObject)Instantiate(tt.tileVisualPrefab, new Vector3(x, y, 0), Quaternion.identity);
-
-                ClickableTile ct = go.GetComponent<ClickableTile>();
-                ct.tileX = x;
-                ct.tileY = y;
-                ct.map = this;
-            }
-        }
-    }
-
-    public Vector3 TileCoordToWorldCoord(int x, int y)
-    {
-        return new Vector3(x, y, 0);
-    }*/
 
     public float CostToEnterTile(int sourceX, int sourceY, int targetX, int targetY)
     {
-        //TileType tt = tileTypes[tiles[targetX, targetY]];
-
         if (UnitCanEnterTile(targetX, targetY) == false)
             return Mathf.Infinity;
 
@@ -884,7 +873,7 @@ public class avatarstatemachine : MonoBehaviour
         {
             // We are moving diagonally!  Fudge the cost for tie-breaking
             // Purely a cosmetic thing!
-            cost += 0.001f;
+            cost += 0.25f;
         }
 
         return cost;
@@ -900,14 +889,15 @@ public class avatarstatemachine : MonoBehaviour
         return fogfield[x, y].enabledpath;
     }
 
-    public void GeneratePathTo(int x, int y)
+    IEnumerator GeneratePathTo(int x, int y)
     {
         // Clear out our unit's old path.
 
         if (UnitCanEnterTile(x, y) == false)
         {
             // We probably clicked on a mountain or something, so just quit out.
-            return;
+            //StopCoroutine(setpathfindingcoroutine);
+            yield break;
         }
 
         Dictionary<Node, float> dist = new Dictionary<Node, float>();
@@ -972,6 +962,7 @@ public class avatarstatemachine : MonoBehaviour
                 {
                     dist[v] = alt;
                     prev[v] = u;
+                    yield return null;
                 }
             }
         }
@@ -982,7 +973,8 @@ public class avatarstatemachine : MonoBehaviour
         if (prev[target] == null)
         {
             // No route between our target and the source
-            return;
+            //StopCoroutine(setpathfindingcoroutine);
+            yield break;
         }
 
         List<Node> currentPath = new List<Node>();
@@ -994,6 +986,7 @@ public class avatarstatemachine : MonoBehaviour
         {
             currentPath.Add(curr);
             curr = prev[curr];
+            yield return null;
         }
 
         // Right now, currentPath describes a route from out target to our source
@@ -1005,18 +998,24 @@ public class avatarstatemachine : MonoBehaviour
 
         for (i = 0; i < maxsizepath; i++)
         {
-            computedpath[i] = Vector2.zero;
+            finalpath[i] = Vector2.zero;
         }
         for (i = 0; i < currentPath.Count; i++)
         {
-            computedpath[i].x = currentPath[i].x;
-            computedpath[i].y = currentPath[i].y;
+            finalpath[i].x = currentPath[i].x;
+            finalpath[i].y = currentPath[i].y;
         }
-        Debug.Log("Path length" + currentPath.Count);
-        /*computedpath[currentPath.Count].x = x;
-        computedpath[currentPath.Count].y = y;*/
-        /*Gizmos.color = Color.blue;
-        Gizmos.DrawLine(transform.position, target.position);*/
-    }
+
+        DeactivateActiveElements();
+        avatarwhereinpath = 0;
+        avatarobject.GetComponent<Animator>().SetTrigger("run");
+
+    //Debug.Log("Path length" + currentPath.Count);
+
+    /*computedpath[currentPath.Count].x = x;
+    computedpath[currentPath.Count].y = y;*/
+    /*Gizmos.color = Color.blue;
+    Gizmos.DrawLine(transform.position, target.position);*/
+}
 
 }
