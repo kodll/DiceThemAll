@@ -34,7 +34,7 @@ public class avatarstatemachine : MonoBehaviour
 	static float curveoffset = 20;
 
     [HideInInspector] public Vector2 avataractualposition;
-	[HideInInspector] public Vector2 avatarafterstaticposition;
+    [HideInInspector] public Vector2 avatarafterstaticposition;
 
     static Vector3 avatar_old_worldposition;
 	static float avatar_old_rotationx = 0;
@@ -635,7 +635,7 @@ public class avatarstatemachine : MonoBehaviour
 
                 //Debug.Log("Checking Battle: " + (int)avataractualposition.x + ", " + (int)avataractualposition.y);
                 battleindex = character_definitions_local.CheckBattle((int)avataractualposition.x, (int)avataractualposition.y);
-                if (battleindex>=0 && avatarwhereinpath>1)//!!!
+                if (battleindex>=0 && avatarwhereinpath>=1)//!!!
                 {
                     //battle
                     Debug.Log("battle, path index: " + avatarwhereinpath);
@@ -862,43 +862,61 @@ public class avatarstatemachine : MonoBehaviour
         }
     }
 
-    public float CostToEnterTile(int sourceX, int sourceY, int targetX, int targetY)
+    public float CostToEnterTile(int sourceX, int sourceY, int targetX, int targetY, int fx, int fy)
     {
-        if (UnitCanEnterTile(targetX, targetY) == false)
+        if (UnitCanEnterTile(targetX, targetY, fx, fy) == false)
             return Mathf.Infinity;
 
         float cost = 1;
 
+        /*
         if (sourceX != targetX && sourceY != targetY)
         {
             // We are moving diagonally!  Fudge the cost for tie-breaking
             // Purely a cosmetic thing!
             cost += 0.25f;
-        }
+        }*/
 
         return cost;
 
     }
 
-    public bool UnitCanEnterTile(int x, int y)
+    public bool UnitCanEnterTile(int x, int y, int fx, int fy)
     {
 
         // We could test the unit's walk/hover/fly type against various
         // terrain flags here to see if they are allowed to enter the tile.
 
+        if (fx != x || fy != y)
+        {
+            if (character_definitions_local.CheckBattle(x, y) >= 0)
+            {
+                return false;
+            }
+        }
         return fogfield[x, y].enabledpath;
+        
     }
 
     IEnumerator GeneratePathTo(int x, int y)
     {
         // Clear out our unit's old path.
 
-        if (UnitCanEnterTile(x, y) == false)
+        int fx;
+        int fy;
+
+        fx = x;
+        fy = y;
+
+        Vector2 delta;
+
+        if (UnitCanEnterTile(x, y, fx, fy) == false)
         {
             // We probably clicked on a mountain or something, so just quit out.
             //StopCoroutine(setpathfindingcoroutine);
             yield break;
         }
+        
 
         Dictionary<Node, float> dist = new Dictionary<Node, float>();
         Dictionary<Node, Node> prev = new Dictionary<Node, Node>();
@@ -906,11 +924,22 @@ public class avatarstatemachine : MonoBehaviour
         // Setup the "Q" -- the list of nodes we haven't checked yet.
         List<Node> unvisited = new List<Node>();
 
-        Node source = graph[
-                            (int)avataractualposition.x,
-                            (int)avataractualposition.y
-                            ];
+        Node source;
 
+        delta.x = avatar_actual_worldposition.x + map_manager_local.mapoffset * map_manager_local.mappiecesize -20;
+        delta.y = avatar_actual_worldposition.y + map_manager_local.mapoffset * map_manager_local.mappiecesize;
+        Debug.Log("Avatar position:" + delta);
+        Debug.Log("Avatar Path:" + finalpath[avatarwhereinpath]*map_manager_local.mappiecesize);
+        delta =  delta - (finalpath[avatarwhereinpath + 1] * map_manager_local.mappiecesize);
+        Debug.Log("Delta:" + delta.magnitude);
+        if (!avatarmoving || delta.magnitude > 50)
+        {
+            source = graph[(int)avataractualposition.x, (int)avataractualposition.y];
+        }
+        else
+        {
+            source = graph[(int)finalpath[avatarwhereinpath + 1].x, (int)finalpath[avatarwhereinpath + 1].y];
+        }
         Node target = graph[
                             x,
                             y
@@ -957,7 +986,7 @@ public class avatarstatemachine : MonoBehaviour
             foreach (Node v in u.neighbours)
             {
                 //float alt = dist[u] + u.DistanceTo(v);
-                float alt = dist[u] + CostToEnterTile(u.x, u.y, v.x, v.y);
+                float alt = dist[u] + CostToEnterTile(u.x, u.y, v.x, v.y, fx, fy);
                 if (alt < dist[v])
                 {
                     dist[v] = alt;
@@ -1008,8 +1037,10 @@ public class avatarstatemachine : MonoBehaviour
 
         DeactivateActiveElements();
         avatarwhereinpath = 0;
-        avatarobject.GetComponent<Animator>().SetTrigger("run");
-
+        if (!avatarmoving)
+        {
+            avatarobject.GetComponent<Animator>().SetTrigger("run");
+        }
     Debug.Log("Path length" + currentPath.Count);
 
     /*computedpath[currentPath.Count].x = x;
