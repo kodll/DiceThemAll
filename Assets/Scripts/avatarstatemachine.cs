@@ -347,8 +347,30 @@ public class avatarstatemachine : MonoBehaviour
         }
     }
 
+    public void FogDirectionUpdate(int x, int y, int dirx, int diry, int steps)
+    {
+        int i;
+        for (i = 1; i <= steps; i++)
+        {
+            if (map_manager_local.dungeonmap.maptiles[x + dirx * i, y + diry * i].isroom)
+            {
+                if (i < steps)
+                    FogUpdateCross(x + dirx * i, y + diry * i, 1, true);
+                else
+                    FogUpdateCross(x + dirx * i, y + diry * i, 1, false);
+            }
+            else
+            {
+                break;
+            }
+        }
+        battlefoundinfog = false;
+    }
+
     public void FogUpdate(int x, int y)
     {
+        int i;
+        int dirx, diry;
         //Debug.Log("Fog Update: " + x + ", " + y);
 
         minimapobject.GetComponent<minimap>().MapUpdate(x, y, 2);
@@ -364,77 +386,17 @@ public class avatarstatemachine : MonoBehaviour
         if (character_definitions_local.CheckBattle(x, y) < 0) battlefoundinfog = false;
         if (!battlefoundinfog)
         {
-            if (map_manager_local.dungeonmap.maptiles[x + 1, y].isroom)
-            {
-                FogUpdateCross(x + 1, y, 1, true);
+            FogDirectionUpdate(x, y,  1,  0, 3);
+            FogDirectionUpdate(x, y, -1,  0, 3);
+            FogDirectionUpdate(x, y,  0,  1, 3);
+            FogDirectionUpdate(x, y,  0, -1, 3);
 
-                if (map_manager_local.dungeonmap.maptiles[x + 2, y].isroom)
-                {
-                    FogUpdateCross(x + 2, y, 2, true);
-
-                    if (map_manager_local.dungeonmap.maptiles[x + 3, y].isroom)
-                    {
-                        FogUpdateCross(x + 3, y, 3, false);
+            /*FogDirectionUpdate(x, y,  1, -1, 1);
+            FogDirectionUpdate(x, y,  1,  1, 1);
+            FogDirectionUpdate(x, y, -1, -1, 1);
+            FogDirectionUpdate(x, y, -1,  1, 1);*/
 
 
-                    }
-                }
-
-            }
-            battlefoundinfog = false;
-
-            if (map_manager_local.dungeonmap.maptiles[x - 1, y].isroom)
-            {
-                FogUpdateCross(x - 1, y, 1, true);
-
-                if (map_manager_local.dungeonmap.maptiles[x - 2, y].isroom)
-                {
-                    FogUpdateCross(x - 2, y, 2, true);
-
-                    if (map_manager_local.dungeonmap.maptiles[x - 3, y].isroom)
-                    {
-                        FogUpdateCross(x - 3, y, 3, false);
-
-
-                    }
-                }
-
-            }
-            battlefoundinfog = false;
-            if (map_manager_local.dungeonmap.maptiles[x, y + 1].isroom)
-            {
-                FogUpdateCross(x, y + 1, 1, true);
-
-                if (map_manager_local.dungeonmap.maptiles[x, y + 2].isroom)
-                {
-                    FogUpdateCross(x, y + 2, 2, true);
-
-                    if (map_manager_local.dungeonmap.maptiles[x, y + 3].isroom)
-                    {
-                        FogUpdateCross(x, y + 3, 3, false);
-
-
-                    }
-                }
-
-            }
-            battlefoundinfog = false;
-            if (map_manager_local.dungeonmap.maptiles[x, y - 1].isroom)
-            {
-                FogUpdateCross(x, y - 1, 1, true);
-
-                if (map_manager_local.dungeonmap.maptiles[x, y - 2].isroom)
-                {
-                    FogUpdateCross(x, y - 2, 2, true);
-
-                    if (map_manager_local.dungeonmap.maptiles[x, y - 3].isroom)
-                    {
-                        FogUpdateCross(x, y - 3, 3, false);
-
-
-                    }
-                }
-            }
         }
     }
 

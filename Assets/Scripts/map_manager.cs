@@ -76,8 +76,6 @@ public class map_manager : MonoBehaviour
     [HideInInspector] public float scrollmultiplier;
     [HideInInspector] public Vector3 scrollpreviousframe;
 
-    bool tap;
-    float taplength;
     Ray ray;
 	[HideInInspector] public bool canscrollmanually;
     Vector3 oldmousepos;
@@ -92,6 +90,10 @@ public class map_manager : MonoBehaviour
     GameObject mymouse3d;
     GameObject mymouse3droomindicator;
     Vector2 mouseposmap;
+    float clickrepeater;
+    float clickrepeatertime = 0.2f;
+    bool leftclick;
+    bool rigthclick;
     Plane floorcollision;
     Camera tapcameracomponent;
     Camera charactercameracomponent;
@@ -225,7 +227,8 @@ public class map_manager : MonoBehaviour
         character_definitions_local.AddBattle(25, 25, 1, 1);
 
         //--------------------------------------------------------------
-
+        clickrepeater = 0;
+        leftclick = false;
         canscrollmanually = true;
         avatarstatictime = 0.4f;
         camerafadeouttime = 0.3f;
@@ -239,7 +242,7 @@ public class map_manager : MonoBehaviour
         mymouse3droomindicator.transform.SetParent(mapcontainer.transform);
         //Cursor.visible = false;
 
-        tap = false;
+        rigthclick = false;
         colpos = Vector3.zero;
         colpos.y = -floorZ;
         floorcollision = new Plane(Vector3.up, colpos);
@@ -295,23 +298,44 @@ public class map_manager : MonoBehaviour
 				
 				newmousepos = m3d;
 			}
-			if (Input.GetMouseButtonDown (0)) {
-				tap = true;
-				lastdeltatime = 0;
-				oldmousepos = newmousepos;
-				initialmousepos = newmousepos;
-			}
+            if (Input.GetMouseButtonDown (0)) {
+                leftclick = true; 
+               
+            }
 			if (Input.GetMouseButtonUp (0)) {
-				tap = false;
-				taplength = 0;
-				//Debug.Log ("released button ");
-				lastdeltatime = 1;
-                MouseClicked();
-			}
+                clickrepeater = 0;
+                leftclick = false;
+            }
 
-		
+            if (leftclick)
+            {
+                if (clickrepeater > clickrepeatertime)
+                {
+                    clickrepeater = 0;
+                }
+                if (clickrepeater == 0) MouseClicked();
+                clickrepeater = clickrepeater + Time.deltaTime;
+            }
 
-		}
+            if (Input.GetMouseButtonDown(1))
+            {
+                rigthclick = true;
+                lastdeltatime = 0;
+                oldmousepos = newmousepos;
+                initialmousepos = newmousepos;
+            }
+            if (Input.GetMouseButtonUp(1))
+            {
+                rigthclick = false;
+              
+                //Debug.Log ("released button ");
+                lastdeltatime = 1;
+                //MouseClicked();
+            }
+
+
+
+        }
 		ScrollMap ();
     }
 
@@ -328,12 +352,12 @@ public class map_manager : MonoBehaviour
 
         //Debug.Log("Scroll multi: " + scrollmultiplier);
 
-        if (tap)
+        if (rigthclick)
         {
             lastdelta = newmousepos - oldmousepos;
             mapmover.transform.position = mapmover.transform.position + lastdelta;
             mapcamera.transform.position = -mapmover.transform.position;
-            taplength = taplength + Time.deltaTime;
+        
             //Debug.Log("Scroll delta: " + lastdelta);
             
 
@@ -356,7 +380,7 @@ public class map_manager : MonoBehaviour
 
 
 			deltamousevector = initialmousepos - newmousepos;
-			if (deltamousevector.magnitude>=_clickdistance && tap)
+			if (deltamousevector.magnitude>=_clickdistance && rigthclick)
             {
                 scrollmultiplier = -6.0f;
             }
@@ -391,11 +415,11 @@ public class map_manager : MonoBehaviour
     {
         GameObject tapindicator;
         Vector3 pos;
-        Vector3 deltamousevector;
+        //Vector3 deltamousevector;
         Vector2 posmap;
 
-        deltamousevector = initialmousepos - newmousepos;
-        if (deltamousevector.magnitude < _clickdistance && !EventSystem.current.IsPointerOverGameObject())
+        //deltamousevector = initialmousepos - newmousepos;
+        if (/*deltamousevector.magnitude < _clickdistance && */!EventSystem.current.IsPointerOverGameObject())
         {
             if (gamemode == 1)//dungeon
             {
@@ -434,7 +458,7 @@ public class map_manager : MonoBehaviour
 	{
 		//Debug.Log("Scrolling: " + scrolling);
 		canscrollmanually = scrolling;
-		tap = false;
+        rigthclick = false;
 		if (scrolling)
 		{
 			//Time.timeScale = 1.0F;
