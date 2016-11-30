@@ -241,6 +241,7 @@ public class avatarstatemachine : MonoBehaviour
         }
         else if (battlefoundinfog == false)
         {
+            //Debug.Log("Fog Reveal");
 
             fogfield[x, y].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 200);
 
@@ -346,11 +347,9 @@ public class avatarstatemachine : MonoBehaviour
         }
     }
 
-    public void FogUpdate()
+    public void FogUpdate(int x, int y)
     {
-        int x, y;
-        x = (int)avataractualposition.x;
-        y = (int)avataractualposition.y;
+        //Debug.Log("Fog Update: " + x + ", " + y);
 
         minimapobject.GetComponent<minimap>().MapUpdate(x, y, 2);
         minimapobject.GetComponent<minimap>().MapUpdate(x, y, 3);
@@ -481,17 +480,6 @@ public class avatarstatemachine : MonoBehaviour
                     fogfield[i, j].fog.transform.localPosition = pos;
 					fogfield[i, j].visitedstate = 0;
 					fogfield [i, j].enabledpath = false;
-
-                    
-                    //-------------Test--------------------------
-                    /*fogfield[i, j].enabledpath = true;
-                    if (fogfield[i, j].visitedstate == 0)
-                    {
-                        fogfield[i, j].visitedstate = 1;
-                        minimapobject.GetComponent<minimap>().MapUpdate(i, j, 1);
-                    }*/
-                    //-------------------------------------------
-                    
                 }
                 
             }
@@ -528,7 +516,10 @@ public class avatarstatemachine : MonoBehaviour
         map_manager_local.avatarstatictime = 0;
 		SetHiMaterial (false);
 
-        
+        Debug.Log("Set character: " + x + ", " + y);
+
+        FogUpdate((int)avataractualposition.x, (int)avataractualposition.y);
+
         //Debug.Log("avatar on place - Erased path: " + x + "," + y);
     }
 
@@ -631,7 +622,7 @@ public class avatarstatemachine : MonoBehaviour
 				avataractualposition = finalpath [avatarwhereinpath];
 				avatar_old_worldposition = avatar_actual_worldposition;
 
-                FogUpdate();
+                FogUpdate((int)avataractualposition.x, (int)avataractualposition.y);
 
                 //Debug.Log("Checking Battle: " + (int)avataractualposition.x + ", " + (int)avataractualposition.y);
                 battleindex = character_definitions_local.CheckBattle((int)avataractualposition.x, (int)avataractualposition.y);
@@ -926,12 +917,19 @@ public class avatarstatemachine : MonoBehaviour
 
         Node source;
 
+        /*delta.x = avatar_actual_worldposition.x / map_manager_local.mappiecesize + map_manager_local.mapoffset;
+        delta.y = avatar_actual_worldposition.y / map_manager_local.mappiecesize + map_manager_local.mapoffset;
+
+        Debug.Log("Avatar tile position:" + delta);*/
+
+        FogUpdate((int)avataractualposition.x, (int)avataractualposition.y);
+
         delta.x = avatar_actual_worldposition.x + map_manager_local.mapoffset * map_manager_local.mappiecesize -20;
         delta.y = avatar_actual_worldposition.y + map_manager_local.mapoffset * map_manager_local.mappiecesize;
-        Debug.Log("Avatar position:" + delta);
-        Debug.Log("Avatar Path:" + finalpath[avatarwhereinpath]*map_manager_local.mappiecesize);
+        //Debug.Log("Avatar position:" + delta);
+        //Debug.Log("Avatar Path:" + finalpath[avatarwhereinpath]*map_manager_local.mappiecesize);
         delta =  delta - (finalpath[avatarwhereinpath + 1] * map_manager_local.mappiecesize);
-        Debug.Log("Delta:" + delta.magnitude);
+        //Debug.Log("Delta:" + delta.magnitude);
         if (!avatarmoving || delta.magnitude > 50)
         {
             source = graph[(int)avataractualposition.x, (int)avataractualposition.y];
@@ -1041,7 +1039,7 @@ public class avatarstatemachine : MonoBehaviour
         {
             avatarobject.GetComponent<Animator>().SetTrigger("run");
         }
-    Debug.Log("Path length" + currentPath.Count);
+    //Debug.Log("Path length" + currentPath.Count);
 
     /*computedpath[currentPath.Count].x = x;
     computedpath[currentPath.Count].y = y;*/

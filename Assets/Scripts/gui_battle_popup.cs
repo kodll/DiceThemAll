@@ -175,7 +175,7 @@ public class gui_battle_popup : MonoBehaviour
             Debug.Log("Battle Won.");
             avatarobject_local.avatarobject.GetComponent<Animator>().SetTrigger("idle");
             map_manager_local.character_definitions_local.RemoveBattle(battleindex);
-            avatarobject_local.FogUpdate();
+            avatarobject_local.FogUpdate((int)avatarobject_local.avataractualposition.x, (int)avatarobject_local.avataractualposition.x);
 
             avatarpos = Vector3.zero;
             avatarpos.x = (avatarobject_local.finalpath[avatarobject_local.avatarwhereinpath].x - map_manager_local.mapoffset) * map_manager_local.mappiecesize + avatarobject_local.avatarshift;

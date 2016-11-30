@@ -216,8 +216,10 @@ public class map_manager : MonoBehaviour
         character_definitions_local.character_definitions_init (true);
         //--------------------------------------------------------------------------------
         // main hero init-----------------------------------------------------
-        avatarobject_local.SetCharacter(26, 23); //start position
+        
         LoadMap();
+
+        avatarobject_local.SetCharacter(26, 23); //start position
         // battles -----------------------------------------------------
         character_definitions_local.AddBattle(27, 22, 0, 1);
         character_definitions_local.AddBattle(25, 25, 1, 1);
@@ -247,7 +249,7 @@ public class map_manager : MonoBehaviour
         newmousepos = Vector3.zero;
 
         SwitchGameMode(1);
-
+        
     }
     
 	
@@ -630,7 +632,7 @@ public class map_manager : MonoBehaviour
         minimaplocal.MapInit(false);
         //avatarobject_local.PathFindingInit();
         avatarobject_local.FogInit(false);      
-        avatarobject_local.FogUpdate();
+        
     }
 
     public void DestroyMap(bool firsttime)
