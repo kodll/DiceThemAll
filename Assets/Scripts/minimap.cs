@@ -45,7 +45,7 @@ public class minimap : MonoBehaviour {
                     //Debug.Log("Old minimap destroyed");
                 }
                 
-                if (map_manager_local.dungeonmap.maptiles[i,j].isroom)
+                if (map_manager_local.dungeonmap.mapwalls[i,j].isroom)
                 {
                     //Debug.Log("Found map_piece: " + map_manager_local.dungeonmap.maptiles[i,j].isroom);
 
@@ -90,7 +90,7 @@ public class minimap : MonoBehaviour {
 			pos.y = y * 4;
 			avatarobject.transform.localPosition = pos;
 		}
-		if (map_manager_local.dungeonmap.maptiles[x, y].isroom && state !=3) 
+		if (map_manager_local.dungeonmap.mapwalls[x, y].isroom && state !=3) 
 		{
 			minimapdata [x, y].GetComponent<UnityEngine.UI.Image> ().color = newcolor;
 		}

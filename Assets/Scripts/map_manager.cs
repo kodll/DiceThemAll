@@ -15,6 +15,14 @@ public class map_manager : MonoBehaviour
     }
     public wallquadrant[] wallquadrantsdef;
 
+    [System.Serializable]
+    public struct floorquadrant
+    {
+        public GameObject tileobject;
+        public int tiletypeNWCW;
+    }
+    public floorquadrant[] floorquadrantsdef;
+
     public struct quadrantobj
     {
         public GameObject quadrantobject;
@@ -37,20 +45,18 @@ public class map_manager : MonoBehaviour
         public quadrantobj[] quadrantsfield;
     }
 
-    maptileobj[,] maptileobjects;
-
     [System.Serializable]
     public struct mapdef
     {
-        public maptile[,] maptiles;
+        public maptile[,] mapwalls;
     }
 
+    maptileobj[,] mapwallobjects;
+    quadrantobj[,] mapfloorobjects;
     public mapdef dungeonmap;
 
-    
-
     //public GameObject[,] mapfield;
-    [HideInInspector] public int mapsize = 50;
+    public int mapsize = 30;
     [HideInInspector] public minimap minimaplocal;
 	static avatarstatemachine avatarobject_local;
     [HideInInspector] public character_definitions character_definitions_local;
@@ -62,10 +68,11 @@ public class map_manager : MonoBehaviour
 	public GameObject GUIChestOpenedPopup;
 	public GameObject GUIDungeonMovement;
     public GameObject GUIBattlePopup;
+    public GameObject GUIEditor;
 
 
     [HideInInspector] public float mappiecesize = 100;
-    [HideInInspector] public float mapoffset = 25;
+    public float mapoffset = 15;
     [HideInInspector] public float floorZ = -19;
 
     [HideInInspector] public float cameraspeedlow = 1.5f;
@@ -93,7 +100,8 @@ public class map_manager : MonoBehaviour
     float clickrepeater;
     float clickrepeatertime = 0.2f;
     bool leftclick;
-    bool rigthclick;
+    bool rightclick;
+    bool altclick;
     Plane floorcollision;
     Camera tapcameracomponent;
     Camera charactercameracomponent;
@@ -189,8 +197,8 @@ public class map_manager : MonoBehaviour
 
 		//----------------------------------------------------------------------
 
-        dungeonmap.maptiles = new maptile[mapsize, mapsize];
-        maptileobjects = new maptileobj[mapsize, mapsize];
+        dungeonmap.mapwalls = new maptile[mapsize, mapsize];
+        mapwallobjects = new maptileobj[mapsize, mapsize];
 
 
 		avatarobject_local = GameObject.FindObjectOfType(typeof(avatarstatemachine)) as avatarstatemachine;
@@ -216,10 +224,20 @@ public class map_manager : MonoBehaviour
 		GUIChestOpenedPopup.GetComponent<gui_chest_unlocked_popup>().InitGuiChestSystem ();
 
         character_definitions_local.character_definitions_init (true);
+
+        //mymouse3d = Instantiate(mouse3d, Vector3.zero, Quaternion.identity) as GameObject;
+        //mymouse3d.transform.SetParent(mapcontainer.transform);
+        mymouse3droomindicator = Instantiate(mouse3droomindicator, Vector3.zero, Quaternion.identity) as GameObject;
+        mymouse3droomindicator.transform.SetParent(mapcontainer.transform);
+        //Cursor.visible = false;
         //--------------------------------------------------------------------------------
         // main hero init-----------------------------------------------------
-        
-        LoadMap();
+
+        gamemode = 10;
+        if (gamemode == 1)
+        {
+            LoadMap();
+        }
 
         avatarobject_local.SetCharacter(26, 23); //start position
         // battles -----------------------------------------------------
@@ -229,6 +247,9 @@ public class map_manager : MonoBehaviour
         //--------------------------------------------------------------
         clickrepeater = 0;
         leftclick = false;
+        rightclick = false;
+        altclick = false;
+
         canscrollmanually = true;
         avatarstatictime = 0.4f;
         camerafadeouttime = 0.3f;
@@ -236,13 +257,7 @@ public class map_manager : MonoBehaviour
         scrollmultiplier = 1;
         scrollpreviousframe = Vector3.zero;
 
-        //mymouse3d = Instantiate(mouse3d, Vector3.zero, Quaternion.identity) as GameObject;
-        //mymouse3d.transform.SetParent(mapcontainer.transform);
-        mymouse3droomindicator = Instantiate(mouse3droomindicator, Vector3.zero, Quaternion.identity) as GameObject;
-        mymouse3droomindicator.transform.SetParent(mapcontainer.transform);
-        //Cursor.visible = false;
-
-        rigthclick = false;
+        
         colpos = Vector3.zero;
         colpos.y = -floorZ;
         floorcollision = new Plane(Vector3.up, colpos);
@@ -251,8 +266,9 @@ public class map_manager : MonoBehaviour
         oldmousepos = Vector3.zero;
         newmousepos = Vector3.zero;
 
-        SwitchGameMode(1);
-        
+        SwitchGameMode(gamemode);
+
+
     }
     
 	
@@ -307,6 +323,17 @@ public class map_manager : MonoBehaviour
                 leftclick = false;
             }
 
+            if (Input.GetKeyDown(KeyCode.LeftAlt))
+            {
+                altclick = true;
+                Debug.Log("alt pressed");
+            }
+            if (Input.GetKeyUp(KeyCode.LeftAlt))
+            {
+                altclick = false;
+                Debug.Log("alt released");
+            }
+
             if (leftclick)
             {
                 if (clickrepeater > clickrepeatertime)
@@ -319,14 +346,14 @@ public class map_manager : MonoBehaviour
 
             if (Input.GetMouseButtonDown(1))
             {
-                rigthclick = true;
+                rightclick = true;
                 lastdeltatime = 0;
                 oldmousepos = newmousepos;
                 initialmousepos = newmousepos;
             }
             if (Input.GetMouseButtonUp(1))
             {
-                rigthclick = false;
+                rightclick = false;
               
                 //Debug.Log ("released button ");
                 lastdeltatime = 1;
@@ -352,7 +379,7 @@ public class map_manager : MonoBehaviour
 
         //Debug.Log("Scroll multi: " + scrollmultiplier);
 
-        if (rigthclick)
+        if (rightclick)
         {
             lastdelta = newmousepos - oldmousepos;
             mapmover.transform.position = mapmover.transform.position + lastdelta;
@@ -380,7 +407,7 @@ public class map_manager : MonoBehaviour
 
 
 			deltamousevector = initialmousepos - newmousepos;
-			if (deltamousevector.magnitude>=_clickdistance && rigthclick)
+			if (deltamousevector.magnitude>=_clickdistance && rightclick)
             {
                 scrollmultiplier = -6.0f;
             }
@@ -429,6 +456,8 @@ public class map_manager : MonoBehaviour
                     lastdeltatime = 0;
                     lastdelta = Vector3.zero;
                     avatarobject_local.FindPath((int)posmap.x, (int)posmap.y);
+
+                    /*
                     tapindicator = Instantiate(maptapvalid, Vector3.zero, Quaternion.identity) as GameObject;
                     tapindicator.transform.SetParent(this.transform);
                     tapindicator.transform.localScale = Vector3.one;
@@ -438,6 +467,7 @@ public class map_manager : MonoBehaviour
                     pos.y = (posmap.y - mapoffset) * mappiecesize;
                     //pos.z = floorZ;
                     tapindicator.transform.localPosition = pos;
+                    */
 
                     avatarstatictime = 1.5f;
                     camerafadeouttime = 0.05f;
@@ -449,6 +479,7 @@ public class map_manager : MonoBehaviour
             {
                 posmap.x = Mathf.Round(mouseposmap.x);
                 posmap.y = Mathf.Round(mouseposmap.y);
+                if (posmap.x < mapsize-5 && posmap.x > 5 && posmap.y < mapsize - 5 && posmap.y > 5)
                 EditTile((int)posmap.x, (int)posmap.y);
             }
         }
@@ -458,7 +489,7 @@ public class map_manager : MonoBehaviour
 	{
 		//Debug.Log("Scrolling: " + scrolling);
 		canscrollmanually = scrolling;
-        rigthclick = false;
+        rightclick = false;
 		if (scrolling)
 		{
 			//Time.timeScale = 1.0F;
@@ -475,11 +506,18 @@ public class map_manager : MonoBehaviour
         {
             mymouse3droomindicator.SetActive(false);
             fogofwarobject.SetActive(true);
+            GUIDungeonMovement.GetComponent<Animator>().SetTrigger("PanelShow");
+            GUIEditor.GetComponent<Animator>().SetTrigger("PanelHide");
+            minimaplocal.MapInit(false);
+            avatarobject_local.FogInit(false);
+            avatarobject_local.FogUpdate((int)avatarobject_local.avataractualposition.x, (int)avatarobject_local.avataractualposition.y);
         }
         else if (mode ==10)
         {
             mymouse3droomindicator.SetActive(true);
             fogofwarobject.SetActive(false);
+            GUIDungeonMovement.GetComponent<Animator>().SetTrigger("PanelHide");
+            GUIEditor.GetComponent<Animator>().SetTrigger("PanelShow");
         }
         gamemode = mode;
         
@@ -487,16 +525,25 @@ public class map_manager : MonoBehaviour
 
     void EditTile(int x, int y)
     {
-        if (dungeonmap.maptiles[x, y].isroom)
+        if (dungeonmap.mapwalls[x, y].isroom)
         {
-            
-            DeleteTile(x, y);
+            if (altclick)
+            {
+                DeleteTile(x, y);
+            }
+            else
+            {
+                DeleteTile(x, y);
+                CreateTile(x, y, 1);
+            }
             
         }
         else
         {
-            CreateTile(x, y, 1);
-            
+            if (!altclick)
+            {
+                CreateTile(x, y, 1);
+            }
         }
             
     }
@@ -506,50 +553,50 @@ public class map_manager : MonoBehaviour
         if (quadrant == 0)
         {
             id = 10;
-            if (dungeonmap.maptiles[x - 1, y].isroom)
+            if (dungeonmap.mapwalls[x - 1, y].isroom)
                 id = id + 100;
-            if (dungeonmap.maptiles[x - 1, y - 1].isroom && dungeonmap.maptiles[x - 1, y].isroom && dungeonmap.maptiles[x, y - 1].isroom)
+            if (dungeonmap.mapwalls[x - 1, y - 1].isroom && dungeonmap.mapwalls[x - 1, y].isroom && dungeonmap.mapwalls[x, y - 1].isroom)
                 id = id + 1000;
-            if (dungeonmap.maptiles[x , y - 1].isroom)
+            if (dungeonmap.mapwalls[x , y - 1].isroom)
                 id = id + 1;
 
-            dungeonmap.maptiles[x, y].quadrantsfield[0].quadrantID = id; 
+            dungeonmap.mapwalls[x, y].quadrantsfield[0].quadrantID = id; 
         }
         else if (quadrant == 1)
         {
             id = 1;
-            if (dungeonmap.maptiles[x - 1, y].isroom)
+            if (dungeonmap.mapwalls[x - 1, y].isroom)
                 id = id + 1000;
-            if (dungeonmap.maptiles[x - 1, y + 1].isroom && dungeonmap.maptiles[x - 1, y].isroom && dungeonmap.maptiles[x, y + 1].isroom)
+            if (dungeonmap.mapwalls[x - 1, y + 1].isroom && dungeonmap.mapwalls[x - 1, y].isroom && dungeonmap.mapwalls[x, y + 1].isroom)
                 id = id + 100;
-            if (dungeonmap.maptiles[x, y + 1].isroom)
+            if (dungeonmap.mapwalls[x, y + 1].isroom)
                 id = id + 10;
 
-            dungeonmap.maptiles[x, y].quadrantsfield[1].quadrantID = id;
+            dungeonmap.mapwalls[x, y].quadrantsfield[1].quadrantID = id;
         }
         else if (quadrant == 2)
         {
             id = 1000;
-            if (dungeonmap.maptiles[x, y + 1].isroom)
+            if (dungeonmap.mapwalls[x, y + 1].isroom)
                 id = id + 100;
-            if (dungeonmap.maptiles[x + 1, y + 1].isroom && dungeonmap.maptiles[x, y + 1].isroom && dungeonmap.maptiles[x + 1, y].isroom)
+            if (dungeonmap.mapwalls[x + 1, y + 1].isroom && dungeonmap.mapwalls[x, y + 1].isroom && dungeonmap.mapwalls[x + 1, y].isroom)
                 id = id + 10;
-            if (dungeonmap.maptiles[x + 1, y].isroom)
+            if (dungeonmap.mapwalls[x + 1, y].isroom)
                 id = id + 1;
 
-            dungeonmap.maptiles[x, y].quadrantsfield[2].quadrantID = id;
+            dungeonmap.mapwalls[x, y].quadrantsfield[2].quadrantID = id;
         }
         else
         {
             id = 100;
-            if (dungeonmap.maptiles[x + 1, y].isroom)
+            if (dungeonmap.mapwalls[x + 1, y].isroom)
                 id = id + 10;
-            if (dungeonmap.maptiles[x + 1, y - 1].isroom && dungeonmap.maptiles[x + 1, y].isroom && dungeonmap.maptiles[x, y - 1].isroom)
+            if (dungeonmap.mapwalls[x + 1, y - 1].isroom && dungeonmap.mapwalls[x + 1, y].isroom && dungeonmap.mapwalls[x, y - 1].isroom)
                 id = id + 1;
-            if (dungeonmap.maptiles[x, y - 1].isroom)
+            if (dungeonmap.mapwalls[x, y - 1].isroom)
                 id = id + 1000;
 
-            dungeonmap.maptiles[x, y].quadrantsfield[3].quadrantID = id;
+            dungeonmap.mapwalls[x, y].quadrantsfield[3].quadrantID = id;
         }
     }
 
@@ -575,34 +622,34 @@ public class map_manager : MonoBehaviour
         rot.y = 180;
         rot.z = 270;
 
-        if (newtile || dungeonmap.maptiles[x, y].isroom)
+        if (newtile || dungeonmap.mapwalls[x, y].isroom)
         {
             for (i = 0; i < 4; i++)
             {
                 SetQuadrantID(x, y, i);
-                wallobject = FindWall(dungeonmap.maptiles[x, y].quadrantsfield[i].quadrantID);
+                wallobject = FindWall(dungeonmap.mapwalls[x, y].quadrantsfield[i].quadrantID);
 
 
-                if (maptileobjects[x, y].quadrantsfield[i].quadrantobject != null) Destroy(maptileobjects[x, y].quadrantsfield[i].quadrantobject);
+                if (mapwallobjects[x, y].quadrantsfield[i].quadrantobject != null) Destroy(mapwallobjects[x, y].quadrantsfield[i].quadrantobject);
 
-                maptileobjects[x, y].quadrantsfield[i].quadrantobject = Instantiate(wallobject, Vector3.zero, Quaternion.identity) as GameObject;
-                maptileobjects[x, y].quadrantsfield[i].quadrantobject.transform.SetParent(mapcontainer.transform);
-                maptileobjects[x, y].quadrantsfield[i].quadrantobject.transform.localEulerAngles = rot;
+                mapwallobjects[x, y].quadrantsfield[i].quadrantobject = Instantiate(wallobject, Vector3.zero, Quaternion.identity) as GameObject;
+                mapwallobjects[x, y].quadrantsfield[i].quadrantobject.transform.SetParent(mapcontainer.transform);
+                mapwallobjects[x, y].quadrantsfield[i].quadrantobject.transform.localEulerAngles = rot;
             }
 
             pos = Vector3.zero;
             pos.x = (x - mapoffset) * mappiecesize - 50;
             pos.y = (y - mapoffset) * mappiecesize;
-            maptileobjects[x, y].quadrantsfield[0].quadrantobject.transform.localPosition = pos;
+            mapwallobjects[x, y].quadrantsfield[0].quadrantobject.transform.localPosition = pos;
             pos.x = (x - mapoffset) * mappiecesize - 50;
             pos.y = (y - mapoffset) * mappiecesize + 50;
-            maptileobjects[x, y].quadrantsfield[1].quadrantobject.transform.localPosition = pos;
+            mapwallobjects[x, y].quadrantsfield[1].quadrantobject.transform.localPosition = pos;
             pos.x = (x - mapoffset) * mappiecesize;
             pos.y = (y - mapoffset) * mappiecesize + 50;
-            maptileobjects[x, y].quadrantsfield[2].quadrantobject.transform.localPosition = pos;
+            mapwallobjects[x, y].quadrantsfield[2].quadrantobject.transform.localPosition = pos;
             pos.x = (x - mapoffset) * mappiecesize;
             pos.y = (y - mapoffset) * mappiecesize;
-            maptileobjects[x, y].quadrantsfield[3].quadrantobject.transform.localPosition = pos;
+            mapwallobjects[x, y].quadrantsfield[3].quadrantobject.transform.localPosition = pos;
         }
     }
 
@@ -613,7 +660,7 @@ public class map_manager : MonoBehaviour
         Vector3 rot;
         int i;
 
-        dungeonmap.maptiles[x, y].isroom = true;
+        dungeonmap.mapwalls[x, y].isroom = true;
 
         SetupTileWalls(x, y, true);
         SetupTileWalls(x-1, y, false);
@@ -631,10 +678,10 @@ public class map_manager : MonoBehaviour
     {
         int i;
 
-        dungeonmap.maptiles[x, y].isroom = false;
+        dungeonmap.mapwalls[x, y].isroom = false;
         for (i = 0; i < 4; i++)
         {
-            if (maptileobjects[x, y].quadrantsfield[i].quadrantobject != null) Destroy(maptileobjects[x, y].quadrantsfield[i].quadrantobject);
+            if (mapwallobjects[x, y].quadrantsfield[i].quadrantobject != null) Destroy(mapwallobjects[x, y].quadrantsfield[i].quadrantobject);
         }
         SetupTileWalls(x - 1, y, false);
         SetupTileWalls(x + 1, y, false);
@@ -655,6 +702,7 @@ public class map_manager : MonoBehaviour
 
         minimaplocal.MapInit(false);
         //avatarobject_local.PathFindingInit();
+        Debug.Log("Filling map art");
         avatarobject_local.FogInit(false);      
         
     }
@@ -666,19 +714,19 @@ public class map_manager : MonoBehaviour
         for (i = 0; i < mapsize; i++)
             for (j = 0; j < mapsize; j++)
             {
-                dungeonmap.maptiles[i, j].isroom = false;
+                dungeonmap.mapwalls[i, j].isroom = false;
                 if (firsttime)
                 {
-                    dungeonmap.maptiles[i, j].quadrantsfield = new quadrant[4];
-                    maptileobjects[i, j].quadrantsfield = new quadrantobj[4];
+                    dungeonmap.mapwalls[i, j].quadrantsfield = new quadrant[4];
+                    mapwallobjects[i, j].quadrantsfield = new quadrantobj[4];
                 }
 
                 for (k = 0; k < 4; k++)
                 {
-                    dungeonmap.maptiles[i, j].quadrantsfield[k].quadrantID = 0;
-                    if (maptileobjects[i, j].quadrantsfield[k].quadrantobject != null)
-                        Destroy(maptileobjects[i, j].quadrantsfield[k].quadrantobject);
-                    maptileobjects[i, j].quadrantsfield[k].quadrantobject = null;
+                    dungeonmap.mapwalls[i, j].quadrantsfield[k].quadrantID = 0;
+                    if (mapwallobjects[i, j].quadrantsfield[k].quadrantobject != null)
+                        Destroy(mapwallobjects[i, j].quadrantsfield[k].quadrantobject);
+                    mapwallobjects[i, j].quadrantsfield[k].quadrantobject = null;
                 }
             }
     }

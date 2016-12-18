@@ -19,6 +19,50 @@ ModelImporter:
     100022: cave_piece1110
     100024: cave_piece1111
     100026: //RootNode
+    100028: cave_floor_v0_t1111
+    100030: cave_floor_v0_t1112
+    100032: cave_floor_v0_t1112 1
+    100034: cave_floor_v0_t1113
+    100036: cave_floor_v0_t1122
+    100038: cave_floor_v0_t1131
+    100040: cave_floor_v0_t1133
+    100042: cave_floor_v0_t1211
+    100044: cave_floor_v0_t1221
+    100046: cave_floor_v0_t1222
+    100048: cave_floor_v0_t1311
+    100050: cave_floor_v0_t1331
+    100052: cave_floor_v0_t1333
+    100054: cave_floor_v0_t2111
+    100056: cave_floor_v0_t2112
+    100058: cave_floor_v0_t2122
+    100060: cave_floor_v0_t2211
+    100062: cave_floor_v0_t2212
+    100064: cave_floor_v0_t2221
+    100066: cave_floor_v0_t2222
+    100068: cave_floor_v0_t2223
+    100070: cave_floor_v0_t2232
+    100072: cave_floor_v0_t2233
+    100074: cave_floor_v0_t2322
+    100076: cave_floor_v0_t2332
+    100078: cave_floor_v0_t2333
+    100080: cave_floor_v0_t3111
+    100082: cave_floor_v0_t3113
+    100084: cave_floor_v0_t3133
+    100086: cave_floor_v0_t3222
+    100088: cave_floor_v0_t3223
+    100090: cave_floor_v0_t3233
+    100092: cave_floor_v0_t3311
+    100094: cave_floor_v0_t3313
+    100096: cave_floor_v0_t3322
+    100098: cave_floor_v0_t3323
+    100100: cave_floor_v0_t3331
+    100102: cave_floor_v0_t3332
+    100104: cave_floor_v0_t3333
+    100106: cave_floor_v1_t1111
+    100108: cave_floor_v1_t3333
+    100110: cave_floor_v2_t1111
+    100112: cave_floor_v3_t1111
+    100114: cave_floor_v0_t1121
     400000: cave_piece0001
     400002: cave_piece0010
     400004: cave_piece0011
@@ -33,6 +77,50 @@ ModelImporter:
     400022: cave_piece1110
     400024: cave_piece1111
     400026: //RootNode
+    400028: cave_floor_v0_t1111
+    400030: cave_floor_v0_t1112
+    400032: cave_floor_v0_t1112 1
+    400034: cave_floor_v0_t1113
+    400036: cave_floor_v0_t1122
+    400038: cave_floor_v0_t1131
+    400040: cave_floor_v0_t1133
+    400042: cave_floor_v0_t1211
+    400044: cave_floor_v0_t1221
+    400046: cave_floor_v0_t1222
+    400048: cave_floor_v0_t1311
+    400050: cave_floor_v0_t1331
+    400052: cave_floor_v0_t1333
+    400054: cave_floor_v0_t2111
+    400056: cave_floor_v0_t2112
+    400058: cave_floor_v0_t2122
+    400060: cave_floor_v0_t2211
+    400062: cave_floor_v0_t2212
+    400064: cave_floor_v0_t2221
+    400066: cave_floor_v0_t2222
+    400068: cave_floor_v0_t2223
+    400070: cave_floor_v0_t2232
+    400072: cave_floor_v0_t2233
+    400074: cave_floor_v0_t2322
+    400076: cave_floor_v0_t2332
+    400078: cave_floor_v0_t2333
+    400080: cave_floor_v0_t3111
+    400082: cave_floor_v0_t3113
+    400084: cave_floor_v0_t3133
+    400086: cave_floor_v0_t3222
+    400088: cave_floor_v0_t3223
+    400090: cave_floor_v0_t3233
+    400092: cave_floor_v0_t3311
+    400094: cave_floor_v0_t3313
+    400096: cave_floor_v0_t3322
+    400098: cave_floor_v0_t3323
+    400100: cave_floor_v0_t3331
+    400102: cave_floor_v0_t3332
+    400104: cave_floor_v0_t3333
+    400106: cave_floor_v1_t1111
+    400108: cave_floor_v1_t3333
+    400110: cave_floor_v2_t1111
+    400112: cave_floor_v3_t1111
+    400114: cave_floor_v0_t1121
     2300000: cave_piece0001
     2300002: cave_piece0010
     2300004: cave_piece0011
@@ -46,6 +134,50 @@ ModelImporter:
     2300020: cave_piece1101
     2300022: cave_piece1110
     2300024: cave_piece1111
+    2300026: cave_floor_v0_t1111
+    2300028: cave_floor_v0_t1112
+    2300030: cave_floor_v0_t1112 1
+    2300032: cave_floor_v0_t1113
+    2300034: cave_floor_v0_t1122
+    2300036: cave_floor_v0_t1131
+    2300038: cave_floor_v0_t1133
+    2300040: cave_floor_v0_t1211
+    2300042: cave_floor_v0_t1221
+    2300044: cave_floor_v0_t1222
+    2300046: cave_floor_v0_t1311
+    2300048: cave_floor_v0_t1331
+    2300050: cave_floor_v0_t1333
+    2300052: cave_floor_v0_t2111
+    2300054: cave_floor_v0_t2112
+    2300056: cave_floor_v0_t2122
+    2300058: cave_floor_v0_t2211
+    2300060: cave_floor_v0_t2212
+    2300062: cave_floor_v0_t2221
+    2300064: cave_floor_v0_t2222
+    2300066: cave_floor_v0_t2223
+    2300068: cave_floor_v0_t2232
+    2300070: cave_floor_v0_t2233
+    2300072: cave_floor_v0_t2322
+    2300074: cave_floor_v0_t2332
+    2300076: cave_floor_v0_t2333
+    2300078: cave_floor_v0_t3111
+    2300080: cave_floor_v0_t3113
+    2300082: cave_floor_v0_t3133
+    2300084: cave_floor_v0_t3222
+    2300086: cave_floor_v0_t3223
+    2300088: cave_floor_v0_t3233
+    2300090: cave_floor_v0_t3311
+    2300092: cave_floor_v0_t3313
+    2300094: cave_floor_v0_t3322
+    2300096: cave_floor_v0_t3323
+    2300098: cave_floor_v0_t3331
+    2300100: cave_floor_v0_t3332
+    2300102: cave_floor_v0_t3333
+    2300104: cave_floor_v1_t1111
+    2300106: cave_floor_v1_t3333
+    2300108: cave_floor_v2_t1111
+    2300110: cave_floor_v3_t1111
+    2300112: cave_floor_v0_t1121
     3300000: cave_piece0001
     3300002: cave_piece0010
     3300004: cave_piece0011
@@ -59,6 +191,50 @@ ModelImporter:
     3300020: cave_piece1101
     3300022: cave_piece1110
     3300024: cave_piece1111
+    3300026: cave_floor_v0_t1111
+    3300028: cave_floor_v0_t1112
+    3300030: cave_floor_v0_t1112 1
+    3300032: cave_floor_v0_t1113
+    3300034: cave_floor_v0_t1122
+    3300036: cave_floor_v0_t1131
+    3300038: cave_floor_v0_t1133
+    3300040: cave_floor_v0_t1211
+    3300042: cave_floor_v0_t1221
+    3300044: cave_floor_v0_t1222
+    3300046: cave_floor_v0_t1311
+    3300048: cave_floor_v0_t1331
+    3300050: cave_floor_v0_t1333
+    3300052: cave_floor_v0_t2111
+    3300054: cave_floor_v0_t2112
+    3300056: cave_floor_v0_t2122
+    3300058: cave_floor_v0_t2211
+    3300060: cave_floor_v0_t2212
+    3300062: cave_floor_v0_t2221
+    3300064: cave_floor_v0_t2222
+    3300066: cave_floor_v0_t2223
+    3300068: cave_floor_v0_t2232
+    3300070: cave_floor_v0_t2233
+    3300072: cave_floor_v0_t2322
+    3300074: cave_floor_v0_t2332
+    3300076: cave_floor_v0_t2333
+    3300078: cave_floor_v0_t3111
+    3300080: cave_floor_v0_t3113
+    3300082: cave_floor_v0_t3133
+    3300084: cave_floor_v0_t3222
+    3300086: cave_floor_v0_t3223
+    3300088: cave_floor_v0_t3233
+    3300090: cave_floor_v0_t3311
+    3300092: cave_floor_v0_t3313
+    3300094: cave_floor_v0_t3322
+    3300096: cave_floor_v0_t3323
+    3300098: cave_floor_v0_t3331
+    3300100: cave_floor_v0_t3332
+    3300102: cave_floor_v0_t3333
+    3300104: cave_floor_v1_t1111
+    3300106: cave_floor_v1_t3333
+    3300108: cave_floor_v2_t1111
+    3300110: cave_floor_v3_t1111
+    3300112: cave_floor_v0_t1121
     4300000: cave_piece0001
     4300002: cave_piece0011
     4300004: cave_piece0010
@@ -72,6 +248,50 @@ ModelImporter:
     4300020: cave_piece1101
     4300022: cave_piece1011
     4300024: cave_piece0111
+    4300026: cave_floor_v0_t1131
+    4300028: cave_floor_v0_t1333
+    4300030: cave_floor_v0_t3333
+    4300032: cave_floor_v0_t1311
+    4300034: cave_floor_v0_t3331
+    4300036: cave_floor_v0_t1331
+    4300038: cave_floor_v0_t3111
+    4300040: cave_floor_v0_t3311
+    4300042: cave_floor_v0_t3313
+    4300044: cave_floor_v0_t1113
+    4300046: cave_floor_v0_t3113
+    4300048: cave_floor_v0_t3133
+    4300050: cave_floor_v0_t1133
+    4300052: cave_floor_v0_t1112
+    4300054: cave_floor_v0_t2212
+    4300056: cave_floor_v0_t2211
+    4300058: cave_floor_v0_t1112
+    4300060: cave_floor_v0_t1222
+    4300062: cave_floor_v0_t2222
+    4300064: cave_floor_v0_t1211
+    4300066: cave_floor_v0_t2221
+    4300068: cave_floor_v0_t1221
+    4300070: cave_floor_v0_t2111
+    4300072: cave_floor_v0_t2112
+    4300074: cave_floor_v0_t2122
+    4300076: cave_floor_v0_t1122
+    4300078: cave_floor_v0_t3233
+    4300080: cave_floor_v0_t2223
+    4300082: cave_floor_v1_t3333
+    4300084: cave_floor_v0_t2322
+    4300086: cave_floor_v0_t3332
+    4300088: cave_floor_v0_t3223
+    4300090: cave_floor_v0_t3323
+    4300092: cave_floor_v0_t3322
+    4300094: cave_floor_v0_t2333
+    4300096: cave_floor_v0_t2332
+    4300098: cave_floor_v0_t3222
+    4300100: cave_floor_v0_t2232
+    4300102: cave_floor_v0_t2233
+    4300104: cave_floor_v0_t1111
+    4300106: cave_floor_v1_t1111
+    4300108: cave_floor_v2_t1111
+    4300110: cave_floor_v3_t1111
+    4300112: cave_floor_v0_t1121
   materials:
     importMaterials: 1
     materialName: 0

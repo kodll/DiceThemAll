@@ -209,6 +209,7 @@ public class avatarstatemachine : MonoBehaviour
                 {
                     testedRoom.x = i;
                     testedRoom.y = j;
+                    //Debug.Log("Testing Room: " + testedRoom);
                     vectorDelta = mousepos - testedRoom;
                     testedDistance = vectorDelta.magnitude;
                     if (testedDistance<minDistance && testedDistance<2)
@@ -225,10 +226,10 @@ public class avatarstatemachine : MonoBehaviour
 
     bool isVisitedRoomsAround(int x, int y)
     {
-        if ((map_manager_local.dungeonmap.maptiles[x, y + 1].isroom) && (fogfield[x, y + 1].visitedstate == 0)) return true;
-        if ((map_manager_local.dungeonmap.maptiles[x, y -1].isroom) && (fogfield[x, y - 1].visitedstate == 0)) return true;
-        if ((map_manager_local.dungeonmap.maptiles[x + 1, y].isroom) && (fogfield[x + 1, y].visitedstate == 0)) return true;
-        if ((map_manager_local.dungeonmap.maptiles[x - 1, y].isroom) && (fogfield[x - 1, y].visitedstate == 0)) return true;
+        if ((map_manager_local.dungeonmap.mapwalls[x, y + 1].isroom) && (fogfield[x, y + 1].visitedstate == 0)) return true;
+        if ((map_manager_local.dungeonmap.mapwalls[x, y -1].isroom) && (fogfield[x, y - 1].visitedstate == 0)) return true;
+        if ((map_manager_local.dungeonmap.mapwalls[x + 1, y].isroom) && (fogfield[x + 1, y].visitedstate == 0)) return true;
+        if ((map_manager_local.dungeonmap.mapwalls[x - 1, y].isroom) && (fogfield[x - 1, y].visitedstate == 0)) return true;
 
         return false;
     }
@@ -241,17 +242,18 @@ public class avatarstatemachine : MonoBehaviour
         }
         else if (battlefoundinfog == false)
         {
-            //Debug.Log("Fog Reveal");
-
-            fogfield[x, y].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 200);
-
-            if (map_manager_local.dungeonmap.maptiles[x, y].isroom)
+            //Debug.Log("Fog Reveal: x:" + x + ", y:" + y);
+            if (map_manager_local.dungeonmap.mapwalls[x, y].isroom)
             {
+                fogfield[x, y].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 200);
+
                 fogfield[x, y].enabledpath = true;
                 if (fogfield[x, y].visitedstate == 0)
                 {
+                    //Debug.Log("Fog Reveal: x:" + x + ", y:" + y);
                     fogfield[x, y].visitedstate = 1;
                     minimapobject.GetComponent<minimap>().MapUpdate(x, y, 1);
+                    
                 }
                 //map_manager_local.mapfield[x, y].GetComponent<UnityEngine.UI.Button>().interactable = true;
             }
@@ -263,28 +265,40 @@ public class avatarstatemachine : MonoBehaviour
                     battlefoundinfog = true;
                 }
 
-                if ((map_manager_local.dungeonmap.maptiles[x + 2, y].isroom) && (fogfield[x + 2, y].visitedstate != 0) || !isVisitedRoomsAround(x + 2, y) || (map_manager_local.dungeonmap.maptiles[x + 1, y].isroom))
+                if ((map_manager_local.dungeonmap.mapwalls[x + 2, y].isroom) && (fogfield[x + 2, y].visitedstate != 0) || !isVisitedRoomsAround(x + 2, y) || (map_manager_local.dungeonmap.mapwalls[x + 1, y].isroom))
                 {
-                    fogfield[x + 1, y].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 100);
-                    if (map_manager_local.dungeonmap.maptiles[x + 1, y].isroom) fogfield[x + 1, y].enabledpath = true;
+                    if (map_manager_local.dungeonmap.mapwalls[x+1, y].isroom)
+                    {
+                        fogfield[x + 1, y].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 100);
+                        if (map_manager_local.dungeonmap.mapwalls[x + 1, y].isroom) fogfield[x + 1, y].enabledpath = true;
+                    }
                 }
 
-                if ((map_manager_local.dungeonmap.maptiles[x - 2, y].isroom) && (fogfield[x - 2, y].visitedstate != 0) || !isVisitedRoomsAround(x - 2, y) || (map_manager_local.dungeonmap.maptiles[x - 1, y].isroom))
+                if ((map_manager_local.dungeonmap.mapwalls[x - 2, y].isroom) && (fogfield[x - 2, y].visitedstate != 0) || !isVisitedRoomsAround(x - 2, y) || (map_manager_local.dungeonmap.mapwalls[x - 1, y].isroom))
                 {
-                    fogfield[x - 1, y].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 100);
-                    if (map_manager_local.dungeonmap.maptiles[x - 1, y].isroom) fogfield[x - 1, y].enabledpath = true;
+                    if (map_manager_local.dungeonmap.mapwalls[x - 1, y].isroom)
+                    {
+                        fogfield[x - 1, y].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 100);
+                        if (map_manager_local.dungeonmap.mapwalls[x - 1, y].isroom) fogfield[x - 1, y].enabledpath = true;
+                    }
                 }
 
-                if ((map_manager_local.dungeonmap.maptiles[x, y - 2].isroom) && (fogfield[x, y - 2].visitedstate != 0) || !isVisitedRoomsAround(x, y - 2) || (map_manager_local.dungeonmap.maptiles[x, y - 1].isroom))
+                if ((map_manager_local.dungeonmap.mapwalls[x, y - 2].isroom) && (fogfield[x, y - 2].visitedstate != 0) || !isVisitedRoomsAround(x, y - 2) || (map_manager_local.dungeonmap.mapwalls[x, y - 1].isroom))
                 {
-                    fogfield[x, y - 1].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 100);
-                    if (map_manager_local.dungeonmap.maptiles[x, y - 1].isroom) fogfield[x, y - 1].enabledpath = true;
+                    if (map_manager_local.dungeonmap.mapwalls[x , y - 1].isroom)
+                    {
+                        fogfield[x, y - 1].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 100);
+                        if (map_manager_local.dungeonmap.mapwalls[x, y - 1].isroom) fogfield[x, y - 1].enabledpath = true;
+                    }
                 }
 
-                if ((map_manager_local.dungeonmap.maptiles[x, y + 2].isroom) && (fogfield[x, y + 2].visitedstate != 0) || !isVisitedRoomsAround(x, y + 2) || (map_manager_local.dungeonmap.maptiles[x, y + 1].isroom))
+                if ((map_manager_local.dungeonmap.mapwalls[x, y + 2].isroom) && (fogfield[x, y + 2].visitedstate != 0) || !isVisitedRoomsAround(x, y + 2) || (map_manager_local.dungeonmap.mapwalls[x, y + 1].isroom))
                 {
-                    fogfield[x, y + 1].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 100);
-                    if (map_manager_local.dungeonmap.maptiles[x, y + 1].isroom) fogfield[x, y + 1].enabledpath = true;
+                    if (map_manager_local.dungeonmap.mapwalls[x, y + 1].isroom)
+                    {
+                        fogfield[x, y + 1].fog.GetComponent<fog_controller>().SetRoomAlpha(intime / 100);
+                        if (map_manager_local.dungeonmap.mapwalls[x, y + 1].isroom) fogfield[x, y + 1].enabledpath = true;
+                    }
                 }
 
                 //empty space fog
@@ -327,19 +341,19 @@ public class avatarstatemachine : MonoBehaviour
 
 
                 //enable minimap
-                if (map_manager_local.dungeonmap.maptiles[x + 1, y].isroom)
+                if (map_manager_local.dungeonmap.mapwalls[x + 1, y].isroom)
                 {                    
                         if (fogfield[x + 1, y].visitedstate == 0) minimapobject.GetComponent<minimap>().MapUpdate(x + 1, y, 1);
                 }
-                if (map_manager_local.dungeonmap.maptiles[x - 1, y].isroom)
+                if (map_manager_local.dungeonmap.mapwalls[x - 1, y].isroom)
                 {                    
                         if (fogfield[x - 1, y].visitedstate == 0) minimapobject.GetComponent<minimap>().MapUpdate(x - 1, y, 1);
                 }
-                if (map_manager_local.dungeonmap.maptiles[x, y + 1].isroom)
+                if (map_manager_local.dungeonmap.mapwalls[x, y + 1].isroom)
                 {                   
                         if (fogfield[x, y + 1].visitedstate == 0) minimapobject.GetComponent<minimap>().MapUpdate(x, y + 1, 1);
                 }
-                if (map_manager_local.dungeonmap.maptiles[x, y - 1].isroom)
+                if (map_manager_local.dungeonmap.mapwalls[x, y - 1].isroom)
                 {                   
                         if (fogfield[x, y - 1].visitedstate == 0) minimapobject.GetComponent<minimap>().MapUpdate(x, y - 1, 1);                    
                 }
@@ -352,7 +366,7 @@ public class avatarstatemachine : MonoBehaviour
         int i;
         for (i = 1; i <= steps; i++)
         {
-            if (map_manager_local.dungeonmap.maptiles[x + dirx * i, y + diry * i].isroom)
+            if (map_manager_local.dungeonmap.mapwalls[x + dirx * i, y + diry * i].isroom)
             {
                 if (i < steps)
                     FogUpdateCross(x + dirx * i, y + diry * i, 1, true);
@@ -371,7 +385,7 @@ public class avatarstatemachine : MonoBehaviour
     {
         int i;
         int dirx, diry;
-        //Debug.Log("Fog Update: " + x + ", " + y);
+        //Debug.Log("Fog Update On position: " + x + ", " + y);
 
         minimapobject.GetComponent<minimap>().MapUpdate(x, y, 2);
         minimapobject.GetComponent<minimap>().MapUpdate(x, y, 3);
@@ -412,20 +426,21 @@ public class avatarstatemachine : MonoBehaviour
             for (j = 1; j < map_manager_local.mapsize-1; j++)
             {
                 found = false;
-				if (map_manager_local.dungeonmap.maptiles[i, j].isroom)
+				if (map_manager_local.dungeonmap.mapwalls[i, j].isroom)
                 {
-					//if (roomfield[i,j] > 2) map_manager_local.mapfield[i, j].GetComponent<UnityEngine.UI.Button>().interactable = false;
+                    //if (roomfield[i,j] > 2) map_manager_local.mapfield[i, j].GetComponent<UnityEngine.UI.Button>().interactable = false;
+                    Debug.Log("Room Found: " + i + ", " + j);
                     found = true;
                 }
-				if (map_manager_local.dungeonmap.maptiles[i + 1, j].isroom) found = true;
-				if (map_manager_local.dungeonmap.maptiles[i - 1, j].isroom) found = true;
-				if (map_manager_local.dungeonmap.maptiles[i, j + 1].isroom) found = true;
-				if (map_manager_local.dungeonmap.maptiles[i, j - 1].isroom) found = true;
+				if (map_manager_local.dungeonmap.mapwalls[i + 1, j].isroom) found = true;
+				if (map_manager_local.dungeonmap.mapwalls[i - 1, j].isroom) found = true;
+				if (map_manager_local.dungeonmap.mapwalls[i, j + 1].isroom) found = true;
+				if (map_manager_local.dungeonmap.mapwalls[i, j - 1].isroom) found = true;
 
-                if (map_manager_local.dungeonmap.maptiles[i + 1, j + 1].isroom) found = true;
-                if (map_manager_local.dungeonmap.maptiles[i - 1, j + 1].isroom) found = true;
-                if (map_manager_local.dungeonmap.maptiles[i + 1, j - 1].isroom) found = true;
-                if (map_manager_local.dungeonmap.maptiles[i - 1, j - 1].isroom) found = true;
+                if (map_manager_local.dungeonmap.mapwalls[i + 1, j + 1].isroom) found = true;
+                if (map_manager_local.dungeonmap.mapwalls[i - 1, j + 1].isroom) found = true;
+                if (map_manager_local.dungeonmap.mapwalls[i + 1, j - 1].isroom) found = true;
+                if (map_manager_local.dungeonmap.mapwalls[i - 1, j - 1].isroom) found = true;
 
                 if (fogfield[i,j].fog!=null)
                 {
@@ -441,7 +456,8 @@ public class avatarstatemachine : MonoBehaviour
                     pos.y = (j - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
                     fogfield[i, j].fog.transform.localPosition = pos;
 					fogfield[i, j].visitedstate = 0;
-					fogfield [i, j].enabledpath = false;
+					fogfield[i, j].enabledpath = false;
+                    fogfield[i, j].fog.GetComponent<fog_controller>().InitFogTile();
                 }
                 
             }
@@ -534,44 +550,48 @@ public class avatarstatemachine : MonoBehaviour
             _wheretogo.z = map_manager_local.floorZ;
 
 			path1 = finalpath [avatarwhereinpath + 1] - finalpath [avatarwhereinpath];
+
+            //curve move
             
-			if (finalpath [avatarwhereinpath + 2] != Vector2.zero)
-            {
-				path2 = finalpath [avatarwhereinpath + 2] - finalpath [avatarwhereinpath + 1];
+            if (finalpath[avatarwhereinpath].x == finalpath[avatarwhereinpath + 1].x || finalpath[avatarwhereinpath].y == finalpath[avatarwhereinpath + 1].y) {
+                if (finalpath[avatarwhereinpath + 2] != Vector2.zero)
+                {
+                    path2 = finalpath[avatarwhereinpath + 2] - finalpath[avatarwhereinpath + 1];
 
-				_wheretogo0.x = (finalpath [avatarwhereinpath].x - map_manager_local.mapoffset) * map_manager_local.mappiecesize + avatarshift;
-				_wheretogo0.y = (finalpath [avatarwhereinpath].y - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
-				_wheretogo0.z = map_manager_local.floorZ;
+                    _wheretogo0.x = (finalpath[avatarwhereinpath].x - map_manager_local.mapoffset) * map_manager_local.mappiecesize + avatarshift;
+                    _wheretogo0.y = (finalpath[avatarwhereinpath].y - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
+                    _wheretogo0.z = map_manager_local.floorZ;
 
-				_wheretogo2.x = (finalpath [avatarwhereinpath + 2].x - map_manager_local.mapoffset) * map_manager_local.mappiecesize + avatarshift;
-				_wheretogo2.y = (finalpath [avatarwhereinpath + 2].y - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
-				_wheretogo2.z = map_manager_local.floorZ;
+                    _wheretogo2.x = (finalpath[avatarwhereinpath + 2].x - map_manager_local.mapoffset) * map_manager_local.mappiecesize + avatarshift;
+                    _wheretogo2.y = (finalpath[avatarwhereinpath + 2].y - map_manager_local.mapoffset) * map_manager_local.mappiecesize;
+                    _wheretogo2.z = map_manager_local.floorZ;
 
-				_deltavector = transform.localPosition - _wheretogo0;
-				waypointdistance1 = _deltavector.magnitude;
-				_deltavector = _wheretogo2 - transform.localPosition;
-				waypointdistance2 = _deltavector.magnitude;
+                    _deltavector = transform.localPosition - _wheretogo0;
+                    waypointdistance1 = _deltavector.magnitude;
+                    _deltavector = _wheretogo2 - transform.localPosition;
+                    waypointdistance2 = _deltavector.magnitude;
 
-				if (path1 != path2 && waypointdistance1 > map_manager_local.mappiecesize * 0.3f) {
-					_wheretogo.x = _wheretogo.x - path1.x * curveoffset * 1.5f + path2.x * curveoffset; 
-					_wheretogo.y = _wheretogo.y - path1.y * curveoffset * 1.5f + path2.y * curveoffset; 
-                    
-					//Debug.Log ("waypoint1:" + finalpath [avatarwhereinpath] + " waypoint2:" + finalpath [avatarwhereinpath + 1] + " waypoint3:" + finalpath [avatarwhereinpath + 2]);
-					//Debug.Log ("path1:" + path1 + " path2:" + path2);
-					//Debug.Log ("offset:" + _wheretogo);
-				}
-			}
-			else
-			{
-				_deltavector = _wheretogo - transform.localPosition;
-				waypointdistance2 = _deltavector.magnitude;
-				if (waypointdistance2 < map_manager_local.mappiecesize * 0.9f && waypointdistance2 > map_manager_local.mappiecesize * 0.7f) {
-					_wheretogo.x = _wheretogo.x - path1.x * map_manager_local.mappiecesize * 0.6f; 
-					_wheretogo.y = _wheretogo.y - path1.y * map_manager_local.mappiecesize * 0.6f; 
-				}
-			}
-			//Debug.Log("offset:" + _wheretogo);
+                    if (path1 != path2 && waypointdistance1 > map_manager_local.mappiecesize * 0.3f) {
+                        _wheretogo.x = _wheretogo.x - path1.x * curveoffset * 1.5f + path2.x * curveoffset;
+                        _wheretogo.y = _wheretogo.y - path1.y * curveoffset * 1.5f + path2.y * curveoffset;
 
+                        //Debug.Log ("waypoint1:" + finalpath [avatarwhereinpath] + " waypoint2:" + finalpath [avatarwhereinpath + 1] + " waypoint3:" + finalpath [avatarwhereinpath + 2]);
+                        //Debug.Log ("path1:" + path1 + " path2:" + path2);
+                        //Debug.Log ("offset:" + _wheretogo);
+                    }
+                }
+                else
+                {
+                    _deltavector = _wheretogo - transform.localPosition;
+                    waypointdistance2 = _deltavector.magnitude;
+                    if (waypointdistance2 < map_manager_local.mappiecesize * 0.9f && waypointdistance2 > map_manager_local.mappiecesize * 0.7f) {
+                        _wheretogo.x = _wheretogo.x - path1.x * map_manager_local.mappiecesize * 0.6f;
+                        _wheretogo.y = _wheretogo.y - path1.y * map_manager_local.mappiecesize * 0.6f;
+                    }
+                }
+                //Debug.Log("offset:" + _wheretogo);
+            }
+            
 
             _deltavector = _wheretogo - transform.localPosition;
             _norm = _deltavector.normalized * avatarspeed * timestep;
@@ -690,6 +710,14 @@ public class avatarstatemachine : MonoBehaviour
 
         setpathfindingcoroutine = GeneratePathTo(whereX, whereY);
         StartCoroutine(setpathfindingcoroutine);
+
+        DeactivateActiveElements();
+        if (!avatarmoving)
+        {
+            avatarmoving = true;
+            avatarobject.GetComponent<Animator>().SetTrigger("run");
+        }
+
         //GeneratePathTo(whereX, whereY);
         /*
 
@@ -793,6 +821,18 @@ public class avatarstatemachine : MonoBehaviour
                 // We have a 4-way connected map
                 // This also works with 6-way hexes and 8-way tiles and n-way variable areas (like EU4)
 
+                //diagonal
+                if (x > 0 && y > 0)
+                    graph[x, y].neighbours.Add(graph[x - 1, y - 1]);
+                if (x < map_manager_local.mapsize - 1 && y > 0)
+                    graph[x, y].neighbours.Add(graph[x + 1, y - 1]);
+                if (x > 0 && y < map_manager_local.mapsize - 1)
+                    graph[x, y].neighbours.Add(graph[x - 1, y + 1]);
+                if (x < map_manager_local.mapsize - 1 && y < map_manager_local.mapsize - 1)
+                    graph[x, y].neighbours.Add(graph[x + 1, y + 1]);
+
+                //horizontal and vertical
+
                 if (x > 0)
                     graph[x, y].neighbours.Add(graph[x - 1, y]);
                 if (x < map_manager_local.mapsize - 1)
@@ -802,39 +842,47 @@ public class avatarstatemachine : MonoBehaviour
                 if (y < map_manager_local.mapsize - 1)
                     graph[x, y].neighbours.Add(graph[x, y + 1]);
 
-                //diagonal
-                /*if (x > 0 && y > 0)
-                    graph[x, y].neighbours.Add(graph[x - 1, y - 1]);
-                if (x < map_manager_local.mapsize - 1 && y > 0)
-                    graph[x, y].neighbours.Add(graph[x + 1, y - 1]);
-                if (x > 0 && y < map_manager_local.mapsize - 1)
-                    graph[x, y].neighbours.Add(graph[x - 1, y + 1]);
-                if (x < map_manager_local.mapsize - 1 && y < map_manager_local.mapsize - 1)
-                    graph[x, y].neighbours.Add(graph[x + 1, y + 1]);*/
+                
             }
         }
     }
 
     public float CostToEnterTile(int sourceX, int sourceY, int targetX, int targetY, int fx, int fy)
     {
-        if (UnitCanEnterTile(targetX, targetY, fx, fy) == false)
+        if (UnitCanEnterTile(sourceX, sourceY, targetX, targetY, fx, fy) == false)
             return Mathf.Infinity;
 
+        Vector2 dist;
         float cost = 1;
+
+        dist.x = fx - targetX;
+        dist.y = fy - targetY;
+
+        cost += dist.magnitude * 0.1f;
 
         /*
         if (sourceX != targetX && sourceY != targetY)
         {
             // We are moving diagonally!  Fudge the cost for tie-breaking
             // Purely a cosmetic thing!
-            cost += 0.25f;
-        }*/
+
+			cost -= 0.01f;
+        }
+        if (sourceX != targetX && sourceY != targetY && (sourceX == fx || sourceY == fy))
+        {
+            // Path to final position needs diagonal movement
+            
+
+            cost += 0.1f;
+        }
+        */
+
 
         return cost;
 
     }
 
-    public bool UnitCanEnterTile(int x, int y, int fx, int fy)
+    public bool UnitCanEnterTile(int sourceX, int sourceY, int x, int y, int fx, int fy)
     {
 
         // We could test the unit's walk/hover/fly type against various
@@ -847,6 +895,11 @@ public class avatarstatemachine : MonoBehaviour
                 return false;
             }
         }
+        if (!fogfield[sourceX,y].enabledpath || !fogfield[x, sourceY].enabledpath)
+        {
+            //Debug.Log("Found Wrong Diagonal");
+            return false;
+        }
         return fogfield[x, y].enabledpath;
         
     }
@@ -857,16 +910,22 @@ public class avatarstatemachine : MonoBehaviour
 
         int fx;
         int fy;
+        int i;
 
         fx = x;
         fy = y;
 
         Vector2 delta;
 
-        if (UnitCanEnterTile(x, y, fx, fy) == false)
+        Vector2 nextposition;
+
+        if (UnitCanEnterTile(x, y, x, y, fx, fy) == false)
         {
             // We probably clicked on a mountain or something, so just quit out.
             //StopCoroutine(setpathfindingcoroutine);
+
+            Debug.Log("Wrong click");
+
             yield break;
         }
         
@@ -886,20 +945,44 @@ public class avatarstatemachine : MonoBehaviour
 
         FogUpdate((int)avataractualposition.x, (int)avataractualposition.y);
 
-        delta.x = avatar_actual_worldposition.x + map_manager_local.mapoffset * map_manager_local.mappiecesize -20;
+
+        
+        delta.x = avatar_actual_worldposition.x + map_manager_local.mapoffset * map_manager_local.mappiecesize;
         delta.y = avatar_actual_worldposition.y + map_manager_local.mapoffset * map_manager_local.mappiecesize;
         //Debug.Log("Avatar position:" + delta);
         //Debug.Log("Avatar Path:" + finalpath[avatarwhereinpath]*map_manager_local.mappiecesize);
         delta =  delta - (finalpath[avatarwhereinpath + 1] * map_manager_local.mappiecesize);
         //Debug.Log("Delta:" + delta.magnitude);
-        if (!avatarmoving || delta.magnitude > 50)
+
+        
+        if (delta.magnitude < 50 && finalpath[avatarwhereinpath + 1].x != 0)
         {
-            source = graph[(int)avataractualposition.x, (int)avataractualposition.y];
+            source = graph[(int)finalpath[avatarwhereinpath + 1].x, (int)finalpath[avatarwhereinpath + 1].y];
+            FogUpdate((int)finalpath[avatarwhereinpath + 1].x, (int)finalpath[avatarwhereinpath + 1].y);
         }
         else
         {
+            source = graph[(int)finalpath[avatarwhereinpath].x, (int)finalpath[avatarwhereinpath].y];
+            FogUpdate((int)finalpath[avatarwhereinpath].x, (int)finalpath[avatarwhereinpath].y);
+        }
+        
+        
+        //source = graph[(int)avataractualposition.x, (int)avataractualposition.y];
+
+        //nextposition = finalpath[avatarwhereinpath + 1];
+
+        /*if (avatarmoving)
+        {
             source = graph[(int)finalpath[avatarwhereinpath + 1].x, (int)finalpath[avatarwhereinpath + 1].y];
         }
+        else
+        {
+            source = graph[(int)finalpath[avatarwhereinpath].x, (int)finalpath[avatarwhereinpath].y];
+        }*/
+        
+        //Debug.Log("Avatar original position:" + finalpath[avatarwhereinpath]);
+        //Debug.Log("Avatar original next position:" + finalpath[avatarwhereinpath + 1]);
+
         Node target = graph[
                             x,
                             y
@@ -951,7 +1034,7 @@ public class avatarstatemachine : MonoBehaviour
                 {
                     dist[v] = alt;
                     prev[v] = u;
-                    yield return null;
+                    //yield return null;
                 }
             }
         }
@@ -963,6 +1046,30 @@ public class avatarstatemachine : MonoBehaviour
         {
             // No route between our target and the source
             //StopCoroutine(setpathfindingcoroutine);
+
+            if (x == finalpath[avatarwhereinpath].x && y == finalpath[avatarwhereinpath].y)
+            {
+
+                for (i = 0; i < maxsizepath; i++)
+                {
+                    finalpath[i] = Vector2.zero;
+                }
+                finalpath[0].x = x;
+                finalpath[0].y = y;
+
+                finalpath[1].x = x;
+                finalpath[1].y = y;
+
+                avatarwhereinpath = 0;
+
+                Debug.Log("Same tile click");
+            }
+            else
+            {
+                Debug.Log("No path found");
+            }
+
+
             yield break;
         }
 
@@ -975,7 +1082,7 @@ public class avatarstatemachine : MonoBehaviour
         {
             currentPath.Add(curr);
             curr = prev[curr];
-            yield return null;
+            //yield return null;
         }
 
         // Right now, currentPath describes a route from out target to our source
@@ -983,30 +1090,92 @@ public class avatarstatemachine : MonoBehaviour
 
         currentPath.Reverse();
 
-        int i;
 
+
+
+        //Debug.Log("Avatar Moving: " + avatarmoving);
+
+
+
+
+
+        
+
+        //Debug.Log("Avatar old path:" + finalpath[avatarwhereinpath].x + ", " + finalpath[avatarwhereinpath].y + " -> " + finalpath[avatarwhereinpath + 1].x + ", " + finalpath[avatarwhereinpath + 1].y);
+
+        //Debug.Log("Avatar new path:" + currentPath[0].x + ", " + currentPath[0].y + " -> " + currentPath[1].x + ", " + currentPath[1].y);
+
+        if (fogfield[(int)currentPath[1].x, (int)finalpath[avatarwhereinpath + 1].y].enabledpath && fogfield[(int)finalpath[avatarwhereinpath + 1].x, (int)currentPath[1].y].enabledpath)
+        //if (finalpath[avatarwhereinpath + 1].x == currentPath[1].x && finalpath[avatarwhereinpath + 1].y == currentPath[1].y)
+        {
+            for (i = 0; i < maxsizepath; i++)
+            {
+                finalpath[i] = Vector2.zero;
+            }
+            for (i = 0; i < currentPath.Count; i++)
+            {
+                finalpath[i].x = currentPath[i].x;
+                finalpath[i].y = currentPath[i].y;
+            }
+            //Debug.Log("Appending the path");
+        } 
+        else
+        {
+            for (i = 0; i < maxsizepath; i++)
+            {
+                finalpath[i] = Vector2.zero;
+            }
+            for (i = 0; i < currentPath.Count; i++)
+            {
+                finalpath[i+1].x = currentPath[i].x;
+                finalpath[i+1].y = currentPath[i].y;
+            }
+            finalpath[0].x = currentPath[0].x;
+            finalpath[0].y = currentPath[0].y;
+        }
+        avatarwhereinpath = 0;
+
+
+        /*
         for (i = 0; i < maxsizepath; i++)
         {
             finalpath[i] = Vector2.zero;
         }
+
+        //Debug.Log("Avatar new path lenght:" + currentPath.Count);
+
         for (i = 0; i < currentPath.Count; i++)
         {
-            finalpath[i].x = currentPath[i].x;
-            finalpath[i].y = currentPath[i].y;
+            finalpath[i+1].x = currentPath[i].x;
+            finalpath[i+1].y = currentPath[i].y;
         }
+        finalpath[0].x = currentPath[0].x;
+        finalpath[0].y = currentPath[0].y;
 
-        DeactivateActiveElements();
         avatarwhereinpath = 0;
-        if (!avatarmoving)
-        {
-            avatarobject.GetComponent<Animator>().SetTrigger("run");
-        }
-    //Debug.Log("Path length" + currentPath.Count);
 
-    /*computedpath[currentPath.Count].x = x;
-    computedpath[currentPath.Count].y = y;*/
-    /*Gizmos.color = Color.blue;
-    Gizmos.DrawLine(transform.position, target.position);*/
-}
+        Debug.Log("Avatar new path:" + finalpath[1] + " -> " + finalpath[2]);
+
+        if (fogfield[(int)finalpath[1].x, (int)finalpath[2].y].enabledpath && fogfield[(int)finalpath[2].x, (int)finalpath[1].y].enabledpath)
+        {
+            avatarwhereinpath = 1;
+        }
+        else
+        {
+            Debug.Log("Don't append path");
+            
+        }
+        */
+
+        //Debug.Log("Avatar first new waypoint:" + currentPath[0].x + ", " + currentPath[0].y);
+        //Debug.Log("Avatar second new waypoint:" + currentPath[1].x + ", " + currentPath[1].y);
+
+        //Debug.Log("Path length" + currentPath.Count);
+
+        /*computedpath[currentPath.Count].x = x;
+        computedpath[currentPath.Count].y = y;*/
+        /*Gizmos.color = Color.blue;
+        Gizmos.DrawLine(transform.position, target.position);*/
+    }
 
 }
