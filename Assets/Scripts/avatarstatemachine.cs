@@ -429,7 +429,7 @@ public class avatarstatemachine : MonoBehaviour
 				if (map_manager_local.dungeonmap.mapwalls[i, j].isroom)
                 {
                     //if (roomfield[i,j] > 2) map_manager_local.mapfield[i, j].GetComponent<UnityEngine.UI.Button>().interactable = false;
-                    Debug.Log("Room Found: " + i + ", " + j);
+                    //Debug.Log("Room Found: " + i + ", " + j);
                     found = true;
                 }
 				if (map_manager_local.dungeonmap.mapwalls[i + 1, j].isroom) found = true;

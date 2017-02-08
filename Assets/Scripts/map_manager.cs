@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 using System;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using UnityEngine.UI;
 
 public class map_manager : MonoBehaviour
 {
@@ -115,6 +116,13 @@ public class map_manager : MonoBehaviour
 
     public int gamemode; //editor = 10, dungeon = 1
 
+
+    [HideInInspector] public class numberinstring
+    {
+        public int numbervalue;
+        public int numberlength;
+    }
+
     //---GLOBAL DEFINITIONS------------------------------------------------------
     public GameObject DiceObject;
 	public GameObject PrefabPanelDicesToRollObject;
@@ -124,11 +132,12 @@ public class map_manager : MonoBehaviour
 	//---END OF GLOBAL DEFINITIONS------------------------------------------------------
     public void SaveMap()
     {
+        /*
         BinaryFormatter bf = new BinaryFormatter();
         string name;
         FileStream file;
 
-        name = "Assets/Resources/maps/level1.map";
+        name = Application.dataPath + "/Resources/maps/level1.txt";
 
         if (!File.Exists(name))
         {
@@ -143,15 +152,56 @@ public class map_manager : MonoBehaviour
  
         bf.Serialize(file, dungeonmap);
         file.Close();
+
+        */
+
+
+        name = Application.dataPath + "/Resources/maps/text1111.txt";
+        StreamWriter stringfile;
+
+        if (File.Exists(name))
+        {
+            File.Delete(name);
+        }
+
+        stringfile = File.CreateText(name);
+
+        //stringfile.WriteLine("This is my file.");
+        //stringfile.WriteLine("I can write ints {0} or floats {1}, and so on.", 1, 4.2);
+        int i, j, k;
+        string s = " ";
+
+        for (i = 0; i < mapsize; i++)
+            for (j = 0; j < mapsize; j++)
+            {
+                if (dungeonmap.mapwalls[i, j].isroom)
+                {
+                    s = " ";
+                    s = "W" + i.ToString() + "," + j.ToString();
+                    for (k = 0; k < 4; k++)
+                    {
+                        s = s + "," + dungeonmap.mapwalls[i, j].quadrantsfield[k].quadrantID.ToString();
+                    }
+                    s = s + ".";
+                    stringfile.WriteLine(s);
+                }
+                
+                
+            }
+
+
+        stringfile.Close();
+
     }
 
     public void LoadMap()
     {
+        /*
         BinaryFormatter bf = new BinaryFormatter();
         string name;
         FileStream file;
 
-        name = "Assets/Resources/maps/level1.map";
+        name = Application.dataPath + "/Resources/maps/level1.txt";
 
         if (File.Exists(name))
         {
@@ -172,7 +222,78 @@ public class map_manager : MonoBehaviour
         {
             Debug.Log("Error!!!");
         }
+
+        */
+        int i,j,k,x,y, tile;
+        numberinstring numstr;
+
+        TextAsset loadedstring = Resources.Load("Maps/text1111") as TextAsset;
+        i = 0;
+        //Debug.Log("Map file length: " + loadedstring.text.Length);
+        while (i < loadedstring.text.Length)
+        {
+            //Debug.Log("Map file char["+ i +"]: " + loadedstring.text[i]);
+
+            if (loadedstring.text[i]=='W')
+            {
+                //Debug.Log("Room Loaded");
+                
+                while (loadedstring.text[i] == 'W')
+                i = i + 1;
+
+                //Debug.Log("First int char[" + i + "]: " + loadedstring.text[i]);
+                numstr = loadvalue(loadedstring.text, i);
+                x = numstr.numbervalue;
+                i = i + numstr.numberlength;
+
+                //Debug.Log("First int char[" + i + "]: " + loadedstring.text[i]);
+                numstr = loadvalue(loadedstring.text, i);
+                y = numstr.numbervalue;
+                i = i + numstr.numberlength;
+
+                dungeonmap.mapwalls[x, y].isroom = true;
+
+                for (k = 0; k < 4; k++)
+                {
+                    numstr = loadvalue(loadedstring.text, i);
+                    tile = numstr.numbervalue;
+                    i = i + numstr.numberlength;
+                    dungeonmap.mapwalls[x, y].quadrantsfield[k].quadrantID = tile;
+                }
+
+                Debug.Log("Room XY Loaded:" + x + ", " + y);
+            }
+            i = i + 1;
+
+        }
+        FillMapArt();
+
     }
+
+    numberinstring loadvalue(string str, int i)
+    {
+        int retnum;
+        int j;
+        int len;
+        numberinstring substringret = new numberinstring();
+
+        //Debug.Log("String To Num: " + str);
+        j = i;
+        retnum = 0;
+        while (str[j]!=',' && str[j] != '.')
+        {
+            //Debug.Log("Value: "+ str[j]);
+            retnum = retnum * 10 + str[j] - 48;
+            j = j + 1;
+        }
+        len = j - i;
+        //Debug.Log("',' found - number:" + retnum + ", length: " + len);
+        substringret.numbervalue = retnum;
+        substringret.numberlength = len + 1;
+        return substringret;
+
+    }
+    
 
     // Use this for initialization
     void Start ()
@@ -233,7 +354,7 @@ public class map_manager : MonoBehaviour
         //--------------------------------------------------------------------------------
         // main hero init-----------------------------------------------------
 
-        gamemode = 10;
+        gamemode = 1;
         if (gamemode == 1)
         {
             LoadMap();
